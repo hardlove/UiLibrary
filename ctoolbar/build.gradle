@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-group='com.Carlos.hardlove'// hardlove代表你github名字
+group='com.github.hardlove'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
