@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CToolBar">
+        <!--bar的背景的 Alpha-->
+        <attr name="c_bar_alpha_press" format="float|reference" />
+        <attr name="c_bar_background" format="color|reference" />
+        <!--所有文字和icon的颜色，如果子控件有设置，颜色将会覆盖-->
+        <attr name="c_bar_text_color" format="color|reference" />
+        <attr name="c_bar_icon_color" format="color|reference" />
+        <!--是否显示Back键-->
+        <attr name="c_show_back" format="boolean" />
+        <!--是否禁用back点击时关闭页面-->
+        <attr name="c_back_finish_enable" format="boolean" />
+        <!--是否显示对应的view-->
+        <attr name="c_show_left_tv" format="boolean" />
+        <attr name="c_show_left_iv" format="boolean" />
+        <attr name="c_show_center_tv" format="boolean" />
+        <attr name="c_show_center_iv" format="boolean" />
+        <attr name="c_show_right_tv1" format="boolean" />
+        <attr name="c_show_right_tv2" format="boolean" />
+        <attr name="c_show_right_tv3" format="boolean" />
+        <attr name="c_show_right_iv1" format="boolean" />
+        <attr name="c_show_right_iv2" format="boolean" />
+        <attr name="c_show_right_iv3" format="boolean" />
+
+        <!--返回键的文字 \ icon \ width -->
+        <attr name="c_left_back_min_width" format="dimension|reference" />
+        <attr name="c_left_back_icon" format="reference" />
+        <attr name="c_left_back_icon_color" format="color|reference" />
+        <attr name="c_left_back_alpha_press" format="float|reference" />
+        <attr name="c_left_back_text" format="reference|string" />
+        <attr name="c_left_back_text_color" format="color|reference" />
+        <attr name="c_left_back_text_size" format="dimension|reference" />
+        <attr name="c_left_back_paddingLeft" format="dimension|reference" />
+        <attr name="c_left_back_paddingRight" format="dimension|reference" />
+        <attr name="c_left_back_drawable_padding" format="dimension|reference" />
+
+        <!--左边的文字和icon-->
+        <attr name="c_left_tv_text" format="string|reference" />
+        <attr name="c_left_tv_text_color" format="color|reference" />
+        <attr name="c_left_tv_text_size" format="dimension|reference" />
+        <attr name="c_left_tv_text_alpha_press" format="float|reference" />
+        <attr name="c_left_iv_icon" format="reference" />
+        <attr name="c_left_iv_icon_color" format="color|reference" />
+        <attr name="c_left_iv_icon_alpha_press" format="float|reference" />
+        <attr name="c_left_tv_text_paddingLeft" format="dimension|reference" />
+        <attr name="c_left_tv_text_paddingRight" format="dimension|reference" />
+        <attr name="c_left_iv_icon_paddingLeft" format="dimension|reference" />
+        <attr name="c_left_iv_icon_paddingRight" format="dimension|reference" />
+
+        <!--中间的文字-->
+        <attr name="c_center_tv_text" format="string|reference" />
+        <attr name="c_center_tv_text_color" format="color|reference" />
+        <attr name="c_center_tv_text_size" format="dimension|reference" />
+        <attr name="c_center_tv_text_alpha_press" format="float|reference" />
+
+
+        <!--中间的自定义布局-->
+        <attr name="c_center_other_layout" format="reference" />
+
+        <!--右边的文字和icon  1 -->
+        <attr name="c_right_tv1_text" format="string|reference" />
+        <attr name="c_right_tv1_text_color" format="color|reference" />
+        <attr name="c_right_tv1_text_size" format="dimension|reference" />
+        <attr name="c_right_tv1_text_alpha_press" format="float|reference" />
+        <attr name="c_right_iv1_icon" format="reference" />
+        <attr name="c_right_iv1_icon_color" format="color|reference" />
+        <attr name="c_right_iv1_icon_alpha_press" format="float|reference" />
+        <attr name="c_right_tv1_text_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_tv1_text_paddingRight" format="dimension|reference" />
+        <attr name="c_right_iv1_icon_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_iv1_icon_paddingRight" format="dimension|reference" />
+
+        <!--右边的文字和icon  2 -->
+        <attr name="c_right_tv2_text" format="string|reference" />
+        <attr name="c_right_tv2_text_color" format="color|reference" />
+        <attr name="c_right_tv2_text_size" format="dimension|reference" />
+        <attr name="c_right_tv2_text_alpha_press" format="float|reference" />
+        <attr name="c_right_iv2_icon" format="reference" />
+        <attr name="c_right_iv2_icon_color" format="color|reference" />
+        <attr name="c_right_iv2_icon_alpha_press" format="float|reference" />
+        <attr name="c_right_tv2_text_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_tv2_text_paddingRight" format="dimension|reference" />
+        <attr name="c_right_iv2_icon_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_iv2_icon_paddingRight" format="dimension|reference" />
+
+        <!--右边的文字和icon  3 -->
+        <attr name="c_right_tv3_text" format="string|reference" />
+        <attr name="c_right_tv3_text_color" format="color|reference" />
+        <attr name="c_right_tv3_text_size" format="dimension|reference" />
+        <attr name="c_right_tv3_text_alpha_press" format="float|reference" />
+        <attr name="c_right_iv3_icon" format="reference" />
+        <attr name="c_right_iv3_icon_color" format="color|reference" />
+        <attr name="c_right_iv3_icon_alpha_press" format="float|reference" />
+        <attr name="c_right_tv3_text_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_tv3_text_paddingRight" format="dimension|reference" />
+        <attr name="c_right_iv3_icon_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_iv3_icon_paddingRight" format="dimension|reference" />
+    </declare-styleable>
+
+</resources>
