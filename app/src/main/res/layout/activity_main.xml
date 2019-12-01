@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <com.hardlove.library.view.ctoobar.CToolBar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:c_center_tv_text="我是标题"
+        app:c_right_iv1_icon="@drawable/ic_header"
+        app:c_show_back="true"
+        app:c_show_right_iv1="true" />
+
+
+    <com.hardlove.library.view.ctoobar.CToolBar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:c_bar_icon_color="@android:color/holo_red_dark"
+        app:c_bar_text_color="@android:color/holo_blue_light"
+        app:c_center_tv_text="我是标题"
+        app:c_right_iv1_icon="@drawable/ic_header"
+        app:c_show_back="true"
+        app:c_show_right_iv1="true" />
+
+
+    <com.hardlove.library.view.ctoobar.CToolBar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:c_bar_icon_color="@android:color/holo_red_dark"
+        app:c_bar_text_color="@android:color/holo_blue_light"
+        app:c_center_tv_text="我是标题"
+        app:c_left_back_icon_color="@android:color/holo_green_dark"
+        app:c_right_iv1_icon="@drawable/ic_header"
+        app:c_show_back="true"
+        app:c_show_right_iv1="true" />
+
+
+    <com.hardlove.library.view.ctoobar.CToolBar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:c_bar_icon_color="@android:color/holo_red_dark"
+        app:c_bar_text_color="@android:color/holo_blue_light"
+        app:c_center_tv_text="我是标题"
+        app:c_left_back_icon_color="@android:color/holo_green_dark"
+        app:c_left_back_text="返回"
+        app:c_right_iv1_icon="@drawable/ic_header"
+        app:c_show_back="true"
+        app:c_show_right_iv1="true" />
+
+    <com.hardlove.library.view.ctoobar.CToolBar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:c_bar_icon_color="@android:color/holo_red_dark"
+        app:c_bar_text_color="@android:color/holo_blue_light"
+        app:c_center_tv_text="我是标题"
+        app:c_left_back_icon_color="@android:color/holo_green_dark"
+        app:c_right_tv1_text="保存"
+        app:c_show_back="true"
+        app:c_show_right_tv1="true" />
+
+    <com.hardlove.library.view.ctoobar.CToolBar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:c_bar_icon_color="@android:color/holo_red_dark"
+        app:c_bar_text_color="@android:color/holo_blue_light"
+        app:c_center_tv_text="我是标题"
+        app:c_right_iv2_icon="@mipmap/icon_back_delete"
+        app:c_show_right_iv2="true"
+        app:c_left_back_icon_color="@android:color/holo_green_dark"
+        app:c_left_back_text="返回"
+        app:c_right_iv1_icon="@drawable/ic_header"
+        app:c_show_back="true"
+        app:c_show_right_iv1="true" />
+
+</LinearLayout>
