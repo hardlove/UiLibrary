@@ -1,4 +1,4 @@
-package com.hardlove.library.view.ctoobar;
+package com.hardlove.library.view;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,6 +25,8 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.hardlove.library.view.ctoobar.R;
 
 import static android.content.ContentValues.TAG;
 

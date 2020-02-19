@@ -1,4 +1,4 @@
-package com.hardlove.library.view.qrcodeview;
+package com.hardlove.library.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -23,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
+
+import com.hardlove.library.view.qrcodeview.R;
 
 
 public class QRCodeView extends CardView {
