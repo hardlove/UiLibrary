@@ -1,2 +1,1 @@
 include ':app', ':ctoolbar', ':QRCodeView'
-rootProject.name='CToolBar'
