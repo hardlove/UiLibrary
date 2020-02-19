@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="SendVerifyCodeView">
+        <!--总倒计时长-->
+        <attr name="totalCountDownTime" format="integer" />
+        <attr name="normalTextColor" format="color" />
+        <attr name="unableTextColor" format="color" />
+        <attr name="normalTips" format="string|reference" />
+        <attr name="resendTips" format="string|reference" />
+    </declare-styleable>
+</resources>

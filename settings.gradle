@@ -1,1 +1,1 @@
-include ':app', ':ctoolbar', ':QRCodeView'
+include ':app', ':ctoolbar', ':QRCodeView', ':VerifyCodeView'
