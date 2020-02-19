@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">VerifyCodeView</string>
     <string name="send_verify_code">发送验证码</string>
     <string name="resend_verify_code">重新发送</string>
 </resources>
