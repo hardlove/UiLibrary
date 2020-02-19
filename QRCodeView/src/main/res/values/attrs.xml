@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--二维码展示View-->
+    <declare-styleable name="QRCodeView">
+        <!--二维码圆角半径-->
+        <attr name="radius" format="dimension|reference" />
+        <!--二维码内外间隔-->
+        <attr name="padding" format="dimension|reference" />
+        <!--内部二维码背景-->
+        <attr name="innerBackgroundColor" format="color|reference" />
+    </declare-styleable>
+
+</resources>

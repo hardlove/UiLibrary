@@ -1,2 +1,2 @@
-include ':app', ':ctoolbar'
+include ':app', ':ctoolbar', ':QRCodeView'
 rootProject.name='CToolBar'
