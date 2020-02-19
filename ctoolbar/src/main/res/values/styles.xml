@@ -17,7 +17,7 @@
     <color name="c_bar_background">#FFFFFF</color>
 
 
-    <style name="CToolBar" parent="">
+    <style name="CToolBar">
         <!--bar的基本属性-->
         <item name="c_bar_alpha_press">0.6</item><!--注意：小数不能写成0.6f-->
         <!--是否显示Back键-->
