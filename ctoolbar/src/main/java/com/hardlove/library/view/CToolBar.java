@@ -37,6 +37,7 @@ import static android.content.ContentValues.TAG;
  */
 
 public class CToolBar extends FrameLayout implements View.OnTouchListener, View.OnClickListener, View.OnLongClickListener {
+    private int DEFAULT_BOTTOM_LINE_COLOR = Color.parseColor("#F7F9FA");
     private final float defaultTextSize = 17;//sp
     int DEFAULT_TEXT_COLOR = Color.BLACK;
     int DEFAULT_ICON_COLOR = Color.BLACK;
@@ -121,6 +122,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private boolean c_show_right_iv1;
     private boolean c_show_right_iv2;
     private boolean c_show_right_iv3;
+    private boolean c_show_bottom_line;
 
 
     private TextViewSettings tv_left_back_settings, left_tv_settings, center_tv_settings, right_tv1_settings, right_tv2_settings, right_tv3_settings;
@@ -144,12 +146,14 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private int c_right_tv3_text_paddingRight;
     private int c_right_iv3_icon_paddingLeft;
     private int c_right_iv3_icon_paddingRight;
-    private FrameLayout toolBar;
+    private ViewGroup toolBar;
     private RecyclerView.OnScrollListener onRlScrollListener;
     private View root;
+    private View bottom_line;//底部分割线
     private int c_bar_background;
     private View[] views;
     private Object[] settings;
+
 
 
     public CToolBar(Context context, AttributeSet attrs) {
@@ -207,6 +211,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         tv_left_back.setMinWidth(c_left_back_min_width);
         tv_left_back.setGravity(Gravity.CENTER);
         showBackView(c_show_back);
+        bottom_line.setVisibility(c_show_bottom_line ? VISIBLE : GONE);
     }
 
     /**
@@ -491,6 +496,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private void findViews(ViewGroup view) {
         root = view.findViewById(R.id.toolbar_root);
         toolBar = view.findViewById(R.id.tool_bar);
+        bottom_line = view.findViewById(R.id.line);
         tv_left_back = view.findViewById(R.id.tv_left_back);
         left_tv = view.findViewById(R.id.left_tv);
         left_iv = view.findViewById(R.id.left_iv);
@@ -911,11 +917,14 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
         DEFAULT_TEXT_COLOR = array.getColor(R.styleable.CToolBar_c_bar_text_color, DEFAULT_TEXT_COLOR);
         DEFAULT_ICON_COLOR = array.getColor(R.styleable.CToolBar_c_bar_icon_color, DEFAULT_ICON_COLOR);
+        DEFAULT_BOTTOM_LINE_COLOR = array.getColor(R.styleable.CToolBar_c_bar_icon_color, DEFAULT_BOTTOM_LINE_COLOR);
 
         c_show_back = array.getBoolean(R.styleable.CToolBar_c_show_back, true);
         c_back_finish = array.getBoolean(R.styleable.CToolBar_c_back_finish_enable, true);
 
         //控制对应view的显示|隐藏
+        c_show_bottom_line = array.getBoolean(R.styleable.CToolBar_c_show_bottom_line, false);
+
         c_show_left_tv = array.getBoolean(R.styleable.CToolBar_c_show_left_tv, false);
         c_show_left_iv = array.getBoolean(R.styleable.CToolBar_c_show_left_iv, false);
 

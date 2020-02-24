@@ -12,15 +12,15 @@
     android:padding="0dp"
     tools:layout_height="60dp">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top"
         android:layout_margin="0dp"
         android:elevation="0dp"
+        android:orientation="vertical"
         android:padding="0dp"
-        android:textColor="@color/c_tool_bar_text_color"
 
         >
 
@@ -171,5 +171,12 @@
                     android:visibility="visible" />
             </LinearLayout>
         </RelativeLayout>
-    </FrameLayout>
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F7F9FA"
+            android:visibility="gone" />
+    </LinearLayout>
 </FrameLayout>
