@@ -13,7 +13,7 @@ buildscript {
          * gradle 最高版本不能超过4.6。
          * 而gradle 4.6+对应到gradle 插件版本为3.2.0~.3.2.1
          */
-        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath 'com.android.tools.build:gradle:3.6.3'
         
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle filesclasspath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
