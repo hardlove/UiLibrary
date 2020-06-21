@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -49,6 +50,10 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     int DEFAULT_PADDING_RIGHT = 20;
     int DEFAULT_PADDING_DRAWABLE = 20;
 
+    private View root;
+    private View bottom_line;//底部分割线
+    private View statusBar;//顶部状态栏
+    private ViewGroup custom_layer;//title内容部分
 
     TextView tv_left_back;//返回键
 
@@ -146,14 +151,13 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private int c_right_tv3_text_paddingRight;
     private int c_right_iv3_icon_paddingLeft;
     private int c_right_iv3_icon_paddingRight;
-    private ViewGroup toolBar;
     private RecyclerView.OnScrollListener onRlScrollListener;
-    private View root;
-    private View bottom_line;//底部分割线
     private int c_bar_background;
     private View[] views;
     private Object[] settings;
-
+    private boolean addStatusBar;//是否是顶部添加状态栏填充位置
+    private int stausbar_color;
+    private int custom_layer_color;
 
 
     public CToolBar(Context context, AttributeSet attrs) {
@@ -168,6 +172,8 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     @Override
     public void setBackgroundColor(int color) {
         root.setBackgroundColor(c_bar_background);
+        statusBar.setBackgroundColor(stausbar_color);
+        custom_layer.setBackgroundColor(custom_layer_color);
     }
 
     @Override
@@ -212,6 +218,12 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         tv_left_back.setGravity(Gravity.CENTER);
         showBackView(c_show_back);
         bottom_line.setVisibility(c_show_bottom_line ? VISIBLE : GONE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4及以上支持
+            statusBar.setVisibility(addStatusBar ? VISIBLE : GONE);
+        } else {
+            statusBar.setVisibility(GONE);//4.4以下不支持沉浸式直接隐藏
+        }
     }
 
     /**
@@ -495,7 +507,9 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
     private void findViews(ViewGroup view) {
         root = view.findViewById(R.id.toolbar_root);
-        toolBar = view.findViewById(R.id.tool_bar);
+        statusBar = view.findViewById(R.id.system_status_bar);
+        custom_layer = view.findViewById(R.id.custom_layer);
+
         bottom_line = view.findViewById(R.id.line);
         tv_left_back = view.findViewById(R.id.tv_left_back);
         left_tv = view.findViewById(R.id.left_tv);
@@ -512,6 +526,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         left_layout = view.findViewById(R.id.left_layout);
         center_layout = view.findViewById(R.id.center_layout);
         right_layout = view.findViewById(R.id.right_layout);
+
 
     }
 
@@ -869,6 +884,22 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         return right_layout;
     }
 
+    public View getBottom_line() {
+        return bottom_line;
+    }
+
+    public ViewGroup getCustom_layer() {
+        return custom_layer;
+    }
+
+    public View getStatusBar() {
+        return statusBar;
+    }
+
+    public boolean isAddStatusBar() {
+        return addStatusBar;
+    }
+
     public void showView(View... views) {
         for (View view : views) {
             if (view != null) {
@@ -915,9 +946,12 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         c_bar_alpha_press = array.getFloat(R.styleable.CToolBar_c_bar_alpha_press, DEFAULT_ALPHA_PRESS);
         c_bar_background = array.getColor(R.styleable.CToolBar_c_bar_background, Color.TRANSPARENT);
 
+
         DEFAULT_TEXT_COLOR = array.getColor(R.styleable.CToolBar_c_bar_text_color, DEFAULT_TEXT_COLOR);
         DEFAULT_ICON_COLOR = array.getColor(R.styleable.CToolBar_c_bar_icon_color, DEFAULT_ICON_COLOR);
         DEFAULT_BOTTOM_LINE_COLOR = array.getColor(R.styleable.CToolBar_c_bar_icon_color, DEFAULT_BOTTOM_LINE_COLOR);
+        stausbar_color = array.getColor(R.styleable.CToolBar_c_status_bar_color, Color.TRANSPARENT);
+        custom_layer_color = array.getColor(R.styleable.CToolBar_c_custom_layer_color, Color.TRANSPARENT);
 
         c_show_back = array.getBoolean(R.styleable.CToolBar_c_show_back, true);
         c_back_finish = array.getBoolean(R.styleable.CToolBar_c_back_finish_enable, true);
@@ -1053,6 +1087,8 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         right_iv3_settings.setPadding(c_right_iv3_icon_paddingLeft, c_right_iv3_icon_paddingRight, 0, 0);
         right_iv3_settings.setMarging(0, 0, 0, 0);
         right_iv3_settings.setIsShow(c_show_right_iv3);
+
+        addStatusBar = array.getBoolean(R.styleable.CToolBar_c_add_status_bar, false);
 
 
     }

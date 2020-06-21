@@ -1,7 +1,12 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.hardlove'
+apply plugin: 'com.novoda.bintray-release'
 android {
+
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
@@ -29,37 +34,25 @@ dependencies {
     api 'com.android.support:support-annotations:28.0.0'
 }
 
-//以下为配置library注释在打包jar后保留
-// 打包源码jar
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
 
-task javadoc(type: Javadoc) {
-    failOnError false
-    source = android.sourceSets.main.java.sourceFiles
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.compile
-}
+//publish {
+//    userOrg = 'hardlove'                               //bintray.com 账号用户名
+//    groupId = 'com.carlos'                                 //唯一 id，最后依赖的库名组成部分之一
+//    artifactId = 'CToolBar'                             //仓库名
+//    publishVersion = '1.0.0'                                 //版本号
+//    desc = '一个好用的通用的ToolBar'                                   //描述
+//    website = 'https://github.com/harlove'                   //开源项目网址
+//}
 
-// 打包文档jar
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
+publish {
+    artifactId = 'CToolBar' // library的名字
+    userOrg = 'carloso' //用户所在组织
+    groupId = 'com.carloso'  // 包名
+    publishVersion = '1.0.0'  // 版本
+    desc = '一个好用的通用的ToolBar' // 描述
+    website = 'https://github.com/harlove'
+    bintrayUser = 'hardlove' // 账户名
+    bintrayKey = 'a6d6c0d3437346b31eb2309848ddaada831997ea' // 就是API key
+    dryRun = false
 
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-javadoc {
-    options {
-        //如果你的项目里面有中文注释的话，必须将格式设置为UTF-8，不然会出现乱码
-        encoding "UTF-8"
-        charSet 'UTF-8'
-        author true
-        version true
-    }
 }

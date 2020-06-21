@@ -5,6 +5,12 @@
         <!--bar的背景的 Alpha-->
         <attr name="c_bar_alpha_press" format="float|reference" />
         <attr name="c_bar_background" format="color|reference" />
+
+        <!--是否在顶部添加系统状态栏-->
+        <attr name="c_add_status_bar" format="boolean|reference" />
+        <attr name="c_status_bar_color" format="color|reference" />
+        <attr name="c_custom_layer_color" format="color|reference" />
+
         <!--所有文字和icon的颜色，如果子控件有设置，颜色将会覆盖-->
         <attr name="c_bar_text_color" format="color|reference" />
         <attr name="c_bar_icon_color" format="color|reference" />
@@ -101,6 +107,9 @@
         <!--底部分割线-->
         <attr name="c_bottom_line_color" format="color|reference" />
         <attr name="c_show_bottom_line" format="boolean|reference" />
+
+
+
     </declare-styleable>
 
 </resources>
