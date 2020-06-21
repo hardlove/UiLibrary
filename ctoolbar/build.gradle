@@ -1,18 +1,13 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
+
 android {
-
-    compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_8
-        sourceCompatibility JavaVersion.VERSION_1_8
-    }
-
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         defaultConfig {
             minSdkVersion 19
-            targetSdkVersion 29
+            targetSdkVersion 28
             versionCode 1
             versionName "1.0"
 
@@ -23,7 +18,11 @@ android {
                 proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             }
         }
+        lintOptions {
+            abortOnError false
+        }
     }
+
 }
 
 dependencies {
@@ -35,24 +34,33 @@ dependencies {
 }
 
 
-//publish {
-//    userOrg = 'hardlove'                               //bintray.com 账号用户名
-//    groupId = 'com.carlos'                                 //唯一 id，最后依赖的库名组成部分之一
-//    artifactId = 'CToolBar'                             //仓库名
-//    publishVersion = '1.0.0'                                 //版本号
-//    desc = '一个好用的通用的ToolBar'                                   //描述
-//    website = 'https://github.com/harlove'                   //开源项目网址
-//}
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task androidJavadocsJar(type: Jar) {
+    classifier = 'javadoc'
+}
+
+artifacts {
+    archives androidJavadocsJar
+    archives sourcesJar
+}
+
+//上传到jcenter 执行
 
 publish {
-    artifactId = 'CToolBar' // library的名字
-    userOrg = 'carloso' //用户所在组织
-    groupId = 'com.carloso'  // 包名
-    publishVersion = '1.0.0'  // 版本
-    desc = '一个好用的通用的ToolBar' // 描述
-    website = 'https://github.com/harlove'
-    bintrayUser = 'hardlove' // 账户名
-    bintrayKey = 'a6d6c0d3437346b31eb2309848ddaada831997ea' // 就是API key
-    dryRun = false
-
+    userOrg = 'carloso'//bintray.com用户名
+    groupId = 'com.carloso.widgets'//jcenter上的路径
+    artifactId = 'CToolBar'//项目名称
+    publishVersion = '1.0.1'//版本号
+    desc = '一个通用的好用的ToolBar'//描述，不重要
+    website = 'https://github.com/hardlove/UiLibrary.git'
+//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }

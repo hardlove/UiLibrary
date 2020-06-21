@@ -1,11 +1,13 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
+
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         defaultConfig {
             minSdkVersion 19
-            targetSdkVersion 29
+            targetSdkVersion 28
             versionCode 1
             versionName "1.0"
 
@@ -25,4 +27,36 @@ dependencies {
     api 'com.android.support:appcompat-v7:28.0.0'
     api 'com.android.support:design:28.0.0'
     api 'com.android.support:support-annotations:28.0.0'
+}
+
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task androidJavadocsJar(type: Jar) {
+    classifier = 'javadoc'
+}
+
+artifacts {
+    archives androidJavadocsJar
+    archives sourcesJar
+}
+
+//上传到jcenter 执行
+
+publish {
+    userOrg = 'carloso'//bintray.com用户名
+    groupId = 'com.carloso'//jcenter上的路径
+    artifactId = 'VerifyCodeView'//项目名称
+    publishVersion = '1.0.2'//版本号
+    desc = '含有倒计时的验证码控件'//描述，不重要
+    website = 'https://github.com/hardlove/UiLibrary.git'
+//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }

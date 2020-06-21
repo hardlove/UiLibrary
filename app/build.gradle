@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.1"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.hardlove.library.ctoolbar"
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -27,11 +27,13 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    implementation project(path: ':QRCodeView')
-    implementation project(path: ':ctoolbar')
-    implementation project(path: ':VerifyCodeView')
+//    implementation project(path: ':QRCodeView')
+//    implementation project(path: ':ctoolbar')
+//    implementation project(path: ':VerifyCodeView')
 
-//    implementation 'com.github.hardlove:BaseLibrary:1.0.2'
+//      implementation 'com.github.hardlove:BaseLibrary:1.0.2'
 
-
+    implementation 'com.carloso.widgets:CToolBar:1.0.1'
+    implementation 'com.carloso.widgets:QRCodeView:1.0.1'
+    implementation 'com.carloso.widgets:VerifyCodeView:1.0.1'
 }
