@@ -52,9 +52,9 @@ artifacts {
 
 publish {
     userOrg = 'carloso'//bintray.com用户名
-    groupId = 'com.carloso'//jcenter上的路径
+    groupId = 'com.carloso.widgets'//jcenter上的路径
     artifactId = 'QRCodeView'//项目名称
-    publishVersion = '1.0.2'//版本号
+    publishVersion = '2.0.2'//版本号
     desc = '二维码'//描述，不重要
     website = 'https://github.com/hardlove/UiLibrary.git'
 //网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
