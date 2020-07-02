@@ -14,10 +14,11 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="40dp">
 
 
             <com.hardlove.library.view.CToolBar
@@ -90,13 +91,13 @@
                 app:c_show_right_iv2="true" />
 
             <com.hardlove.library.view.CToolBar
-                app:c_custom_layer_color="#00ff00"
-                app:c_status_bar_color="@color/colorAccent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:c_add_status_bar="true"
                 app:c_bar_icon_color="@android:color/holo_red_dark"
                 app:c_bar_text_color="@android:color/holo_blue_light"
                 app:c_center_tv_text="我是带有系统状态栏的ToolBar"
+                app:c_custom_layer_color="#00ff00"
                 app:c_left_back_icon_color="@android:color/holo_green_dark"
                 app:c_left_back_text="返回"
                 app:c_right_iv1_icon="@drawable/ic_header"
@@ -104,8 +105,7 @@
                 app:c_show_back="true"
                 app:c_show_right_iv1="true"
                 app:c_show_right_iv2="true"
-                app:c_add_status_bar="true"
-                />
+                app:c_status_bar_color="@color/colorAccent" />
 
             <com.hardlove.library.view.QRCodeView
                 android:layout_width="214dp"
@@ -125,6 +125,10 @@
                 app:resendTips="重新获取"
                 app:totalCountDownTime="60"
                 app:unableTextColor="@color/colorPrimary" />
+
+            <com.hardlove.library.view.SearchLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
 
 
         </LinearLayout>
