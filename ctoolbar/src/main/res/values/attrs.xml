@@ -111,5 +111,35 @@
 
 
     </declare-styleable>
+    
+    
+    <declare-styleable name="SearchLayout">
+        <attr name="c_search_layout_radius" format="dimension|reference"/>
+        <attr name="c_search_layout_solid_color" format="color|reference"/>
+        <attr name="c_search_layout_stroke_color" format="color|reference"/>
+        <attr name="c_search_layout_stroke_width" format="dimension|reference"/>
+
+        <attr name="c_search_icon_size" format="dimension|reference"/>
+        <attr name="c_search_icon_color" format="color|reference"/>
+        <attr name="c_search_icon" format="reference"/>
+
+        <attr name="c_search_delete_icon_size" format="dimension|reference"/>
+        <attr name="c_search_delete_icon_color" format="color|reference"/>
+        <attr name="c_search_delete_icon" format="reference"/>
+
+        <attr name="c_search_hint_text" format="string|reference" />
+        <attr name="c_search_hint_text_color" format="color|reference" />
+        <attr name="c_search_text" format="string|reference" />
+        <attr name="c_search_text_color" format="color|reference" />
+        <attr name="c_search_text_size" format="dimension|reference" />
+
+<!--        <attr name="c_search_gravity" format="enum"  />-->
+
+        <attr name="c_search_enable_edit" format="boolean|reference" />
+        <attr name="c_search_text_padding_left" format="dimension|reference" />
+
+        
+    </declare-styleable>
+        
 
 </resources>
