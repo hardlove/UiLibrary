@@ -108,6 +108,16 @@
         <attr name="c_bottom_line_color" format="color|reference" />
         <attr name="c_show_bottom_line" format="boolean|reference" />
 
+        <!--显示搜索框-->
+        <attr name="c_show_search_layout" format="boolean|reference" />
+        <attr name="c_search_layout_margin_top" format="dimension|reference" />
+        <attr name="c_search_layout_margin_bottom" format="dimension|reference" />
+        <attr name="c_search_layout_margin_left" format="dimension|reference" />
+        <attr name="c_search_layout_margin_right" format="dimension|reference" />
+
+
+
+
 
 
     </declare-styleable>
@@ -132,8 +142,6 @@
         <attr name="c_search_text" format="string|reference" />
         <attr name="c_search_text_color" format="color|reference" />
         <attr name="c_search_text_size" format="dimension|reference" />
-
-<!--        <attr name="c_search_gravity" format="enum"  />-->
 
         <attr name="c_search_enable_edit" format="boolean|reference" />
         <attr name="c_search_text_padding_left" format="dimension|reference" />

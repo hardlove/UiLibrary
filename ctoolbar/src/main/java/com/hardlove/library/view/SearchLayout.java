@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.provider.CalendarContract;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -17,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.core.graphics.ColorUtils;
 
 import com.hardlove.library.view.ctoobar.R;
 
@@ -55,7 +58,7 @@ public class SearchLayout extends LinearLayout {
     public SearchLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        setGravity(Gravity.CENTER_VERTICAL);
+        setGravity(Gravity.CENTER);
 
         initAttrs(context, attrs, defStyleAttr);
         initView(context, attrs);
@@ -65,23 +68,6 @@ public class SearchLayout extends LinearLayout {
     private void initAttrs(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.SearchLayout, defStyleAttr, 0);
 
-//          <attr name="c_search_layout_radius" format="dimension|reference"/>
-//        <attr name="c_search_layout_solid_color" format="color|reference"/>
-//        <attr name="c_search_layout_stroke_color" format="color|reference"/>
-//        <attr name="c_search_layout_stroke_width" format="dimension|reference"/>
-//
-//        <attr name="c_search_icon_size" format="dimension|reference"/>
-//        <attr name="c_search_icon_color" format="color|reference"/>
-//        <attr name="c_search_icon" format="reference"/>
-//
-//        <attr name="c_search_delete_icon_size" format="dimension|reference"/>
-//        <attr name="c_search_delete_icon_color" format="color|reference"/>
-//        <attr name="c_search_delete_icon" format="reference"/>
-//
-//        <attr name="c_search_hint_text" format="string|reference" />
-//        <attr name="c_search_hint_text_color" format="color|reference" />
-//        <attr name="c_search_text_color" format="color|reference" />
-//        <attr name="c_search_text_size" format="dimension|reference" />
         cornerRadius = array.getDimensionPixelOffset(R.styleable.SearchLayout_c_search_layout_radius, dip2px(context, 4));
         strokeWidth = array.getDimensionPixelOffset(R.styleable.SearchLayout_c_search_layout_stroke_width, dip2px(context, 1));
         solidColor = array.getColor(R.styleable.SearchLayout_c_search_layout_solid_color, solidColor);
@@ -99,7 +85,7 @@ public class SearchLayout extends LinearLayout {
         textColor = array.getColor(R.styleable.SearchLayout_c_search_text_color, defColor);
         hitTextColor = array.getColor(R.styleable.SearchLayout_c_search_hint_text_color, defColor);
         textSize = array.getDimensionPixelSize(R.styleable.SearchLayout_c_search_text_size, dip2px(context, 14));
-        enableEdit = array.getBoolean(R.styleable.SearchLayout_c_search_enable_edit, false);
+        enableEdit = array.getBoolean(R.styleable.SearchLayout_c_search_enable_edit, true);
         textPaddingLR = array.getDimensionPixelOffset(R.styleable.SearchLayout_c_search_text_padding_left, dip2px(context, 5));
 
         array.recycle();
@@ -135,6 +121,9 @@ public class SearchLayout extends LinearLayout {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && deleteIconColor != Integer.MIN_VALUE) {
             deleteIconView.setImageTintList(ColorStateList.valueOf(deleteIconColor));
         }
+        if (TextUtils.isEmpty(tintText)) {
+            tintText = getContext().getString(R.string.search);
+        }
         editText.setHint(tintText);
         editText.setHintTextColor(hitTextColor);
         if (text != null) {
@@ -143,7 +132,7 @@ public class SearchLayout extends LinearLayout {
         }
         editText.setTextColor(textColor);
         editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-        editText.setBackground(null);
+        editText.setBackgroundColor(0x00000000);
         editText.setEnabled(enableEdit);
         editText.setPadding(textPaddingLR, 0, textPaddingLR, 0);
     }

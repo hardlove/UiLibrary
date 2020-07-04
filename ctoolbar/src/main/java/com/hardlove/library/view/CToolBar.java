@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -71,6 +72,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     ImageView right_iv3;
 
     LinearLayout left_layout, center_layout, right_layout;
+    SearchLayout search_layout;
     private float c_bar_alpha_press;
 
     private int c_left_back_min_width;
@@ -158,6 +160,11 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private boolean addStatusBar;//是否是顶部添加状态栏填充位置
     private int stausbar_color;
     private int custom_layer_color;
+    private boolean showSearchLayout;
+    private int searchLayoutMarginTop;
+    private int searchLayoutMarginBottom;
+    private int searchLayoutMarginLeft;
+    private int searchLayoutMarginRight;
 
 
     public CToolBar(Context context, AttributeSet attrs) {
@@ -223,6 +230,18 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
             statusBar.setVisibility(addStatusBar ? VISIBLE : GONE);
         } else {
             statusBar.setVisibility(GONE);//4.4以下不支持沉浸式直接隐藏
+        }
+
+        if (showSearchLayout) {
+            search_layout.setVisibility(VISIBLE);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) search_layout.getLayoutParams();
+            params.topMargin = searchLayoutMarginTop;
+            params.bottomMargin = searchLayoutMarginBottom;
+            params.leftMargin = searchLayoutMarginLeft;
+            params.rightMargin = searchLayoutMarginRight;
+            search_layout.setLayoutParams(params);
+        } else {
+            search_layout.setVisibility(GONE);
         }
     }
 
@@ -526,6 +545,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         left_layout = view.findViewById(R.id.left_layout);
         center_layout = view.findViewById(R.id.center_layout);
         right_layout = view.findViewById(R.id.right_layout);
+        search_layout = view.findViewById(R.id.search_layout);
 
 
     }
@@ -1089,6 +1109,12 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         right_iv3_settings.setIsShow(c_show_right_iv3);
 
         addStatusBar = array.getBoolean(R.styleable.CToolBar_c_add_status_bar, false);
+
+        showSearchLayout = array.getBoolean(R.styleable.CToolBar_c_show_search_layout, false);
+        searchLayoutMarginTop = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_margin_top, dip2px(getContext(), 5));
+        searchLayoutMarginBottom = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_margin_bottom, dip2px(getContext(), 5));
+        searchLayoutMarginLeft = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_margin_left, dip2px(getContext(), 5));
+        searchLayoutMarginRight = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_margin_right, dip2px(getContext(), 5));
 
 
     }
