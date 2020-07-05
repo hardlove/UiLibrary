@@ -33,7 +33,7 @@ dependencies {
 
 //      implementation 'com.github.hardlove:BaseLibrary:1.0.2'
 
-//    implementation 'com.carloso.widgets:CToolBar:1.0.3'
-//    implementation 'com.carloso.widgets:QRCodeView:1.0.3'
-//    implementation 'com.carloso.widgets:VerifyCodeView:1.0.3'
+//    implementation 'com.carloso.widgets:CToolBar:2.0.3'
+//    implementation 'com.carloso.widgets:QRCodeView:2.0.3'
+//    implementation 'com.carloso.widgets:VerifyCodeView:2.0.3'
 }
