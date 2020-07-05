@@ -2,12 +2,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
     defaultConfig {
         defaultConfig {
             minSdkVersion 19
-            targetSdkVersion 28
+            targetSdkVersion 29
             versionCode 1
             versionName "1.0"
 
@@ -24,9 +24,9 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api 'com.android.support:appcompat-v7:28.0.0'
-    api 'com.android.support:design:28.0.0'
-    api 'com.android.support:support-annotations:28.0.0'
+    api 'com.android.support:appcompat-v7:29.0.0'
+    api 'com.android.support:design:29.0.0'
+    api 'com.android.support:support-annotations:29.0.0'
 }
 
 task sourcesJar(type: Jar) {
@@ -52,9 +52,9 @@ artifacts {
 
 publish {
     userOrg = 'carloso'//bintray.com用户名
-    groupId = 'com.carloso.widgets'//jcenter上的路径
+    groupId = 'com.carloso'//jcenter上的路径
     artifactId = 'QRCodeView'//项目名称
-    publishVersion = '2.0.2'//版本号
+    publishVersion = '2.0.3'//版本号
     desc = '二维码'//描述，不重要
     website = 'https://github.com/hardlove/UiLibrary.git'
 //网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了

@@ -108,8 +108,79 @@
         <attr name="c_bottom_line_color" format="color|reference" />
         <attr name="c_show_bottom_line" format="boolean|reference" />
 
+        <!--显示搜索框-->
+        <attr name="c_show_search_layout" format="boolean|reference" />
+        <attr name="c_search_layout_margin_top" format="dimension|reference" />
+        <attr name="c_search_layout_margin_bottom" format="dimension|reference" />
+        <attr name="c_search_layout_margin_left" format="dimension|reference" />
+        <attr name="c_search_layout_margin_right" format="dimension|reference" />
+        <attr name="c_search_layout_padding_left_right" format="dimension|reference" />
+
+
+        <attr name="c_search_layout_radius" />
+        <attr name="c_search_layout_solid_color" />
+        <attr name="c_search_layout_stroke_color" />
+        <attr name="c_search_layout_stroke_width" />
+
+        <attr name="c_search_icon_size" />
+        <attr name="c_search_icon_color" />
+        <attr name="c_search_icon" />
+
+        <attr name="c_search_delete_icon_size" />
+        <attr name="c_search_delete_icon_color" />
+        <attr name="c_search_delete_icon" />
+
+        <attr name="c_search_hint_text" />
+        <attr name="c_search_hint_text_color" />
+        <attr name="c_search_text" />
+        <attr name="c_search_text_color" />
+        <attr name="c_search_text_size" />
+
+        <attr name="c_search_enable_edit" />
+        <attr name="c_search_text_padding_left_right" />
+
+        <attr name="c_search_gravity"/>
+
+        <attr name="c_show_search_search_icon" />
+        <attr name="c_show_search_delete_icon" />
 
 
     </declare-styleable>
+
+
+    <declare-styleable name="SearchLayout">
+        <attr name="c_search_layout_radius" format="dimension|reference" />
+        <attr name="c_search_layout_solid_color" format="color|reference" />
+        <attr name="c_search_layout_stroke_color" format="color|reference" />
+        <attr name="c_search_layout_stroke_width" format="dimension|reference" />
+
+        <attr name="c_search_icon_size" format="dimension|reference" />
+        <attr name="c_search_icon_color" format="color|reference" />
+        <attr name="c_search_icon" format="reference" />
+
+        <attr name="c_search_delete_icon_size" format="dimension|reference" />
+        <attr name="c_search_delete_icon_color" format="color|reference" />
+        <attr name="c_search_delete_icon" format="reference" />
+
+        <attr name="c_search_hint_text" format="string|reference" />
+        <attr name="c_search_hint_text_color" format="color|reference" />
+        <attr name="c_search_text" format="string|reference" />
+        <attr name="c_search_text_color" format="color|reference" />
+        <attr name="c_search_text_size" format="dimension|reference" />
+
+        <attr name="c_search_enable_edit" format="boolean|reference" />
+        <attr name="c_search_text_padding_left_right" format="dimension|reference" />
+
+        <attr name="c_search_gravity">
+            <enum name="start" value="1" />
+            <enum name="center" value="2" />
+        </attr>
+
+        <attr name="c_show_search_search_icon" format="boolean|reference" />
+        <attr name="c_show_search_delete_icon" format="boolean|reference" />
+
+
+    </declare-styleable>
+
 
 </resources>

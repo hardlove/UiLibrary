@@ -89,6 +89,19 @@
                 android:textSize="@dimen/c_tool_bar_text_size" />
         </LinearLayout>
 
+        <com.hardlove.library.view.SearchLayout
+            android:id="@+id/search_layout"
+            android:layout_toEndOf="@id/left_layout"
+            android:layout_toStartOf="@id/right_layout"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+
         <!--右边部分-->
         <LinearLayout
             android:id="@+id/right_layout"

@@ -2,9 +2,12 @@
 buildscript {
     repositories {
         google()
-        maven { url 'https://dl.bintray.com/carloso/maven' }
         jcenter()
         maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://dl.bintray.com/novoda-oss/snapshots/'
+        }
+        maven { url 'https://dl.bintray.com/carloso/maven' }
         mavenCentral()
 
     }
@@ -18,9 +21,12 @@ buildscript {
 allprojects {
     repositories {
         google()
-        maven { url 'https://dl.bintray.com/carloso/maven' }
         jcenter()
         maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://dl.bintray.com/novoda-oss/snapshots/'
+        }
+        maven { url 'https://dl.bintray.com/carloso/maven' }
         mavenCentral()
 
     }
