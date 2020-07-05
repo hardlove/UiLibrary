@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.hardlove.library.view.ctoobar.R;
 
@@ -85,6 +86,13 @@ public class SearchLayout extends LinearLayout {
         deleteIconColor = array.getColor(R.styleable.SearchLayout_c_search_delete_icon_color, Integer.MIN_VALUE);
         searchIcon = array.getDrawable(R.styleable.SearchLayout_c_search_icon);
         deleteIcon = array.getDrawable(R.styleable.SearchLayout_c_search_delete_icon);
+
+        if (searchIcon == null) {
+            searchIcon = ContextCompat.getDrawable(getContext(), R.mipmap.icon_search);
+        }
+        if (deleteIcon == null) {
+            deleteIcon = ContextCompat.getDrawable(getContext(), R.mipmap.icon_back_delete);
+        }
 
         hintText = array.getString(R.styleable.SearchLayout_c_search_hint_text);
         text = array.getString(R.styleable.SearchLayout_c_search_text);

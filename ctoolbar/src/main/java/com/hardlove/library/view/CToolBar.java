@@ -1206,12 +1206,18 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         search_solidColor = array.getColor(R.styleable.CToolBar_c_search_layout_solid_color, search_solidColor);
         search_strokeColor = array.getColor(R.styleable.CToolBar_c_search_layout_stroke_color, search_strokeColor);
 
-        search_searchIconSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_icon_size, dip2px(getContext(), 30));
-        search_deleteIconSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_delete_icon_size, dip2px(getContext(), 30));
+        search_searchIconSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_icon_size, dip2px(getContext(), 16));
+        search_deleteIconSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_delete_icon_size, dip2px(getContext(), 16));
         search_searchIconColor = array.getColor(R.styleable.CToolBar_c_search_icon_color, Integer.MIN_VALUE);
         search_deleteIconColor = array.getColor(R.styleable.CToolBar_c_search_delete_icon_color, Integer.MIN_VALUE);
         search_searchIcon = array.getDrawable(R.styleable.CToolBar_c_search_icon);
         search_deleteIcon = array.getDrawable(R.styleable.CToolBar_c_search_delete_icon);
+        if (search_searchIcon == null) {
+            search_searchIcon = ContextCompat.getDrawable(getContext(), R.mipmap.icon_search);
+        }
+        if (search_deleteIcon == null) {
+            search_deleteIcon = ContextCompat.getDrawable(getContext(), R.mipmap.icon_back_delete);
+        }
 
         search_hintText = array.getString(R.styleable.CToolBar_c_search_hint_text);
         search_text = array.getString(R.styleable.CToolBar_c_search_text);

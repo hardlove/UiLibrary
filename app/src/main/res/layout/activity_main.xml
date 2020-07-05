@@ -108,11 +108,13 @@
                 app:c_status_bar_color="@color/colorAccent" />
 
             <com.hardlove.library.view.CToolBar
+                app:c_search_layout_padding_left_right="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:c_add_status_bar="true"
                 app:c_bottom_line_color="#ff0000"
                 app:c_right_tv1_text="搜索"
+                app:c_search_hint_text="请输入搜索内容"
                 app:c_search_layout_margin_bottom="5dp"
                 app:c_search_layout_margin_left="5dp"
                 app:c_search_layout_margin_right="5dp"
@@ -152,7 +154,6 @@
                 app:c_search_gravity="center"
                 app:c_search_hint_text="搜索"
                 app:c_search_hint_text_color="#ff0000"
-                app:c_search_icon="@mipmap/icon_back_delete"
                 app:c_search_icon_color="@color/colorAccent"
                 app:c_search_layout_margin_bottom="5dp"
                 app:c_search_layout_margin_left="5dp"
@@ -193,7 +194,6 @@
                 app:c_search_delete_icon_color="#FFF"
                 app:c_search_hint_text="请输入搜索的内容"
                 app:c_search_hint_text_color="#ffffff"
-                app:c_search_icon="@mipmap/icon_back_delete"
                 app:c_search_icon_color="#ff0000"
                 app:c_search_layout_radius="98dp"
                 app:c_search_layout_solid_color="#99999999"
