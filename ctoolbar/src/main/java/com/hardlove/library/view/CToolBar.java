@@ -24,7 +24,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -161,19 +164,44 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private int status_bar_color;
     private int c_bottom_line_color;
     private int custom_layer_color;
+    /*searchLayout相关*/
     private boolean showSearchLayout;
     private int searchLayoutMarginTop;
     private int searchLayoutMarginBottom;
     private int searchLayoutMarginLeft;
     private int searchLayoutMarginRight;
+    private int searchLayoutPaddingLR;
+
+    private int search_cornerRadius;
+    private int search_strokeWidth;
+    private int search_solidColor = Color.parseColor("#eeeeee");
+    private int search_strokeColor = Color.parseColor("#eeeeee");
+    private int search_searchIconSize;
+    private int search_deleteIconSize;
+    private int search_searchIconColor;
+    private int search_deleteIconColor;
+    private Drawable search_searchIcon;
+    private Drawable search_deleteIcon;
+    private String search_hintText;
+    private String search_text;
+    private int search_textColor;
+    private int search_hitTextColor;
+    private int search_textSize;
+    private boolean search_enableEdit;
+    private int search_textPaddingLR;
+    private int search_searchGravity;
+    private static final int GRAVITY_START = 1;
+    private static final int GRAVITY_CENTER = 2;
 
 
     public CToolBar(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initView(context, attrs);
+        this(context, attrs, R.style.CToolBar);
+    }
+
+    public CToolBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr);
         setBackgroundColor(c_bar_background);
-
-
     }
 
 
@@ -189,9 +217,8 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         root.setBackgroundResource(resid);
     }
 
-    private void initView(Context context, AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CToolBar, 0, R.style.CToolBar);
-
+    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CToolBar, 0, defStyleAttr);
         getAttrs(typedArray);
 
         ViewGroup title = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.love_c_toolbar, null);
@@ -232,7 +259,12 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         } else {
             statusBar.setVisibility(GONE);//4.4以下不支持沉浸式直接隐藏
         }
+        initSearchLayout();
+    }
 
+    private void initSearchLayout() {
+        search_layout.setOnClickListener(this);
+        search_layout.setOnLongClickListener(this);
         if (showSearchLayout) {
             search_layout.setVisibility(VISIBLE);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) search_layout.getLayoutParams();
@@ -244,6 +276,31 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         } else {
             search_layout.setVisibility(GONE);
         }
+        search_layout.setPadding(searchLayoutPaddingLR, 0, searchLayoutPaddingLR, 0);
+        search_layout.setSolidColor(search_solidColor);
+        search_layout.setStrokeColor(search_strokeColor);
+        search_layout.setCornerRadius(search_cornerRadius);
+        search_layout.setStrokeWidth(search_strokeWidth);
+        search_layout.setSearchGravity(search_searchGravity);
+        search_layout.setSearchIcon(search_searchIcon);
+        search_layout.setDeleteIcon(search_deleteIcon);
+        search_layout.setSearchIconSize(search_searchIconSize);
+        search_layout.setDeleteIconSize(search_deleteIconSize);
+        search_layout.setEnableEdit(search_enableEdit);
+        search_layout.setTextSize(search_textSize);
+        search_layout.setTextColor(search_textColor);
+        search_layout.setHintText(search_hintText);
+        search_layout.setText(search_text);
+        search_layout.setHintTextColor(search_hitTextColor);
+        search_layout.setTextPaddingLR(search_textPaddingLR);
+        if (search_searchIconColor != Integer.MIN_VALUE) {
+            search_layout.setSearchIconColor(search_searchIconColor);
+        }
+        if (search_deleteIconColor != Integer.MIN_VALUE) {
+            search_layout.setDeleteIconColor(search_deleteIconColor);
+        }
+
+
     }
 
     /**
@@ -362,6 +419,9 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
         public void onRightIv3Click() {
         }
+
+        public void onSearchLayoutClick() {
+        }
     }
 
     /**
@@ -409,6 +469,10 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         }
 
         public boolean onRightIv3LongClick() {
+            return false;
+        }
+
+        public boolean onSearchLayoutLongClick() {
             return false;
         }
     }
@@ -612,6 +676,8 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
             onCToolBarClickListener.onRightTv3Click();
         } else if (v == right_iv3) {
             onCToolBarClickListener.onRightIv3Click();
+        } else if (v == search_layout) {
+            onCToolBarClickListener.onSearchLayoutClick();
         }
     }
 
@@ -640,6 +706,8 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
             return onCToolBarLongClickListener.onRightTv3LongClick();
         } else if (v == right_iv3) {
             return onCToolBarLongClickListener.onRightIv3LongClick();
+        } else if (v == search_layout) {
+            onCToolBarLongClickListener.onSearchLayoutLongClick();
         }
         return false;
     }
@@ -913,6 +981,14 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         return custom_layer;
     }
 
+    public SearchLayout getSearch_layout() {
+        return search_layout;
+    }
+
+    public boolean isShowSearchLayout() {
+        return showSearchLayout;
+    }
+
     public View getStatusBar() {
         return statusBar;
     }
@@ -1111,13 +1187,40 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
         addStatusBar = array.getBoolean(R.styleable.CToolBar_c_add_status_bar, false);
 
+        /*searchLayout相关*/
+        initSearchLayoutAttrs(array);
+
+    }
+
+    private void initSearchLayoutAttrs(TypedArray array) {
         showSearchLayout = array.getBoolean(R.styleable.CToolBar_c_show_search_layout, false);
         searchLayoutMarginTop = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_margin_top, dip2px(getContext(), 5));
         searchLayoutMarginBottom = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_margin_bottom, dip2px(getContext(), 5));
         searchLayoutMarginLeft = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_margin_left, dip2px(getContext(), 5));
         searchLayoutMarginRight = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_margin_right, dip2px(getContext(), 5));
+        searchLayoutPaddingLR = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_padding_left_right, dip2px(getContext(), 5));
 
 
+        search_cornerRadius = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_radius, dip2px(getContext(), 4));
+        search_strokeWidth = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_stroke_width, dip2px(getContext(), 1));
+        search_solidColor = array.getColor(R.styleable.CToolBar_c_search_layout_solid_color, search_solidColor);
+        search_strokeColor = array.getColor(R.styleable.CToolBar_c_search_layout_stroke_color, search_strokeColor);
+
+        search_searchIconSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_icon_size, dip2px(getContext(), 30));
+        search_deleteIconSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_delete_icon_size, dip2px(getContext(), 30));
+        search_searchIconColor = array.getColor(R.styleable.CToolBar_c_search_icon_color, Integer.MIN_VALUE);
+        search_deleteIconColor = array.getColor(R.styleable.CToolBar_c_search_delete_icon_color, Integer.MIN_VALUE);
+        search_searchIcon = array.getDrawable(R.styleable.CToolBar_c_search_icon);
+        search_deleteIcon = array.getDrawable(R.styleable.CToolBar_c_search_delete_icon);
+
+        search_hintText = array.getString(R.styleable.CToolBar_c_search_hint_text);
+        search_text = array.getString(R.styleable.CToolBar_c_search_text);
+        search_textColor = array.getColor(R.styleable.CToolBar_c_search_text_color, DEFAULT_TEXT_COLOR);
+        search_hitTextColor = array.getColor(R.styleable.CToolBar_c_search_hint_text_color, DEFAULT_TEXT_COLOR);
+        search_textSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_text_size, dip2px(getContext(), 14));
+        search_enableEdit = array.getBoolean(R.styleable.CToolBar_c_search_enable_edit, true);
+        search_textPaddingLR = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_text_padding_left_right, dip2px(getContext(), 5));
+        search_searchGravity = array.getInt(R.styleable.CToolBar_c_search_gravity, 1);
     }
 
     private void adjustImageView(ImageView v, ImageViewSettings settings) {

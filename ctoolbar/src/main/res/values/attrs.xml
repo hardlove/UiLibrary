@@ -114,6 +114,35 @@
         <attr name="c_search_layout_margin_bottom" format="dimension|reference" />
         <attr name="c_search_layout_margin_left" format="dimension|reference" />
         <attr name="c_search_layout_margin_right" format="dimension|reference" />
+        <attr name="c_search_layout_padding_left_right" format="dimension|reference" />
+
+
+
+        <attr name="c_search_layout_radius"  />
+        <attr name="c_search_layout_solid_color"  />
+        <attr name="c_search_layout_stroke_color"  />
+        <attr name="c_search_layout_stroke_width"  />
+
+        <attr name="c_search_icon_size"  />
+        <attr name="c_search_icon_color"  />
+        <attr name="c_search_icon" />
+
+        <attr name="c_search_delete_icon_size" />
+        <attr name="c_search_delete_icon_color"  />
+        <attr name="c_search_delete_icon"  />
+
+        <attr name="c_search_hint_text"  />
+        <attr name="c_search_hint_text_color"  />
+        <attr name="c_search_text"  />
+        <attr name="c_search_text_color"  />
+        <attr name="c_search_text_size" />
+
+        <attr name="c_search_enable_edit" />
+        <attr name="c_search_text_padding_left_right" />
+
+        <attr name="c_search_gravity">
+
+        </attr>
 
 
     </declare-styleable>
@@ -140,7 +169,7 @@
         <attr name="c_search_text_size" format="dimension|reference" />
 
         <attr name="c_search_enable_edit" format="boolean|reference" />
-        <attr name="c_search_text_padding_left" format="dimension|reference" />
+        <attr name="c_search_text_padding_left_right" format="dimension|reference" />
 
         <attr name="c_search_gravity">
             <enum name="start" value="1" />
