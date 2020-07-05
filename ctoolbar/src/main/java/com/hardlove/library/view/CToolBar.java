@@ -192,6 +192,8 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private int search_searchGravity;
     private static final int GRAVITY_START = 1;
     private static final int GRAVITY_CENTER = 2;
+    private boolean showSearchIcon;
+    private boolean showDeleteIcon;
 
 
     public CToolBar(Context context, AttributeSet attrs) {
@@ -299,6 +301,8 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         if (search_deleteIconColor != Integer.MIN_VALUE) {
             search_layout.setDeleteIconColor(search_deleteIconColor);
         }
+        search_layout.setShowSearchIcon(showSearchIcon);
+        search_layout.setShowDeleteIcon(showDeleteIcon);
 
 
     }
@@ -1205,6 +1209,9 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         search_strokeWidth = array.getDimensionPixelOffset(R.styleable.CToolBar_c_search_layout_stroke_width, dip2px(getContext(), 1));
         search_solidColor = array.getColor(R.styleable.CToolBar_c_search_layout_solid_color, search_solidColor);
         search_strokeColor = array.getColor(R.styleable.CToolBar_c_search_layout_stroke_color, search_strokeColor);
+
+        showSearchIcon = array.getBoolean(R.styleable.CToolBar_c_show_search_search_icon, true);
+        showDeleteIcon = array.getBoolean(R.styleable.CToolBar_c_show_search_delete_icon, false);
 
         search_searchIconSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_icon_size, dip2px(getContext(), 16));
         search_deleteIconSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_delete_icon_size, dip2px(getContext(), 16));

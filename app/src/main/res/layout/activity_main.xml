@@ -108,17 +108,18 @@
                 app:c_status_bar_color="@color/colorAccent" />
 
             <com.hardlove.library.view.CToolBar
-                app:c_search_layout_padding_left_right="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:c_add_status_bar="true"
                 app:c_bottom_line_color="#ff0000"
+                app:c_left_back_drawable_padding="10dp"
+                app:c_left_back_paddingRight="0dp"
                 app:c_right_tv1_text="搜索"
                 app:c_search_hint_text="请输入搜索内容"
                 app:c_search_layout_margin_bottom="5dp"
-                app:c_search_layout_margin_left="5dp"
                 app:c_search_layout_margin_right="5dp"
                 app:c_search_layout_margin_top="5dp"
+                app:c_search_layout_padding_left_right="10dp"
                 app:c_show_back="true"
                 app:c_show_bottom_line="true"
                 app:c_show_right_tv1="true"
@@ -127,13 +128,14 @@
             <com.hardlove.library.view.CToolBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 app:c_bottom_line_color="#eeeeee"
+                app:c_left_back_drawable_padding="10dp"
+                app:c_left_back_paddingRight="0dp"
                 app:c_right_tv1_text="取消"
                 app:c_search_hint_text="搜索"
-                app:c_search_icon="@mipmap/icon_back_delete"
                 app:c_search_icon_color="#ff0000"
                 app:c_search_layout_margin_bottom="5dp"
-                app:c_search_layout_margin_left="5dp"
                 app:c_search_layout_margin_right="5dp"
                 app:c_search_layout_margin_top="5dp"
                 app:c_search_layout_padding_left_right="20dp"
@@ -145,19 +147,22 @@
                 app:c_show_back="true"
                 app:c_show_bottom_line="true"
                 app:c_show_right_tv1="true"
+                app:c_show_search_delete_icon="true"
                 app:c_show_search_layout="true" />
 
             <com.hardlove.library.view.CToolBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:c_left_back_drawable_padding="10dp"
+
+                app:c_left_back_paddingRight="0dp"
                 app:c_search_enable_edit="false"
                 app:c_search_gravity="center"
                 app:c_search_hint_text="搜索"
                 app:c_search_hint_text_color="#ff0000"
                 app:c_search_icon_color="@color/colorAccent"
                 app:c_search_layout_margin_bottom="5dp"
-                app:c_search_layout_margin_left="5dp"
-                app:c_search_layout_margin_right="5dp"
+                app:c_search_layout_margin_right="25dp"
                 app:c_search_layout_margin_top="5dp"
                 app:c_search_layout_radius="80dp"
                 app:c_search_layout_solid_color="#eeeeee"

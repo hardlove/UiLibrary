@@ -51,6 +51,8 @@ public class SearchLayout extends LinearLayout {
     private ImageView searchIconView;
     private EditText editText;
     private ImageView deleteIconView;
+    private boolean showSearchIcon;
+    private boolean showDeleteIcon;
 
 
     public SearchLayout(Context context) {
@@ -86,6 +88,8 @@ public class SearchLayout extends LinearLayout {
         deleteIconColor = array.getColor(R.styleable.SearchLayout_c_search_delete_icon_color, Integer.MIN_VALUE);
         searchIcon = array.getDrawable(R.styleable.SearchLayout_c_search_icon);
         deleteIcon = array.getDrawable(R.styleable.SearchLayout_c_search_delete_icon);
+        showSearchIcon = array.getBoolean(R.styleable.SearchLayout_c_show_search_search_icon, true);
+        showDeleteIcon = array.getBoolean(R.styleable.SearchLayout_c_show_search_delete_icon, false);
 
         if (searchIcon == null) {
             searchIcon = ContextCompat.getDrawable(getContext(), R.mipmap.icon_search);
@@ -160,6 +164,9 @@ public class SearchLayout extends LinearLayout {
         editText.setEllipsize(TextUtils.TruncateAt.END);
         setEnableEdit(enableEdit);
         setTextPaddingLR(textPaddingLR);
+
+        searchIconView.setVisibility(showSearchIcon ? VISIBLE : GONE);
+        deleteIconView.setVisibility(showDeleteIcon ? VISIBLE : GONE);
 
     }
 
@@ -345,4 +352,13 @@ public class SearchLayout extends LinearLayout {
         return super.onInterceptTouchEvent(ev);
     }
 
+    public void setShowSearchIcon(boolean showSearchIcon) {
+        this.showSearchIcon = showSearchIcon;
+        searchIconView.setVisibility(this.showSearchIcon ? VISIBLE : GONE);
+    }
+
+    public void setShowDeleteIcon(boolean showDeleteIcon) {
+        this.showDeleteIcon = showDeleteIcon;
+        deleteIconView.setVisibility(this.showDeleteIcon ? VISIBLE : GONE);
+    }
 }
