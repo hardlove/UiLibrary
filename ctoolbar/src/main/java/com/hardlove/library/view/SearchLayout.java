@@ -25,6 +25,8 @@ import com.hardlove.library.view.ctoobar.R;
 
 /*搜索*/
 public class SearchLayout extends LinearLayout {
+    private static final int GRAVITY_START = 1;
+    private static final int GRAVITY_CENTER = 2;
     int cornerRadius;
     int solidColor = Color.parseColor("#eeeeee");
     int strokeColor = Color.parseColor("#ff0000");
@@ -45,6 +47,7 @@ public class SearchLayout extends LinearLayout {
     private int textSize;
     private boolean enableEdit;
     private int textPaddingLR;
+    private int searchGravity;
 
 
     public SearchLayout(Context context) {
@@ -87,6 +90,7 @@ public class SearchLayout extends LinearLayout {
         textSize = array.getDimensionPixelSize(R.styleable.SearchLayout_c_search_text_size, dip2px(context, 14));
         enableEdit = array.getBoolean(R.styleable.SearchLayout_c_search_enable_edit, true);
         textPaddingLR = array.getDimensionPixelOffset(R.styleable.SearchLayout_c_search_text_padding_left, dip2px(context, 5));
+        searchGravity = array.getInt(R.styleable.SearchLayout_c_search_gravity, 1);
 
         array.recycle();
     }
@@ -106,8 +110,16 @@ public class SearchLayout extends LinearLayout {
         ImageView deleteIconView = new ImageView(context);
 
         addView(searchIconView, 0, new LayoutParams(searchIconSize, searchIconSize));
-        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.weight = 1;
+        LayoutParams params = null;
+        if (searchGravity == GRAVITY_START) {
+            params = new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.weight = 1;
+        } else if (searchGravity == GRAVITY_CENTER) {
+            params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        } else {
+            params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
         addView(editText, 1, params);
         addView(deleteIconView, 2, new LayoutParams(deleteIconSize, deleteIconSize));
 
