@@ -69,8 +69,12 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
+            android:layout_toStartOf="@id/right_layout"
+            android:layout_toEndOf="@id/left_layout"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
 
             <ImageView
                 android:id="@+id/center_iv"
@@ -83,23 +87,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:gravity="center_vertical"
-                android:maxLines="1"
-                tools:text="我是标题"
-                android:textSize="@dimen/c_tool_bar_text_size" />
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:textSize="@dimen/c_tool_bar_text_size"
+                tools:text="我是标题" />
         </LinearLayout>
 
         <com.hardlove.library.view.SearchLayout
             android:id="@+id/search_layout"
-            android:layout_toEndOf="@id/left_layout"
-            android:layout_toStartOf="@id/right_layout"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toStartOf="@id/right_layout"
+            android:layout_toEndOf="@id/left_layout"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
 
 
         <!--右边部分-->
