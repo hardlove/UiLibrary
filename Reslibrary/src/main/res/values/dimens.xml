@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="common_res_shadow_out_left">2dp</dimen>
+    <dimen name="common_res_shadow_out_top">2dp</dimen>
+    <dimen name="common_res_shadow_out_right">2dp</dimen>
+    <dimen name="common_res_shadow_out_bottom">2dp</dimen>
+
+    <dimen name="common_res_shadow_inner_left">3dp</dimen>
+    <dimen name="common_res_shadow_inner_top">3dp</dimen>
+    <dimen name="common_res_shadow_inner_right">3dp</dimen>
+    <dimen name="common_res_shadow_inner_bottom">5dp</dimen>
+</resources>
