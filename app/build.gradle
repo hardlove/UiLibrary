@@ -26,14 +26,14 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
-    implementation project(path: ':QRCodeView')
-    implementation project(path: ':ctoolbar')
-    implementation project(path: ':VerifyCodeView')
+//
+   // implementation project(path: ':QRCodeView')
+   // implementation project(path: ':ctoolbar')
+//    implementation project(path: ':VerifyCodeView')
 
 //      implementation 'com.github.hardlove:BaseLibrary:1.0.2'
 
-//    implementation 'com.carloso.widgets:CToolBar:2.0.3'
-//    implementation 'com.carloso.widgets:QRCodeView:2.0.3'
-//    implementation 'com.carloso.widgets:VerifyCodeView:2.0.3'
+    implementation 'com.carloso.widgets:CToolBar:2.0.3'
+    implementation 'com.carloso.widgets:QRCodeView:2.0.2'
+    implementation 'com.carloso.widgets:VerifyCodeView:2.0.2'
 }
