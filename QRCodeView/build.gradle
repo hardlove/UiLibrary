@@ -52,7 +52,7 @@ artifacts {
 
 publish {
     userOrg = 'carloso'//bintray.com用户名
-    groupId = 'com.carloso'//jcenter上的路径
+    groupId = 'com.carloso.widgets'//jcenter上的路径
     artifactId = 'QRCodeView'//项目名称
     publishVersion = '1.0.0'//版本号
     desc = '二维码'//描述，不重要
