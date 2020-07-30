@@ -160,7 +160,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private int c_bar_background;
     private View[] views;
     private Object[] settings;
-    private boolean addStatusBar;//是否是顶部添加状态栏填充位置
+    private boolean addStatusBar = true;//是否是顶部添加状态栏填充位置(默认添加)
     private int status_bar_color;
     private int c_bottom_line_color;
     private int custom_layer_color;
@@ -1189,7 +1189,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         right_iv3_settings.setMarging(0, 0, 0, 0);
         right_iv3_settings.setIsShow(c_show_right_iv3);
 
-        addStatusBar = array.getBoolean(R.styleable.CToolBar_c_add_status_bar, false);
+        addStatusBar = array.getBoolean(R.styleable.CToolBar_c_add_status_bar, addStatusBar);
 
         /*searchLayout相关*/
         initSearchLayoutAttrs(array);
