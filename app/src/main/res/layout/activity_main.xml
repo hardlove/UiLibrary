@@ -22,8 +22,9 @@
 
 
             <com.hardlove.library.view.CToolBar
+                app:c_add_status_bar="false"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 app:c_center_tv_text="我是标题"
                 app:c_right_iv1_icon="@drawable/ic_header"
                 app:c_show_back="true"
@@ -31,8 +32,9 @@
 
 
             <com.hardlove.library.view.CToolBar
+                app:c_add_status_bar="false"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 app:c_bar_icon_color="@android:color/holo_red_dark"
                 app:c_bar_text_color="@android:color/holo_blue_light"
                 app:c_center_tv_text="我是标题"
@@ -42,8 +44,9 @@
 
 
             <com.hardlove.library.view.CToolBar
+                app:c_add_status_bar="false"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 app:c_bar_icon_color="@android:color/holo_red_dark"
                 app:c_bar_text_color="@android:color/holo_blue_light"
                 app:c_center_tv_text="我是标题"
@@ -54,8 +57,9 @@
 
 
             <com.hardlove.library.view.CToolBar
+                app:c_add_status_bar="false"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 app:c_bar_icon_color="@android:color/holo_red_dark"
                 app:c_bar_text_color="@android:color/holo_blue_light"
                 app:c_center_tv_text="我是标题"
@@ -66,8 +70,9 @@
                 app:c_show_right_iv1="true" />
 
             <com.hardlove.library.view.CToolBar
+                app:c_add_status_bar="false"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 app:c_bar_icon_color="@android:color/holo_red_dark"
                 app:c_bar_text_color="@android:color/holo_blue_light"
                 app:c_center_tv_text="我是标题"
@@ -77,8 +82,9 @@
                 app:c_show_right_tv1="true" />
 
             <com.hardlove.library.view.CToolBar
+                app:c_add_status_bar="false"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 app:c_bar_icon_color="@android:color/holo_red_dark"
                 app:c_bar_text_color="@android:color/holo_blue_light"
                 app:c_center_tv_text="我是标题"
