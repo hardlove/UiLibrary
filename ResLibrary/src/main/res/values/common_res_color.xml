@@ -23,7 +23,6 @@
     <color name="color_F5FFFA" tools:ignore="ResourceName">#F5FFFA</color>
     <color name="color_F0F8FF" tools:ignore="ResourceName">#F0F8FF</color>
     <color name="color_E6E6FA" tools:ignore="ResourceName">#E6E6FA</color>
-    <color name="color_FFFFFF" tools:ignore="ResourceName">#FFFFFF</color>
     <color name="color_000000" tools:ignore="ResourceName">#000000</color>
     <color name="color_2F4F4F" tools:ignore="ResourceName">#2F4F4F</color>
     <color name="color_708090" tools:ignore="ResourceName">#708090</color>
@@ -115,7 +114,6 @@
     <color name="color_FFF5EE" tools:ignore="ResourceName">#FFF5EE</color>
     <color name="color_EEE5DE" tools:ignore="ResourceName">#EEE5DE</color>
     <color name="color_CDC5BF" tools:ignore="ResourceName">#CDC5BF</color>
-    <color name="color_EEEEEE" tools:ignore="ResourceName">#EEEEEE</color>
     <color name="color_8B8682" tools:ignore="ResourceName">#8B8682</color>
     <color name="color_FFEFDB" tools:ignore="ResourceName">#FFEFDB</color>
     <color name="color_EEDFCC" tools:ignore="ResourceName">#EEDFCC</color>
@@ -421,4 +419,20 @@
     <color name="color_E8E8E8" tools:ignore="ResourceName">#E8E8E8</color>
     <color name="color_A9A9A9" tools:ignore="ResourceName">#A9A9A9</color>
     <color name="color_8B0000" tools:ignore="ResourceName">#8B0000</color>
+    <color name="color_111111" tools:ignore="ResourceName">#111111</color>
+    <color name="color_222222" tools:ignore="ResourceName">#222222</color>
+    <color name="color_333333" tools:ignore="ResourceName">#333333</color>
+    <color name="color_444444" tools:ignore="ResourceName">#444444</color>
+    <color name="color_555555" tools:ignore="ResourceName">#555555</color>
+    <color name="color_666666" tools:ignore="ResourceName">#666666</color>
+    <color name="color_777777" tools:ignore="ResourceName">#777777</color>
+    <color name="color_888888" tools:ignore="ResourceName">#888888</color>
+    <color name="color_999999" tools:ignore="ResourceName">#999999</color>
+    <color name="color_AAAAAA" tools:ignore="ResourceName">#AAAAAA</color>
+    <color name="color_BBBBBB" tools:ignore="ResourceName">#BBBBBB</color>
+    <color name="color_CCCCCC" tools:ignore="ResourceName">#CCCCCC</color>
+    <color name="color_DDDDDD" tools:ignore="ResourceName">#DDDDDD</color>
+    <color name="color_EEEEEE" tools:ignore="ResourceName">#EEEEEE</color>
+    <color name="color_FFFFFF" tools:ignore="ResourceName">#FFFFFF</color>
+
 </resources>
