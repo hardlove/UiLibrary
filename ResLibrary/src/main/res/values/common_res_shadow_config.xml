@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--背景阴影颜色配置-->
+    <color name="common_res_color_shadow">#eeeeee</color>
+    <color name="common_res_shadow_out_startColor">@color/white</color>
+    <color name="common_res_shadow_out_endColor">#eeeeee</color>
+    <color name="common_res_shadow_inner_startColor">@color/white</color>
+    <color name="common_res_shadow_inner_endColor">@color/white</color>
+
+    <!--阴影圆角配置-->
+    <dimen name="common_res_shadow_out_left">2dp</dimen>
+    <dimen name="common_res_shadow_out_top">2dp</dimen>
+    <dimen name="common_res_shadow_out_right">2dp</dimen>
+    <dimen name="common_res_shadow_out_bottom">2dp</dimen>
+    <dimen name="common_res_shadow_inner_left">3dp</dimen>
+    <dimen name="common_res_shadow_inner_top">3dp</dimen>
+    <dimen name="common_res_shadow_inner_right">3dp</dimen>
+    <dimen name="common_res_shadow_inner_bottom">5dp</dimen>
+</resources>
