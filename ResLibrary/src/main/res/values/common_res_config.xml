@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="common_res_color_label_text_white">@color/white</color>
+    <color name="common_res_color_label_text_black">@color/black</color>
+    <color name="common_res_color_label_text_accent">@color/colorAccent</color>
+
+
 
     <!--背景阴影颜色配置-->
     <color name="common_res_color_shadow">#eeeeee</color>

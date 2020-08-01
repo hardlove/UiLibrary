@@ -8,12 +8,6 @@
     <color name="white" tools:ignore="ResourceName">#FFFFFF</color>
     <color name="black" tools:ignore="ResourceName">#000000</color>
 
-    <color name="common_res_color_eeeeee">#eeeeee</color>
-    <color name="common_res_color_label_text_white">@color/white</color>
-    <color name="common_res_color_label_text_black">@color/black</color>
-    <color name="common_res_color_label_text_accent">@color/colorAccent</color>
-
-
 
     <!--通用RGB颜色表-->
     <color name="color_F8F8FF" tools:ignore="ResourceName">#F8F8FF</color>
@@ -121,6 +115,7 @@
     <color name="color_FFF5EE" tools:ignore="ResourceName">#FFF5EE</color>
     <color name="color_EEE5DE" tools:ignore="ResourceName">#EEE5DE</color>
     <color name="color_CDC5BF" tools:ignore="ResourceName">#CDC5BF</color>
+    <color name="color_EEEEEE" tools:ignore="ResourceName">#EEEEEE</color>
     <color name="color_8B8682" tools:ignore="ResourceName">#8B8682</color>
     <color name="color_FFEFDB" tools:ignore="ResourceName">#FFEFDB</color>
     <color name="color_EEDFCC" tools:ignore="ResourceName">#EEDFCC</color>
