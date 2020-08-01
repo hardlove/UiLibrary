@@ -30,7 +30,6 @@ dependencies {
     implementation project(path: ':QRCodeView')
     implementation project(path: ':ctoolbar')
     implementation project(path: ':VerifyCodeView')
-    implementation project(path: ':VerifyCodeView')
     implementation project(path: ':ResLibrary')
 
 //      implementation 'com.github.hardlove:BaseLibrary:1.0.2'
