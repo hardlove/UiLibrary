@@ -1,1 +1,3 @@
+include ':ShortCut'
+include ':Wallpaper'
 include ':app', ':ctoolbar', ':QRCodeView', ':VerifyCodeView', ':ResLibrary'

@@ -31,6 +31,8 @@ dependencies {
     implementation project(path: ':ctoolbar')
     implementation project(path: ':VerifyCodeView')
     implementation project(path: ':ResLibrary')
+    implementation project(path: ':Wallpaper')
+    implementation project(path: ':ShortCut')
 
 //      implementation 'com.github.hardlove:BaseLibrary:1.0.2'
 
