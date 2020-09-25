@@ -6,15 +6,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
-
-import androidx.annotation.RequiresApi;
 
 import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.RomUtils;
 import com.blankj.utilcode.util.UriUtils;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -23,7 +22,26 @@ import java.io.IOException;
  */
 public class WallpaperUtils {
     /**
+     * {@link Intent#ACTION_WALLPAPER_CHANGED}
+     * 注册该广播可以监听壁纸变化
+     */
+
+    /**
+     * 设置为桌面壁纸
+     * @param context
+     * @param bitmap
+     */
+    private void setWallpaper(Context context, Bitmap bitmap) {
+        try {
+            WallpaperManager.getInstance(context).setBitmap(bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 调用系统图库，设置指定的图片为壁纸
+     *可选择设置桌面壁纸和锁屏壁纸
      * @param context
      * @param uriPath
      */

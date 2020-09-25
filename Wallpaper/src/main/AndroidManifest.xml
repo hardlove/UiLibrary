@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hardlove.wallpaper">
 
-    /
+    <!--设置壁纸权限-->
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
 </manifest>
