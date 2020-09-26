@@ -10,9 +10,12 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import androidx.annotation.NonNull;
+
 import com.blankj.utilcode.util.ImageUtils;
 import com.blankj.utilcode.util.RomUtils;
 import com.blankj.utilcode.util.UriUtils;
+import com.hardlove.wallpaper.service.VideoWallpaperService;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,11 +30,42 @@ public class WallpaperUtils {
      */
 
     /**
-     * 设置为桌面壁纸
+     * 设置桌面视频动态壁纸
+     *
+     * @param context
+     * @param videoPath
+     */
+    public static void setVideoWallpaper(Context context, String videoPath) {
+        VideoWallpaperService.setToWallPaper(context, videoPath);
+    }
+
+    /**
+     * 设置静音
+     *
+     * @param context
+     */
+    public static void setVoiceSilence(@NonNull Context context) {
+        VideoWallpaperService.setVoiceSilence(context);
+    }
+
+    /**
+     * 设置有声音
+     *
+     * @param context
+     */
+    public static void setVoiceNormal(@NonNull Context context) {
+        VideoWallpaperService.setVoiceNormal(context);
+    }
+
+    //=============================================================================================
+
+    /**
+     * 设置为桌面静态壁纸
+     *
      * @param context
      * @param bitmap
      */
-    private void setWallpaper(Context context, Bitmap bitmap) {
+    public static void setWallpaper(Context context, Bitmap bitmap) {
         try {
             WallpaperManager.getInstance(context).setBitmap(bitmap);
         } catch (Exception e) {
