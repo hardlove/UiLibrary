@@ -61,6 +61,9 @@ public class LuckDisk extends View {
     private int textColor = Color.WHITE;
     /*文字大小 单位：sp*/
     private float textSize = 16;
+    private RectF rectF;
+    private float width;
+    private float height;
 
     public LuckDisk(Context context) {
         this(context, null);
@@ -116,8 +119,8 @@ public class LuckDisk extends View {
         InitAngle = 360 * 1.0f / sellSize;
         verPanRadius = 360 * 1.0f / sellSize;
         diffRadius = verPanRadius / 2;
-        dPaint.setColor(Color.rgb(255, 133, 132));
-        sPaint.setColor(Color.rgb(254, 104, 105));
+        dPaint.setColor(Color.WHITE);
+        sPaint.setColor(Color.YELLOW);
         textPaint.setColor(textColor);
         textPaint.setTextSize(Util.dip2px(context, textSize));
     }
@@ -127,30 +130,38 @@ public class LuckDisk extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        int minValue = Math.min(getMeasuredWidth(), getMeasuredHeight());
-        minValue -= Util.dip2px(context, 38) * 2;
-        setMeasuredDimension(minValue, minValue);
-    }
+//        int minValue = Math.min(getMeasuredWidth(), getMeasuredHeight());
+//        minValue -= Util.dip2px(context, 38) * 2;
+//        setMeasuredDimension(minValue, minValue);
+        setMeasuredDimension(widthMeasureSpec,heightMeasureSpec);
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         final int paddingLeft = getPaddingLeft();
         final int paddingRight = getPaddingRight();
         final int paddingTop = getPaddingTop();
         final int paddingBottom = getPaddingBottom();
 
-        float width = getWidth() - paddingLeft - paddingRight;
-        float height = getHeight() - paddingTop - paddingBottom;
+        width = getMeasuredWidth() - paddingLeft - paddingRight;
+        height = width;
 
         float minValue = Math.min(width, height);
 
         radius = minValue * 1.0f / 2;
 
-        RectF rectF = new RectF(getPaddingLeft(), getPaddingTop(), width, height);
+        int  left = getPaddingLeft();
+        int top = getPaddingTop();
+        int right = (int) (left + width);
+        int bottom = (int) (top + height);
+        rectF = new RectF(left, top, right, bottom);
+
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
 
         float startAngle = (sellSize % 4 == 0) ? InitAngle : InitAngle - diffRadius;
-        Log.d(TAG, "onDraw~~~~~~~startAngle:"+ startAngle);
+        Log.d(TAG, "onDraw~~~~~~~startAngle:"+ startAngle+"  rectF:"+ rectF.toString());
 
         for (int i = 0; i < sellSize; i++) {
             if (i % 2 == 0) {
