@@ -12,17 +12,18 @@
 
     </string-array>
 
-    <string-array name="icons">
-        <item>action</item>
-        <item>adventure</item>
-        <item>combat</item>
-        <item>moba</item>
-        <item>other</item>
-        <item>role</item>
-        <item>sports</item>
-        <item>words</item>
+    <integer-array name="icons">
+        <item>@mipmap/action</item>
+        <item>@mipmap/adventure</item>
+        <item>@mipmap/combat</item>
+        <item>@mipmap/moba</item>
+        <item>@mipmap/other</item>
+        <item>@mipmap/role</item>
+        <item>@mipmap/sports</item>
+        <item>@mipmap/words</item>
+    </integer-array>
 
-    </string-array>
+
 
 
 </resources>

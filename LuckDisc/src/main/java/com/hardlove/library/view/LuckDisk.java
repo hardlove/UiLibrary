@@ -39,25 +39,28 @@ public class LuckDisk extends View {
     private static final String TAG = "RotatePan";
     private Context context;
 
-    private int panNum = 0;
+    private int sellSize = 0;
 
     private Paint dPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint sPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private int InitAngle = 0;
-    private int radius = 0;
-    private int verPanRadius;
-    private int diffRadius;
+    private float InitAngle = 0;
+    private float radius = 0;
+    private float verPanRadius;
+    private float diffRadius;
     public static final int FLING_VELOCITY_DOWNSCALE = 4;
     private Integer[] images;
-    private String[] strs;
-    private List<Bitmap> bitmaps = new ArrayList<>();
+    private List<String> cellNames = new ArrayList<>();
+    private List<Bitmap> bitmapList = new ArrayList<>();
     private GestureDetectorCompat mDetector;
     private ScrollerCompat scroller;
-    private int screenWidth, screeHeight;
 
     //旋转一圈所需要的时间
     private static final long ONE_WHEEL_TIME = 500;
+    /*文字颜色*/
+    private int textColor = Color.WHITE;
+    /*文字大小 单位：sp*/
+    private float textSize = 16;
 
     public LuckDisk(Context context) {
         this(context, null);
@@ -70,161 +73,142 @@ public class LuckDisk extends View {
     public LuckDisk(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
-        screeHeight = getResources().getDisplayMetrics().heightPixels;
-        screenWidth = getResources().getDisplayMetrics().widthPixels;
-
         mDetector = new GestureDetectorCompat(context, new RotatePanGestureListener());
         scroller = ScrollerCompat.create(context);
 
-        try {
-            initData(context, attrs);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        initAttrs(context, attrs);
+        initData();
+
+        //设置可点击
+        setClickable(true);
+
+
     }
 
-    private void initData(Context context, AttributeSet attrs) {
-        checkPanState(context, attrs);
-        InitAngle = 360 / panNum;
-        verPanRadius = 360 / panNum;
+    private void initAttrs(Context context, AttributeSet attrs) {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LuckDisk);
+        sellSize = typedArray.getInteger(R.styleable.LuckDisk_cellSize, 0);
+
+        cellNames.clear();
+        bitmapList.clear();
+
+        int namesId = typedArray.getResourceId(R.styleable.LuckDisk_names, 0);
+        /*布局中设置了默认值*/
+        if (namesId != 0) {
+            String[] array = context.getResources().getStringArray(namesId);
+            cellNames = Arrays.asList(array);
+        }
+
+        int iconResId = typedArray.getResourceId(R.styleable.LuckDisk_icons, 0);
+        if (iconResId != 0) {
+            int[] array = context.getResources().getIntArray(iconResId);
+            for (int iconId : array) {
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), iconId);
+                bitmapList.add(bitmap);
+            }
+        }
+
+        typedArray.recycle();
+
+    }
+
+    private void initData() {
+        InitAngle = 360 * 1.0f / sellSize;
+        verPanRadius = 360 * 1.0f / sellSize;
         diffRadius = verPanRadius / 2;
         dPaint.setColor(Color.rgb(255, 133, 132));
         sPaint.setColor(Color.rgb(254, 104, 105));
-        textPaint.setColor(Color.WHITE);
-        textPaint.setTextSize(Util.dip2px(context, 16));
-        setClickable(true);
-
-        for (int i = 0; i < panNum; i++) {
-            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), images[i]);
-            bitmaps.add(bitmap);
-        }
-    }
-
-    private void checkPanState(Context context, AttributeSet attrs) {
-        Log.d(TAG, "start load luckpan resources ...");
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.luckpan);
-        panNum = typedArray.getInteger(R.styleable.luckpan_pannum, 0);
-        if (360 % panNum != 0)
-            throw new RuntimeException("can't split pan for all icon.");
-        int nameArray = typedArray.getResourceId(R.styleable.luckpan_names, -1);
-        if (nameArray == -1) throw new RuntimeException("Can't find pan name.");
-        strs = context.getResources().getStringArray(nameArray);
-        int iconArray = typedArray.getResourceId(R.styleable.luckpan_icons, -1);
-        if (iconArray == -1) throw new RuntimeException("Can't find pan icon.");
-
-        String[] iconStrs = context.getResources().getStringArray(iconArray);
-        List<Integer> iconLists = new ArrayList<>();
-        for (int i = 0; i < iconStrs.length; i++) {
-            iconLists.add(context.getResources().getIdentifier(iconStrs[i], "mipmap", context.getPackageName()));
-        }
-
-        images = iconLists.toArray(new Integer[iconLists.size()]);
-        Log.d(TAG, Arrays.toString(images));
-        typedArray.recycle();
-        if (strs == null || images == null)
-            throw new RuntimeException("Can't find string or icon resources.");
-        if (strs.length != panNum || images.length != panNum)
-            throw new RuntimeException("The string length or icon length  isn't equals panNum.");
-        Log.d(TAG, "load luckpan resources successfully -_- ~");
+        textPaint.setColor(textColor);
+        textPaint.setTextSize(Util.dip2px(context, textSize));
     }
 
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // TODO Auto-generated method stub
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        int MinValue = Math.min(screenWidth, screeHeight);
-        MinValue -= Util.dip2px(context, 38) * 2;
-        setMeasuredDimension(MinValue, MinValue);
+        int minValue = Math.min(getMeasuredWidth(), getMeasuredHeight());
+        minValue -= Util.dip2px(context, 38) * 2;
+        setMeasuredDimension(minValue, minValue);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         final int paddingLeft = getPaddingLeft();
         final int paddingRight = getPaddingRight();
         final int paddingTop = getPaddingTop();
         final int paddingBottom = getPaddingBottom();
 
-        int width = getWidth() - paddingLeft - paddingRight;
-        int height = getHeight() - paddingTop - paddingBottom;
+        float width = getWidth() - paddingLeft - paddingRight;
+        float height = getHeight() - paddingTop - paddingBottom;
 
-        int MinValue = Math.min(width, height);
+        float minValue = Math.min(width, height);
 
-        radius = MinValue / 2;
+        radius = minValue * 1.0f / 2;
 
         RectF rectF = new RectF(getPaddingLeft(), getPaddingTop(), width, height);
 
-        int angle = (panNum % 4 == 0) ? InitAngle : InitAngle - diffRadius;
-        Log.d(TAG, String.valueOf(angle));
+        float startAngle = (sellSize % 4 == 0) ? InitAngle : InitAngle - diffRadius;
+        Log.d(TAG, "onDraw~~~~~~~startAngle:"+ startAngle);
 
-        for (int i = 0; i < panNum; i++) {
+        for (int i = 0; i < sellSize; i++) {
             if (i % 2 == 0) {
-                canvas.drawArc(rectF, angle, verPanRadius, true, dPaint);
+                //偶数
+                canvas.drawArc(rectF, startAngle, verPanRadius, true, dPaint);
             } else {
-                canvas.drawArc(rectF, angle, verPanRadius, true, sPaint);
+                //奇数
+                canvas.drawArc(rectF, startAngle, verPanRadius, true, sPaint);
             }
-            angle += verPanRadius;
+            startAngle += verPanRadius;
         }
 
-        for (int i = 0; i < panNum; i++) {
-            drawIcon(width / 2, height / 2, radius, (panNum % 4 == 0) ? InitAngle + diffRadius : InitAngle, i, canvas);
+        //绘制图标
+        for (int i = 0; i < sellSize; i++) {
+            drawIcon(width / 2, height / 2, radius, (sellSize % 4 == 0) ? InitAngle + diffRadius : InitAngle, i, canvas);
             InitAngle += verPanRadius;
         }
 
-        for (int i = 0; i < panNum; i++) {
-            drawText((panNum % 4 == 0) ? InitAngle + diffRadius + (diffRadius * 3 / 4) : InitAngle + diffRadius, strs[i], 2 * radius, textPaint, canvas, rectF);
+        //绘制文字
+        for (int i = 0; i < sellSize; i++) {
+            drawText((sellSize % 4 == 0) ? InitAngle + diffRadius + (diffRadius * 3 / 4) : InitAngle + diffRadius, cellNames.get(i), 2 * radius, textPaint, canvas, rectF);
             InitAngle += verPanRadius;
         }
     }
 
-    private void drawText(float startAngle, String string, int mRadius, Paint mTextPaint, Canvas mCanvas, RectF mRange) {
+    private void drawText(float startAngle, String string, float mRadius, Paint mTextPaint, Canvas mCanvas, RectF mRange) {
         Path path = new Path();
 
         path.addArc(mRange, startAngle, verPanRadius);
         float textWidth = mTextPaint.measureText(string);
 
         //圆弧的水平偏移
-        float hOffset = (panNum % 4 == 0) ? ((float) (mRadius * Math.PI / panNum / 2))
-                : ((float) (mRadius * Math.PI / panNum / 2 - textWidth / 2));
+        float hOffset = (sellSize % 4 == 0) ? (float) ((mRadius * Math.PI / sellSize / 2)) : (float) ((mRadius * Math.PI / sellSize / 2 - textWidth / 2));
         //圆弧的垂直偏移
-        float vOffset = mRadius / 2 / 6;
+        float vOffset = mRadius * 1.0f / 2 / 6;
 
         mCanvas.drawTextOnPath(string, path, hOffset, vOffset, mTextPaint);
     }
 
-    private void drawIcon(int xx, int yy, int mRadius, float startAngle, int i, Canvas mCanvas) {
-
-        int imgWidth = mRadius / 4;
+    private void drawIcon(float xx, float yy, float mRadius, float startAngle, int i, Canvas mCanvas) {
+        Bitmap bitmap = bitmapList.get(i);
+        if (bitmap == null) {
+            Log.e(TAG, "未指定图标，position:" + i);
+            return;
+        }
+        float imgWidth = mRadius * 1.0f / 4;
 
         float angle = (float) Math.toRadians(verPanRadius + startAngle);
 
         //确定图片在圆弧中 中心点的位置
-        float x = (float) (xx + (mRadius / 2 + mRadius / 12) * Math.cos(angle));
-        float y = (float) (yy + (mRadius / 2 + mRadius / 12) * Math.sin(angle));
+        float x = (float) (xx + (mRadius * 1.0f / 2 + mRadius * 1.0f / 12) * Math.cos(angle));
+        float y = (float) (yy + (mRadius * 1.0f / 2 + mRadius * 1.0f / 12) * Math.sin(angle));
 
         // 确定绘制图片的位置
-        RectF rect = new RectF(x - imgWidth * 2 / 3, y - imgWidth * 2 / 3, x + imgWidth
-                * 2 / 3, y + imgWidth * 2 / 3);
+        RectF rect = new RectF(x - imgWidth * 2.0f / 3, y - imgWidth * 2.0f / 3, x + imgWidth * 2.0f / 3, y + imgWidth * 2.0f / 3);
 
-        Bitmap bitmap = bitmaps.get(i);
 
         mCanvas.drawBitmap(bitmap, null, rect, null);
-    }
-
-
-    public void setImages(List<Bitmap> bitmaps) {
-        this.bitmaps = bitmaps;
-//        panNum = bitmaps.size();
-//        this.invalidate();
-    }
-
-    public void setStr(String... strs) {
-        this.strs = strs;
-//        panNum = strs.length;
-//        this.invalidate();
     }
 
 
@@ -239,9 +223,9 @@ public class LuckDisk extends View {
         int lap = (int) (Math.random() * 12) + 4;
 
         //Rotate angle.
-        int angle = 0;
+        float angle = 0;
         if (pos < 0) {
-            angle = (int) (Math.random() * 360);
+            angle = (float) (Math.random() * 360);
         } else {
             int initPos = queryPosition();
             if (pos > initPos) {
@@ -256,22 +240,22 @@ public class LuckDisk extends View {
         }
 
         //All of the rotate angle.
-        int increaseDegree = lap * 360 + angle;
-        long time = (lap + angle / 360) * ONE_WHEEL_TIME;
-        int DesRotate = increaseDegree + InitAngle;
+        float increaseDegree = lap * 360 + angle;
+        double time = (lap + angle * 1.0f / 360) * ONE_WHEEL_TIME;
+        float DesRotate = increaseDegree + InitAngle;
 
         //TODO 为了每次都能旋转到转盘的中间位置
-        int offRotate = DesRotate % 360 % verPanRadius;
+        float offRotate = DesRotate % 360 % verPanRadius;
         DesRotate -= offRotate;
         DesRotate += diffRadius;
 
-        ValueAnimator animtor = ValueAnimator.ofInt(InitAngle, DesRotate);
+        ValueAnimator animtor = ValueAnimator.ofFloat(InitAngle, DesRotate);
         animtor.setInterpolator(new AccelerateDecelerateInterpolator());
-        animtor.setDuration(time);
+        animtor.setDuration((long) time);
         animtor.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                int updateValue = (int) animation.getAnimatedValue();
+                float updateValue = (float) animation.getAnimatedValue();
                 InitAngle = (updateValue % 360 + 360) % 360;
                 ViewCompat.postInvalidateOnAnimation(LuckDisk.this);
             }
@@ -294,16 +278,16 @@ public class LuckDisk extends View {
 
     private int queryPosition() {
         InitAngle = (InitAngle % 360 + 360) % 360;
-        int pos = InitAngle / verPanRadius;
-        if (panNum == 4) pos++;
-        return calcumAngle(pos);
+        int pos = (int) (InitAngle / verPanRadius);
+        if (sellSize == 4) pos++;
+        return calculateAngle(pos);
     }
 
-    private int calcumAngle(int pos) {
-        if (pos >= 0 && pos <= panNum / 2) {
-            pos = panNum / 2 - pos;
+    private int calculateAngle(int pos) {
+        if (pos >= 0 && pos <= sellSize / 2) {
+            pos = sellSize / 2 - pos;
         } else {
-            pos = (panNum - pos) + panNum / 2;
+            pos = (sellSize - pos) + sellSize / 2;
         }
         return pos;
     }
@@ -370,8 +354,7 @@ public class LuckDisk extends View {
 
             float scrollTheta = vectorToScalarScroll(distanceX, distanceY, e2.getX() - centerX, e2.getY() -
                     centerY);
-            int rotate = InitAngle -
-                    (int) scrollTheta / FLING_VELOCITY_DOWNSCALE;
+            int rotate = (int) (InitAngle - scrollTheta / FLING_VELOCITY_DOWNSCALE);
 
             setRotate(rotate);
             return true;
@@ -386,7 +369,7 @@ public class LuckDisk extends View {
                     centerY);
 
             scroller.abortAnimation();
-            scroller.fling(0, InitAngle, 0, (int) scrollTheta / FLING_VELOCITY_DOWNSCALE,
+            scroller.fling(0, (int) InitAngle, 0, (int) scrollTheta / FLING_VELOCITY_DOWNSCALE,
                     0, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
             return true;
         }
