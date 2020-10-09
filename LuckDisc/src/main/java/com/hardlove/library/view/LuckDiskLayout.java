@@ -33,7 +33,6 @@ public class LuckDiskLayout extends RelativeLayout {
     private LuckDisk luckDisk;
     private ImageView startBtn;
 
-    private int screenWidth, screeHeight;
     private int MinValue;
     /**
      * LuckPan 中间对应的Button必须设置tag为 startbtn.
@@ -56,19 +55,13 @@ public class LuckDiskLayout extends RelativeLayout {
         backgroundPaint.setColor(Color.rgb(255, 92, 93));
         whitePaint.setColor(Color.WHITE);
         yellowPaint.setColor(Color.YELLOW);
-        screeHeight = getResources().getDisplayMetrics().heightPixels;
-        screenWidth = getResources().getDisplayMetrics().widthPixels;
         startLuckLight();
     }
 
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        MinValue = Math.min(screenWidth, screeHeight);
-        MinValue -= Util.dip2px(context, 10) * 2;
-        Log.d(TAG, "screenWidth = " + screenWidth + "screenHeight = " + screeHeight + "MinValue = " + MinValue);
-        setMeasuredDimension(MinValue, MinValue);
+        super.onMeasure(widthMeasureSpec, widthMeasureSpec);
     }
 
 

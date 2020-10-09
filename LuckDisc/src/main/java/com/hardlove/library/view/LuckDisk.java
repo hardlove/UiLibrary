@@ -140,25 +140,31 @@ public class LuckDisk extends View {
         final int paddingTop = getPaddingTop();
         final int paddingBottom = getPaddingBottom();
 
-        width = getMeasuredWidth() - paddingLeft - paddingRight;
+
+        width = getMeasuredWidth();
         height = width;
 
         float minValue = Math.min(width, height);
 
-        radius = minValue * 1.0f / 2;
+        radius = minValue * 1.0f / 2-60;
 
         int  left = getPaddingLeft();
         int top = getPaddingTop();
         int right = (int) (left + width);
         int bottom = (int) (top + height);
         rectF = new RectF(left, top, right, bottom);
+        Log.d(TAG, "measureWidth:" + getMeasuredWidth() + " measureHeight:" + getMeasuredHeight() + "  paddingTop:" + getPaddingTop() + " paddingLeft:" + getPaddingLeft() + " width:" + getWidth() + " height:" + getHeight());
+
+
 
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        canvas.translate(width / 2, height / 2);
 
+        rectF.set(-radius, -radius, radius, radius);
 
         float startAngle = (sellSize % 4 == 0) ? InitAngle : InitAngle - diffRadius;
         Log.d(TAG, "onDraw~~~~~~~startAngle:"+ startAngle+"  rectF:"+ rectF.toString());

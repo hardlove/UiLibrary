@@ -24,13 +24,13 @@
             <com.hardlove.library.view.LuckDiskLayout
                 android:background="@android:color/transparent"
                 android:id="@+id/luckDiskLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_width="300dp"
+                android:layout_height="300dp">
 
                 <com.hardlove.library.view.LuckDisk
                     android:id="@+id/luckDisk"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="600dp"
+                    android:layout_height="600dp"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     app:icons="@array/icons"
