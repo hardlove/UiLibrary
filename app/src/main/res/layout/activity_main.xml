@@ -21,31 +21,6 @@
             android:paddingBottom="40dp">
 
 
-            <com.hardlove.library.view.LuckDiskLayout
-                android:id="@+id/luckDiskLayout"
-                android:layout_width="300dp"
-                android:layout_height="300dp">
-
-                <com.hardlove.library.view.LuckDiskView
-                    android:id="@+id/luckDisk"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="20dp"
-                    app:outCircleColor="@color/colorAccent"
-                    app:outCircleSize="10dp" />
-
-                <ImageView
-                    android:id="@+id/iv_start"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:src="@mipmap/node"
-                    android:tag="startView" />
-
-            </com.hardlove.library.view.LuckDiskLayout>
-
 
             <FrameLayout
                 android:layout_width="300dp"
@@ -64,7 +39,6 @@
                     android:id="@+id/iv_start2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
                     android:src="@mipmap/node"
                     android:tag="startView" />

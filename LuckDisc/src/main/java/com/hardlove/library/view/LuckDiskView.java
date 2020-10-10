@@ -30,6 +30,7 @@ import com.hardlove.library.utils.Util;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Author：CL
@@ -37,7 +38,7 @@ import java.util.List;
  * 说明：
  **/
 public class LuckDiskView extends View {
-    private static final String TAG = "RotatePan";
+    private static final String TAG = "LuckDiskView";
     private Context context;
 
     private int sellSize = 0;
@@ -120,11 +121,6 @@ public class LuckDiskView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, widthMeasureSpec);
-        final int paddingLeft = getPaddingLeft();
-        final int paddingRight = getPaddingRight();
-        final int paddingTop = getPaddingTop();
-        final int paddingBottom = getPaddingBottom();
-
 
         width = height = getMeasuredWidth();
         float minValue = Math.min(width, height);
@@ -134,14 +130,6 @@ public class LuckDiskView extends View {
         }
 
         innerCircleRadius = minValue * 1.0f / 2 - outCircleSize;
-
-        int left = getPaddingLeft();
-        int top = getPaddingTop();
-        int right = (int) (left + width);
-        int bottom = (int) (top + height);
-        Log.d(TAG, "measureWidth:" + getMeasuredWidth() + " measureHeight:" + getMeasuredHeight() + "  paddingTop:" + getPaddingTop() + " paddingLeft:" + getPaddingLeft() + " width:" + getWidth() + " height:" + getHeight());
-
-
     }
 
     @Override
@@ -328,7 +316,10 @@ public class LuckDiskView extends View {
         float desRotate = increaseDegree + initAngle;
 
         //TODO 为了每次都能旋转到转盘的中间位置
-        float offRotate = desRotate % 360 % verCellRadius;
+        double offRotate = desRotate % 360 % verCellRadius;
+        // TODO: 2020/10/10 在可控范围内增加一些随机性
+        offRotate = Math.random() * (-offRotate / 2) + offRotate;
+        Log.d(TAG, "offRotate~~~~~~~~~:" + offRotate);
         desRotate -= offRotate;
         desRotate += diffRadius;
 
@@ -400,9 +391,6 @@ public class LuckDiskView extends View {
     @Override
     protected void onDetachedFromWindow() {
         clearAnimation();
-        if (getParent() instanceof LuckDiskLayout) {
-            ((LuckDiskLayout) getParent()).getHandler().removeCallbacksAndMessages(null);
-        }
         super.onDetachedFromWindow();
     }
 

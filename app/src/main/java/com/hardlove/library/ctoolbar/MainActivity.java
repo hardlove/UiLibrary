@@ -1,17 +1,16 @@
 package com.hardlove.library.ctoolbar;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.hardlove.library.bean.Sector;
 import com.hardlove.library.utils.ColorUtil;
 import com.hardlove.library.view.LuckDiskView;
-import com.hardlove.library.view.LuckDiskLayout;
 import com.hardlove.library.view.SendVerifyCodeView;
 
 import java.util.ArrayList;
@@ -40,26 +39,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final LuckDiskLayout luckDiskLayout = findViewById(R.id.luckDiskLayout);
-        luckDiskLayout.setOnResultListener(new LuckDiskView.OnResultListener() {
-            @Override
-            public void onSelectedResult(Sector sector) {
-                Toast.makeText(getApplicationContext(), sector.getName(), Toast.LENGTH_SHORT).show();
-            }
-        });
 
-        LuckDiskView luckDiskView = findViewById(R.id.luckDisk);
+        final LuckDiskView luckDiskView = findViewById(R.id.luckDisk2);
         luckDiskView.setData(getLuckDisKData());
-        findViewById(R.id.iv_start).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                luckDiskLayout.startRotate(-1, LuckDiskLayout.DEFAULT_TIME_PERIOD);
-            }
-        });
-
-        final LuckDiskView luncDiskView2 = findViewById(R.id.luckDisk2);
-        luncDiskView2.setData(getLuckDisKData());
-        luncDiskView2.setOnResultListener(new LuckDiskView.OnResultListener() {
+        luckDiskView.setOnResultListener(new LuckDiskView.OnResultListener() {
             @Override
             public void onSelectedResult(Sector sector) {
                 Toast.makeText(getApplicationContext(), sector.getName(), Toast.LENGTH_SHORT).show();
@@ -68,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.iv_start2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                luncDiskView2.startRotate(-1);
+                luckDiskView.startRotate(-1);
             }
         });
 
