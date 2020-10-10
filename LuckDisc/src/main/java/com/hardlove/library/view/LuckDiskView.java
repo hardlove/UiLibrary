@@ -109,6 +109,8 @@ public class LuckDiskView extends View {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.LuckDiskView);
         outCircleColor = array.getColor(R.styleable.LuckDiskView_outCircleColor, outCircleColor);
         outCircleSize = array.getDimensionPixelSize(R.styleable.LuckDiskView_outCircleSize, Util.dip2px(context, outCircleSize));
+        flashActiveColor = array.getColor(R.styleable.LuckDiskView_flash_active_color, flashActiveColor);
+        flashInActiveColor = array.getColor(R.styleable.LuckDiskView_flash_inactive_color, flashInActiveColor);
 
         addFlash = array.getBoolean(R.styleable.LuckDiskView_addFlash, true);
         array.recycle();
