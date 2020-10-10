@@ -4,9 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -23,11 +21,11 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.ScrollerCompat;
 
-import com.hardlove.library.R;
+import com.hardlove.library.bean.Sector;
 import com.hardlove.library.utils.Util;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,23 +33,20 @@ import java.util.List;
  * 日期:2020/10/9
  * 说明：
  **/
-public class LuckDisk extends View {
+public class LuckDiskView extends View {
     private static final String TAG = "RotatePan";
     private Context context;
 
     private int sellSize = 0;
 
     private Paint dPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint sPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private float InitAngle = 0;
+    private float initAngle = 0;
     private float radius = 0;
-    private float verPanRadius;
+    private float verCellRadius;
     private float diffRadius;
     public static final int FLING_VELOCITY_DOWNSCALE = 4;
-    private Integer[] images;
-    private List<String> cellNames = new ArrayList<>();
-    private List<Bitmap> bitmapList = new ArrayList<>();
+    List<Sector> list = new ArrayList<>();
     private GestureDetectorCompat mDetector;
     private ScrollerCompat scroller;
 
@@ -64,23 +59,21 @@ public class LuckDisk extends View {
     private RectF rectF;
     private float width;
     private float height;
+    private ValueAnimator valueAnimator;
 
-    public LuckDisk(Context context) {
+    public LuckDiskView(Context context) {
         this(context, null);
     }
 
-    public LuckDisk(Context context, AttributeSet attrs) {
+    public LuckDiskView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public LuckDisk(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LuckDiskView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         mDetector = new GestureDetectorCompat(context, new RotatePanGestureListener());
         scroller = ScrollerCompat.create(context);
-
-        initAttrs(context, attrs);
-        initData();
 
         //设置可点击
         setClickable(true);
@@ -88,73 +81,27 @@ public class LuckDisk extends View {
 
     }
 
-    private void initAttrs(Context context, AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LuckDisk);
-        sellSize = typedArray.getInteger(R.styleable.LuckDisk_cellSize, 0);
-
-        cellNames.clear();
-        bitmapList.clear();
-
-        int namesId = typedArray.getResourceId(R.styleable.LuckDisk_names, 0);
-        /*布局中设置了默认值*/
-        if (namesId != 0) {
-            String[] array = context.getResources().getStringArray(namesId);
-            cellNames = Arrays.asList(array);
-        }
-
-        int iconResId = typedArray.getResourceId(R.styleable.LuckDisk_icons, 0);
-        if (iconResId != 0) {
-            int[] array = context.getResources().getIntArray(iconResId);
-            for (int iconId : array) {
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), iconId);
-                bitmapList.add(bitmap);
-            }
-        }
-
-        typedArray.recycle();
-
-    }
-
-    private void initData() {
-        InitAngle = 360 * 1.0f / sellSize;
-        verPanRadius = 360 * 1.0f / sellSize;
-        diffRadius = verPanRadius / 2;
-        dPaint.setColor(Color.WHITE);
-        sPaint.setColor(Color.YELLOW);
-        textPaint.setColor(textColor);
-        textPaint.setTextSize(Util.dip2px(context, textSize));
-    }
-
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-//        int minValue = Math.min(getMeasuredWidth(), getMeasuredHeight());
-//        minValue -= Util.dip2px(context, 38) * 2;
-//        setMeasuredDimension(minValue, minValue);
-        setMeasuredDimension(widthMeasureSpec,heightMeasureSpec);
-
+        super.onMeasure(widthMeasureSpec, widthMeasureSpec);
         final int paddingLeft = getPaddingLeft();
         final int paddingRight = getPaddingRight();
         final int paddingTop = getPaddingTop();
         final int paddingBottom = getPaddingBottom();
 
 
-        width = getMeasuredWidth();
-        height = width;
-
+        width = height = getMeasuredWidth();
         float minValue = Math.min(width, height);
 
-        radius = minValue * 1.0f / 2-60;
+        radius = minValue * 1.0f / 2 - 60;
 
-        int  left = getPaddingLeft();
+        int left = getPaddingLeft();
         int top = getPaddingTop();
         int right = (int) (left + width);
         int bottom = (int) (top + height);
         rectF = new RectF(left, top, right, bottom);
         Log.d(TAG, "measureWidth:" + getMeasuredWidth() + " measureHeight:" + getMeasuredHeight() + "  paddingTop:" + getPaddingTop() + " paddingLeft:" + getPaddingLeft() + " width:" + getWidth() + " height:" + getHeight());
-
 
 
     }
@@ -166,68 +113,89 @@ public class LuckDisk extends View {
 
         rectF.set(-radius, -radius, radius, radius);
 
-        float startAngle = (sellSize % 4 == 0) ? InitAngle : InitAngle - diffRadius;
-        Log.d(TAG, "onDraw~~~~~~~startAngle:"+ startAngle+"  rectF:"+ rectF.toString());
+        float startAngle = (sellSize % 4 == 0) ? initAngle : initAngle - diffRadius;
+        Log.d(TAG, "onDraw~~~~~~~startAngle:" + startAngle + "  rectF:" + rectF.toString());
 
+        //绘制扇形
         for (int i = 0; i < sellSize; i++) {
-            if (i % 2 == 0) {
-                //偶数
-                canvas.drawArc(rectF, startAngle, verPanRadius, true, dPaint);
-            } else {
-                //奇数
-                canvas.drawArc(rectF, startAngle, verPanRadius, true, sPaint);
-            }
-            startAngle += verPanRadius;
+            dPaint.setColor(list.get(i).getBgColor());
+            canvas.drawArc(rectF, startAngle, verCellRadius, true, dPaint);
+            startAngle += verCellRadius;
         }
 
         //绘制图标
         for (int i = 0; i < sellSize; i++) {
-            drawIcon(width / 2, height / 2, radius, (sellSize % 4 == 0) ? InitAngle + diffRadius : InitAngle, i, canvas);
-            InitAngle += verPanRadius;
+            drawIcon(0, 0, radius, (sellSize % 4 == 0) ? initAngle + diffRadius : initAngle, list.get(i).getBitmap(), canvas);
+            initAngle += verCellRadius;
         }
 
         //绘制文字
         for (int i = 0; i < sellSize; i++) {
-            drawText((sellSize % 4 == 0) ? InitAngle + diffRadius + (diffRadius * 3 / 4) : InitAngle + diffRadius, cellNames.get(i), 2 * radius, textPaint, canvas, rectF);
-            InitAngle += verPanRadius;
+            textPaint.setColor(list.get(i).getTextColor());
+            textPaint.setTextSize(Util.sp2px(context, list.get(i).getTextSize() == 0 ? textSize : list.get(i).getTextSize()));
+
+            drawText((sellSize % 4 == 0) ? initAngle + diffRadius + (diffRadius * 3 / 4) : initAngle + diffRadius, list.get(i).getName(), 2 * radius, textPaint, canvas, rectF);
+            initAngle += verCellRadius;
         }
     }
 
-    private void drawText(float startAngle, String string, float mRadius, Paint mTextPaint, Canvas mCanvas, RectF mRange) {
+    private void drawText(float startAngle, String text, float mRadius, Paint mTextPaint, Canvas mCanvas, RectF mRange) {
         Path path = new Path();
 
-        path.addArc(mRange, startAngle, verPanRadius);
-        float textWidth = mTextPaint.measureText(string);
+        path.addArc(mRange, startAngle, verCellRadius);
+        float textWidth = mTextPaint.measureText(text);
 
         //圆弧的水平偏移
         float hOffset = (sellSize % 4 == 0) ? (float) ((mRadius * Math.PI / sellSize / 2)) : (float) ((mRadius * Math.PI / sellSize / 2 - textWidth / 2));
         //圆弧的垂直偏移
         float vOffset = mRadius * 1.0f / 2 / 6;
 
-        mCanvas.drawTextOnPath(string, path, hOffset, vOffset, mTextPaint);
+        mCanvas.drawTextOnPath(text, path, hOffset, vOffset, mTextPaint);
+
     }
 
-    private void drawIcon(float xx, float yy, float mRadius, float startAngle, int i, Canvas mCanvas) {
-        Bitmap bitmap = bitmapList.get(i);
+    private void drawIcon(float cx, float cy, float mRadius, float startAngle, Bitmap bitmap, Canvas mCanvas) {
         if (bitmap == null) {
-            Log.e(TAG, "未指定图标，position:" + i);
+            Log.e(TAG, "未指定图标");
             return;
         }
         float imgWidth = mRadius * 1.0f / 4;
 
-        float angle = (float) Math.toRadians(verPanRadius + startAngle);
+        //将度转为弧度
+        float angle = (float) Math.toRadians(verCellRadius + startAngle);
 
         //确定图片在圆弧中 中心点的位置
-        float x = (float) (xx + (mRadius * 1.0f / 2 + mRadius * 1.0f / 12) * Math.cos(angle));
-        float y = (float) (yy + (mRadius * 1.0f / 2 + mRadius * 1.0f / 12) * Math.sin(angle));
+        float x = (float) (cx + (mRadius * 1.0f / 2 + mRadius * 1.0f / 10) * Math.cos(angle));
+        float y = (float) (cy + (mRadius * 1.0f / 2 + mRadius * 1.0f / 10) * Math.sin(angle));
 
         // 确定绘制图片的位置
         RectF rect = new RectF(x - imgWidth * 2.0f / 3, y - imgWidth * 2.0f / 3, x + imgWidth * 2.0f / 3, y + imgWidth * 2.0f / 3);
 
-
         mCanvas.drawBitmap(bitmap, null, rect, null);
     }
 
+    /**
+     * 设置数据
+     *
+     * @param data
+     */
+    public void setData(List<Sector> data) {
+        list.clear();
+
+        if (data != null && data.size() > 0) {
+            list.addAll(data);
+        }
+        sellSize = list.size();
+
+        if (sellSize == 0) {
+            throw new InvalidParameterException("数据不能位空");
+        }
+
+        initAngle = 360 * 1.0f / sellSize;
+        verCellRadius = 360 * 1.0f / sellSize;
+        diffRadius = verCellRadius / 2;
+
+    }
 
     /**
      * 开始转动
@@ -246,11 +214,11 @@ public class LuckDisk extends View {
         } else {
             int initPos = queryPosition();
             if (pos > initPos) {
-                angle = (pos - initPos) * verPanRadius;
+                angle = (pos - initPos) * verCellRadius;
                 lap -= 1;
                 angle = 360 - angle;
             } else if (pos < initPos) {
-                angle = (initPos - pos) * verPanRadius;
+                angle = (initPos - pos) * verCellRadius;
             } else {
                 //nothing to do.
             }
@@ -259,43 +227,64 @@ public class LuckDisk extends View {
         //All of the rotate angle.
         float increaseDegree = lap * 360 + angle;
         double time = (lap + angle * 1.0f / 360) * ONE_WHEEL_TIME;
-        float DesRotate = increaseDegree + InitAngle;
+        float desRotate = increaseDegree + initAngle;
 
         //TODO 为了每次都能旋转到转盘的中间位置
-        float offRotate = DesRotate % 360 % verPanRadius;
-        DesRotate -= offRotate;
-        DesRotate += diffRadius;
+        float offRotate = desRotate % 360 % verCellRadius;
+        desRotate -= offRotate;
+        desRotate += diffRadius;
 
-        ValueAnimator animtor = ValueAnimator.ofFloat(InitAngle, DesRotate);
-        animtor.setInterpolator(new AccelerateDecelerateInterpolator());
-        animtor.setDuration((long) time);
-        animtor.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        if (valueAnimator != null && valueAnimator.isRunning()) {
+            valueAnimator.cancel();
+        }
+
+        valueAnimator = initValueAnimator((long) time, desRotate);
+        valueAnimator.start();
+
+
+    }
+
+    private ValueAnimator initValueAnimator(long time, float desRotate) {
+        valueAnimator = ValueAnimator.ofFloat(initAngle, desRotate);
+        valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        valueAnimator.setDuration(time);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float updateValue = (float) animation.getAnimatedValue();
-                InitAngle = (updateValue % 360 + 360) % 360;
-                ViewCompat.postInvalidateOnAnimation(LuckDisk.this);
+                initAngle = (updateValue % 360 + 360) % 360;
+                ViewCompat.postInvalidateOnAnimation(LuckDiskView.this);
             }
         });
 
-        animtor.addListener(new AnimatorListenerAdapter() {
+        valueAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                if (((LuckDiskLayout) getParent()).getAnimationEndListener() != null) {
-                    ((LuckDiskLayout) getParent()).setStartBtnEnable(true);
-                    ((LuckDiskLayout) getParent()).setDelayTime(LuckDiskLayout.DEFAULT_TIME_PERIOD);
-                    ((LuckDiskLayout) getParent()).getAnimationEndListener().endAnimation(queryPosition());
+                if (onResultListener != null) {
+                    onResultListener.onSelectedResult(list.get(queryPosition()));
                 }
+
             }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                super.onAnimationCancel(animation);
+            }
+
         });
-        animtor.start();
+        return valueAnimator;
     }
 
 
+    /**
+     * 查询当前选择结果
+     *
+     * @return
+     */
     private int queryPosition() {
-        InitAngle = (InitAngle % 360 + 360) % 360;
-        int pos = (int) (InitAngle / verPanRadius);
+        initAngle = (initAngle % 360 + 360) % 360;
+        int pos = (int) (initAngle / verCellRadius);
         if (sellSize == 4) pos++;
         return calculateAngle(pos);
     }
@@ -319,7 +308,18 @@ public class LuckDisk extends View {
         super.onDetachedFromWindow();
     }
 
+    /**
+     * 选中结果回调
+     */
+    public interface OnResultListener {
+        void onSelectedResult(Sector sector);
+    }
 
+    private OnResultListener onResultListener;
+
+    public void setOnResultListener(OnResultListener onResultListener) {
+        this.onResultListener = onResultListener;
+    }
     // TODO ==================================== 手势处理 ===============================================================
 
     @Override
@@ -337,7 +337,7 @@ public class LuckDisk extends View {
 
     public void setRotate(int rotation) {
         rotation = (rotation % 360 + 360) % 360;
-        InitAngle = rotation;
+        initAngle = rotation;
         ViewCompat.postInvalidateOnAnimation(this);
     }
 
@@ -366,12 +366,12 @@ public class LuckDisk extends View {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            float centerX = (LuckDisk.this.getLeft() + LuckDisk.this.getRight()) * 0.5f;
-            float centerY = (LuckDisk.this.getTop() + LuckDisk.this.getBottom()) * 0.5f;
+            float centerX = (LuckDiskView.this.getLeft() + LuckDiskView.this.getRight()) * 0.5f;
+            float centerY = (LuckDiskView.this.getTop() + LuckDiskView.this.getBottom()) * 0.5f;
 
             float scrollTheta = vectorToScalarScroll(distanceX, distanceY, e2.getX() - centerX, e2.getY() -
                     centerY);
-            int rotate = (int) (InitAngle - scrollTheta / FLING_VELOCITY_DOWNSCALE);
+            int rotate = (int) (initAngle - scrollTheta / FLING_VELOCITY_DOWNSCALE);
 
             setRotate(rotate);
             return true;
@@ -379,14 +379,14 @@ public class LuckDisk extends View {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            float centerX = (LuckDisk.this.getLeft() + LuckDisk.this.getRight()) * 0.5f;
-            float centerY = (LuckDisk.this.getTop() + LuckDisk.this.getBottom()) * 0.5f;
+            float centerX = (LuckDiskView.this.getLeft() + LuckDiskView.this.getRight()) * 0.5f;
+            float centerY = (LuckDiskView.this.getTop() + LuckDiskView.this.getBottom()) * 0.5f;
 
             float scrollTheta = vectorToScalarScroll(velocityX, velocityY, e2.getX() - centerX, e2.getY() -
                     centerY);
 
             scroller.abortAnimation();
-            scroller.fling(0, (int) InitAngle, 0, (int) scrollTheta / FLING_VELOCITY_DOWNSCALE,
+            scroller.fling(0, (int) initAngle, 0, (int) scrollTheta / FLING_VELOCITY_DOWNSCALE,
                     0, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
             return true;
         }

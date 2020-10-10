@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="LuckDisk">
+    <declare-styleable name="LuckDiskView">
         <attr name="cellSize"  format="integer"/>
         <attr name="names" format="reference"/>
         <attr name="icons"  format="reference"/>

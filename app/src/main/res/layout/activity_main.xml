@@ -22,28 +22,25 @@
 
 
             <com.hardlove.library.view.LuckDiskLayout
-                android:background="@android:color/transparent"
                 android:id="@+id/luckDiskLayout"
                 android:layout_width="300dp"
-                android:layout_height="300dp">
+                android:layout_height="300dp"
+                android:background="@android:color/transparent">
 
-                <com.hardlove.library.view.LuckDisk
+                <com.hardlove.library.view.LuckDiskView
                     android:id="@+id/luckDisk"
                     android:layout_width="600dp"
                     android:layout_height="600dp"
                     android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    app:icons="@array/icons"
-                    app:names="@array/names"
-                    app:cellSize="8" />
+                    android:layout_centerHorizontal="true" />
 
                 <ImageView
-                    android:layout_centerHorizontal="true"
                     android:id="@+id/iv_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:src="@mipmap/node"
-                    android:tag="startbtn" />
+                    android:tag="startView" />
 
             </com.hardlove.library.view.LuckDiskLayout>
 

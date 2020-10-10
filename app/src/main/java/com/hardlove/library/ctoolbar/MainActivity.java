@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.hardlove.library.view.LuckDisk;
+import com.hardlove.library.bean.Sector;
+import com.hardlove.library.utils.ColorUtil;
+import com.hardlove.library.view.LuckDiskView;
 import com.hardlove.library.view.LuckDiskLayout;
 import com.hardlove.library.view.SendVerifyCodeView;
 
@@ -39,26 +41,32 @@ public class MainActivity extends AppCompatActivity {
         });
 
         final LuckDiskLayout luckDiskLayout = findViewById(R.id.luckDiskLayout);
-        luckDiskLayout.setAnimationEndListener(new LuckDiskLayout.AnimationEndListener() {
+        luckDiskLayout.setOnResultListener(new LuckDiskView.OnResultListener() {
             @Override
-            public void endAnimation(int position) {
-                Toast.makeText(getApplication(), position + "", 0).show();
+            public void onSelectedResult(Sector sector) {
+                Toast.makeText(getApplicationContext(), sector.getName(), Toast.LENGTH_SHORT).show();
             }
         });
-        LuckDisk luckDisk = findViewById(R.id.luckDisk);
+
+        LuckDiskView luckDiskView = findViewById(R.id.luckDisk);
+        luckDiskView.setData(getLuckDisKData());
         findViewById(R.id.iv_start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                luckDiskLayout.rotate(-1, 2000);
+                luckDiskLayout.startRotate(-1, LuckDiskLayout.DEFAULT_TIME_PERIOD);
             }
         });
-//        luckDisk.setImages(getImages());
-//        luckDisk.setStr(getStrs());
+
 
     }
 
-    private String[] getStrs() {
-        return new String[]{"奖品1", "奖品2", "奖品3", "奖品4", "奖品5"};
+    private List<Sector> getLuckDisKData() {
+        List<Sector> list = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Sector sector = new Sector("Item" + i, ColorUtil.getRandomColor(), ColorUtil.getRandomColor(), BitmapFactory.decodeResource(getResources(), R.mipmap.action));
+            list.add(sector);
+        }
+        return list;
     }
 
     private List<Bitmap> getImages() {

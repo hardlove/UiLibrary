@@ -6,19 +6,21 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.hardlove.library.bean.Sector;
 import com.hardlove.library.utils.Util;
+
+import java.util.Objects;
 
 /**
  * Author：CL
  * 日期:2020/10/9
  * 说明：
  **/
-public class LuckDiskLayout extends RelativeLayout {
+public class LuckDiskLayout extends RelativeLayout implements LuckDiskView.OnResultListener {
     private static final String TAG = "LuckPanLayout";
 
     private Context context;
@@ -30,15 +32,32 @@ public class LuckDiskLayout extends RelativeLayout {
     private Canvas canvas;
     private boolean isYellow = false;
     private int delayTime = 500;
-    private LuckDisk luckDisk;
+    private LuckDiskView luckDiskView;
     private ImageView startBtn;
 
-    private int MinValue;
     /**
      * LuckPan 中间对应的Button必须设置tag为 startbtn.
      */
-    private static final String START_BTN_TAG = "startbtn";
-    public static final int DEFAULT_TIME_PERIOD = 500;
+    private static final String START_BTN_TAG = "startView";
+    public static final int DEFAULT_TIME_PERIOD = 1000;
+
+    private LuckDiskView.OnResultListener onResultListener;
+
+    public void setOnResultListener(LuckDiskView.OnResultListener onResultListener) {
+        this.onResultListener = onResultListener;
+    }
+
+    private LuckDiskView findLuckDiskView() {
+        int childCount = getChildCount();
+        if (childCount > 0) {
+            for (int i = 0; i < childCount; i++) {
+                if (getChildAt(i) instanceof LuckDiskView) {
+                    return (LuckDiskView) getChildAt(i);
+                }
+            }
+        }
+        return null;
+    }
 
 
     public LuckDiskLayout(Context context) {
@@ -56,8 +75,31 @@ public class LuckDiskLayout extends RelativeLayout {
         whitePaint.setColor(Color.WHITE);
         yellowPaint.setColor(Color.YELLOW);
         startLuckLight();
+
+
+
+
     }
 
+    @Override
+    public void onViewAdded(View child) {
+        super.onViewAdded(child);
+
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Objects.requireNonNull(findLuckDiskView()).setOnResultListener(this);
+    }
+
+    @Override
+    public void onSelectedResult(Sector sector) {
+        setStartBtnEnable(true);
+        if (onResultListener != null) {
+            onResultListener.onSelectedResult(sector);
+        }
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -98,8 +140,8 @@ public class LuckDiskLayout extends RelativeLayout {
         boolean panReady = false;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-            if (child instanceof LuckDisk) {
-                luckDisk = (LuckDisk) child;
+            if (child instanceof LuckDiskView) {
+                luckDiskView = (LuckDiskView) child;
                 int panWidth = child.getWidth();
                 int panHeight = child.getHeight();
                 child.layout(centerX - panWidth / 2, centerY - panHeight / 2, centerX + panWidth / 2, centerY + panHeight / 2);
@@ -139,8 +181,8 @@ public class LuckDiskLayout extends RelativeLayout {
      * @param pos       转到指定的转盘，-1 则随机
      * @param delayTime 外围灯光闪烁的间隔时间
      */
-    public void rotate(int pos, int delayTime) {
-        luckDisk.startRotate(pos);
+    public void startRotate(int pos, int delayTime) {
+        luckDiskView.startRotate(pos);
         setDelayTime(delayTime);
         setStartBtnEnable(false);
     }
@@ -167,18 +209,5 @@ public class LuckDiskLayout extends RelativeLayout {
         this.delayTime = delayTime;
     }
 
-    public interface AnimationEndListener {
-        void endAnimation(int position);
-    }
-
-    private AnimationEndListener l;
-
-    public void setAnimationEndListener(AnimationEndListener l) {
-        this.l = l;
-    }
-
-    public AnimationEndListener getAnimationEndListener() {
-        return l;
-    }
 
 }
