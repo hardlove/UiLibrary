@@ -57,6 +57,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final LuckDiskView luncDiskView2 = findViewById(R.id.luckDisk2);
+        luncDiskView2.setData(getLuckDisKData());
+        luncDiskView2.setOnResultListener(new LuckDiskView.OnResultListener() {
+            @Override
+            public void onSelectedResult(Sector sector) {
+                Toast.makeText(getApplicationContext(), sector.getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        findViewById(R.id.iv_start2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                luncDiskView2.startRotate(-1);
+            }
+        });
+
 
     }
 

@@ -1,6 +1,7 @@
 package com.hardlove.library.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.hardlove.library.R;
 import com.hardlove.library.bean.Sector;
 import com.hardlove.library.utils.Util;
 
@@ -22,6 +24,7 @@ import java.util.Objects;
  **/
 public class LuckDiskLayout extends RelativeLayout implements LuckDiskView.OnResultListener {
     private static final String TAG = "LuckPanLayout";
+    private final int bgColor = Color.rgb(255, 92, 93);
 
     private Context context;
     private Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -71,12 +74,11 @@ public class LuckDiskLayout extends RelativeLayout implements LuckDiskView.OnRes
     public LuckDiskLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
-        backgroundPaint.setColor(Color.rgb(255, 92, 93));
+        setBackgroundColor(Color.TRANSPARENT);
+        backgroundPaint.setColor(bgColor);
         whitePaint.setColor(Color.WHITE);
         yellowPaint.setColor(Color.YELLOW);
         startLuckLight();
-
-
 
 
     }
@@ -104,6 +106,7 @@ public class LuckDiskLayout extends RelativeLayout implements LuckDiskView.OnRes
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, widthMeasureSpec);
+
     }
 
 

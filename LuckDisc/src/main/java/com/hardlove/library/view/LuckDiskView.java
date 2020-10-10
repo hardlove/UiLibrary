@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,10 +18,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import androidx.annotation.ColorInt;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.ScrollerCompat;
 
+import com.hardlove.library.R;
 import com.hardlove.library.bean.Sector;
 import com.hardlove.library.utils.Util;
 
@@ -41,8 +44,15 @@ public class LuckDiskView extends View {
 
     private Paint dPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint outCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint flashPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    private int flashActiveColor = Color.YELLOW;
+    private int flashInActiveColor = Color.WHITE;
+
     private float initAngle = 0;
-    private float radius = 0;
+    /*内环半径*/
+    private float innerCircleRadius = 0;
     private float verCellRadius;
     private float diffRadius;
     public static final int FLING_VELOCITY_DOWNSCALE = 4;
@@ -56,10 +66,17 @@ public class LuckDiskView extends View {
     private int textColor = Color.WHITE;
     /*文字大小 单位：sp*/
     private float textSize = 16;
-    private RectF rectF;
+    private RectF rectF = new RectF();
     private float width;
     private float height;
     private ValueAnimator valueAnimator;
+    /*外圆环宽度*/
+    private int outCircleSize = 20;
+    @ColorInt
+    private int outCircleColor = Color.rgb(255, 92, 93);
+    private boolean addFlash;
+    private boolean firstActive;
+
 
     public LuckDiskView(Context context) {
         this(context, null);
@@ -72,13 +89,29 @@ public class LuckDiskView extends View {
     public LuckDiskView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
+
+        initAttrs(context, attrs);
         mDetector = new GestureDetectorCompat(context, new RotatePanGestureListener());
         scroller = ScrollerCompat.create(context);
 
+        outCirclePaint.setColor(Color.YELLOW);
+        outCirclePaint.setStrokeWidth(outCircleSize);
+
         //设置可点击
         setClickable(true);
+        //开启闪光
+        startFlash();
 
 
+    }
+
+    private void initAttrs(Context context, AttributeSet attrs) {
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.LuckDiskView);
+        outCircleColor = array.getColor(R.styleable.LuckDiskView_outCircleColor, outCircleColor);
+        outCircleSize = array.getDimensionPixelSize(R.styleable.LuckDiskView_outCircleSize, Util.dip2px(context, outCircleSize));
+
+        addFlash = array.getBoolean(R.styleable.LuckDiskView_addFlash, true);
+        array.recycle();
     }
 
 
@@ -94,13 +127,16 @@ public class LuckDiskView extends View {
         width = height = getMeasuredWidth();
         float minValue = Math.min(width, height);
 
-        radius = minValue * 1.0f / 2 - 60;
+        if (outCircleSize >= width / 2) {
+            throw new InvalidParameterException("外环过大");
+        }
+
+        innerCircleRadius = minValue * 1.0f / 2 - outCircleSize;
 
         int left = getPaddingLeft();
         int top = getPaddingTop();
         int right = (int) (left + width);
         int bottom = (int) (top + height);
-        rectF = new RectF(left, top, right, bottom);
         Log.d(TAG, "measureWidth:" + getMeasuredWidth() + " measureHeight:" + getMeasuredHeight() + "  paddingTop:" + getPaddingTop() + " paddingLeft:" + getPaddingLeft() + " width:" + getWidth() + " height:" + getHeight());
 
 
@@ -111,8 +147,13 @@ public class LuckDiskView extends View {
         super.onDraw(canvas);
         canvas.translate(width / 2, height / 2);
 
-        rectF.set(-radius, -radius, radius, radius);
+        //绘制外环
+        drawOutCircle(canvas);
 
+        //绘制外环闪光灯
+        drawFlash(canvas);
+
+        rectF.set(-innerCircleRadius, -innerCircleRadius, innerCircleRadius, innerCircleRadius);
         float startAngle = (sellSize % 4 == 0) ? initAngle : initAngle - diffRadius;
         Log.d(TAG, "onDraw~~~~~~~startAngle:" + startAngle + "  rectF:" + rectF.toString());
 
@@ -125,7 +166,7 @@ public class LuckDiskView extends View {
 
         //绘制图标
         for (int i = 0; i < sellSize; i++) {
-            drawIcon(0, 0, radius, (sellSize % 4 == 0) ? initAngle + diffRadius : initAngle, list.get(i).getBitmap(), canvas);
+            drawIcon(0, 0, innerCircleRadius, (sellSize % 4 == 0) ? initAngle + diffRadius : initAngle, list.get(i).getBitmap(), canvas);
             initAngle += verCellRadius;
         }
 
@@ -134,8 +175,63 @@ public class LuckDiskView extends View {
             textPaint.setColor(list.get(i).getTextColor());
             textPaint.setTextSize(Util.sp2px(context, list.get(i).getTextSize() == 0 ? textSize : list.get(i).getTextSize()));
 
-            drawText((sellSize % 4 == 0) ? initAngle + diffRadius + (diffRadius * 3 / 4) : initAngle + diffRadius, list.get(i).getName(), 2 * radius, textPaint, canvas, rectF);
+            drawText((sellSize % 4 == 0) ? initAngle + diffRadius + (diffRadius * 3 / 4) : initAngle + diffRadius, list.get(i).getName(), 2 * innerCircleRadius, textPaint, canvas, rectF);
             initAngle += verCellRadius;
+        }
+
+
+    }
+
+    /**
+     * 开启闪光灯
+     */
+    private void startFlash() {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                firstActive = !firstActive;
+                invalidate();
+                //进入循环
+                startFlash();
+            }
+        }, 1000);
+    }
+
+    private void drawFlash(Canvas canvas) {
+        if (addFlash) {
+            int CircleX = 0;
+            int CircleY = 0;
+            float pointDistance = innerCircleRadius + outCircleSize * 1.0f / 2;
+            int pos = 0;
+            for (int i = 0; i <= 360; i += 20) {
+                int x = (int) (pointDistance * Math.sin(Util.change(i))) + CircleX;
+                int y = (int) (pointDistance * Math.cos(Util.change(i))) + CircleY;
+
+                if (firstActive) {
+                    if (pos++ % 2 == 0) {
+                        flashPaint.setColor(flashActiveColor);
+                    } else {
+                        flashPaint.setColor(flashInActiveColor);
+                    }
+                } else {
+                    if (pos++ % 2 == 1) {
+                        flashPaint.setColor(flashActiveColor);
+                    } else {
+                        flashPaint.setColor(flashInActiveColor);
+                    }
+                }
+                canvas.drawCircle(x, y, outCircleSize * 1.0f / 2 / 2, flashPaint);
+
+            }
+        }
+    }
+
+    private void drawOutCircle(Canvas canvas) {
+        if (outCircleSize > 0) {
+            outCirclePaint.setColor(outCircleColor);
+            canvas.drawCircle(0, 0, width / 2, outCirclePaint);
+            outCirclePaint.setColor(Color.WHITE);
+            canvas.drawCircle(0, 0, width / 2 - outCircleSize, outCirclePaint);
         }
     }
 
@@ -202,7 +298,7 @@ public class LuckDiskView extends View {
      *
      * @param pos 如果 pos = -1 则随机，如果指定某个值，则转到某个指定区域
      */
-    protected void startRotate(int pos) {
+    public void startRotate(int pos) {
 
         //Rotate lap.
         int lap = (int) (Math.random() * 12) + 4;

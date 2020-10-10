@@ -24,15 +24,17 @@
             <com.hardlove.library.view.LuckDiskLayout
                 android:id="@+id/luckDiskLayout"
                 android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:background="@android:color/transparent">
+                android:layout_height="300dp">
 
                 <com.hardlove.library.view.LuckDiskView
                     android:id="@+id/luckDisk"
-                    android:layout_width="600dp"
-                    android:layout_height="600dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="20dp"
+                    app:outCircleColor="@color/colorAccent"
+                    app:outCircleSize="10dp" />
 
                 <ImageView
                     android:id="@+id/iv_start"
@@ -43,6 +45,28 @@
                     android:tag="startView" />
 
             </com.hardlove.library.view.LuckDiskLayout>
+
+
+            <FrameLayout
+                android:layout_width="300dp"
+                android:layout_height="300dp">
+                <com.hardlove.library.view.LuckDiskView
+                    android:id="@+id/luckDisk2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="15dp"
+                    app:outCircleColor="@color/colorAccent"
+                    app:outCircleSize="20dp" />
+
+                <ImageView
+                    android:id="@+id/iv_start2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:src="@mipmap/node"
+                    android:tag="startView" />
+            </FrameLayout>
 
 
             <com.hardlove.library.view.CToolBar

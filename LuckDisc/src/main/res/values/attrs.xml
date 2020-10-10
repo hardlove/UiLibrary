@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="LuckDiskView">
-        <attr name="cellSize"  format="integer"/>
-        <attr name="names" format="reference"/>
-        <attr name="icons"  format="reference"/>
+        <!--外环大小-->
+        <attr name="outCircleSize" format="dimension|reference"/>
+        <!--外环颜色-->
+        <attr name="outCircleColor" format="color|reference" />
+        <!--是否在外环添加闪光灯-->
+        <attr name="addFlash" format="boolean" />
+
     </declare-styleable>
 </resources>
