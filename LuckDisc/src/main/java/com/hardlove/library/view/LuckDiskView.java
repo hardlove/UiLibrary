@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
@@ -22,20 +23,16 @@ import androidx.annotation.ColorInt;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.ScrollerCompat;
-
 import com.hardlove.library.R;
-import com.hardlove.library.bean.Sector;
-import com.hardlove.library.utils.Util;
-
+import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Author：CL
  * 日期:2020/10/9
- * 说明：
+ * 说明：幸运随机转盘
  **/
 public class LuckDiskView extends View {
     private static final String TAG = "LuckDiskView";
@@ -66,7 +63,7 @@ public class LuckDiskView extends View {
     /*文字颜色*/
     private int textColor = Color.WHITE;
     /*文字大小 单位：sp*/
-    private float textSize = 16;
+    private float textSize = 12;
     private RectF rectF = new RectF();
     private float width;
     private float height;
@@ -77,6 +74,7 @@ public class LuckDiskView extends View {
     private int outCircleColor = Color.rgb(255, 92, 93);
     private boolean addFlash;
     private boolean firstActive;
+    private boolean enableRotate;
 
 
     public LuckDiskView(Context context) {
@@ -98,10 +96,14 @@ public class LuckDiskView extends View {
         outCirclePaint.setColor(Color.YELLOW);
         outCirclePaint.setStrokeWidth(outCircleSize);
 
+
+        if (addFlash) {
+            //开启闪光
+            startFlash();
+        }
+
         //设置可点击
-        setClickable(true);
-        //开启闪光
-        startFlash();
+        setClickable(enableRotate);
 
 
     }
@@ -109,11 +111,13 @@ public class LuckDiskView extends View {
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.LuckDiskView);
         outCircleColor = array.getColor(R.styleable.LuckDiskView_outCircleColor, outCircleColor);
-        outCircleSize = array.getDimensionPixelSize(R.styleable.LuckDiskView_outCircleSize, Util.dip2px(context, outCircleSize));
+        outCircleSize = array.getDimensionPixelSize(R.styleable.LuckDiskView_outCircleSize, dip2px(context, outCircleSize));
+        textSize = array.getDimensionPixelSize(R.styleable.LuckDiskView_textSize, sp2px(context, textSize));
         flashActiveColor = array.getColor(R.styleable.LuckDiskView_flash_active_color, flashActiveColor);
         flashInActiveColor = array.getColor(R.styleable.LuckDiskView_flash_inactive_color, flashInActiveColor);
 
         addFlash = array.getBoolean(R.styleable.LuckDiskView_addFlash, true);
+        enableRotate = array.getBoolean(R.styleable.LuckDiskView_enable_rotate, true);
         array.recycle();
     }
 
@@ -144,7 +148,7 @@ public class LuckDiskView extends View {
         drawFlash(canvas);
 
         rectF.set(-innerCircleRadius, -innerCircleRadius, innerCircleRadius, innerCircleRadius);
-        float startAngle = (sellSize % 4 == 0) ? initAngle : initAngle - diffRadius;
+        float startAngle = initAngle;
         Log.d(TAG, "onDraw~~~~~~~startAngle:" + startAngle + "  rectF:" + rectF.toString());
 
         //绘制扇形
@@ -154,23 +158,54 @@ public class LuckDiskView extends View {
             startAngle += verCellRadius;
         }
 
+        startAngle = initAngle + diffRadius;
         //绘制图标
         for (int i = 0; i < sellSize; i++) {
-            drawIcon(0, 0, innerCircleRadius, (sellSize % 4 == 0) ? initAngle + diffRadius : initAngle, list.get(i).getBitmap(), canvas);
-            initAngle += verCellRadius;
+            drawIcon(startAngle, list.get(i).getBitmap(), canvas);
+            startAngle += verCellRadius;
         }
 
+        startAngle = initAngle + diffRadius;
         //绘制文字
         for (int i = 0; i < sellSize; i++) {
             textPaint.setColor(list.get(i).getTextColor());
-            textPaint.setTextSize(Util.sp2px(context, list.get(i).getTextSize() == 0 ? textSize : list.get(i).getTextSize()));
+            float textSize = list.get(i).getTextSize() == 0 ? this.textSize : list.get(i).getTextSize();
+            textPaint.setTextSize(textSize);
 
-            drawText((sellSize % 4 == 0) ? initAngle + diffRadius + (diffRadius * 3 / 4) : initAngle + diffRadius, list.get(i).getName(), 2 * innerCircleRadius, textPaint, canvas, rectF);
-            initAngle += verCellRadius;
+            drawText(startAngle, list.get(i).getName(), textPaint, canvas);
+            startAngle += verCellRadius;
         }
 
 
     }
+
+    private void drawText(float startAngle, String name, Paint textPaint, Canvas canvas) {
+        char[] chars = name.toCharArray();
+        int count = chars.length;
+        //最大绘制个字符
+        int max = 8;
+        if (count > max) {
+            count = max;
+        }
+        Path path = new Path();
+
+        float dx = (float) (Math.cos(Math.toRadians(startAngle)) * innerCircleRadius);
+        float dy = (float) (Math.sin(Math.toRadians(startAngle)) * innerCircleRadius);
+        path.moveTo(dx, dy);
+        path.lineTo(dx / 16, dy / 16);
+
+        float hOffset = (innerCircleRadius - textPaint.measureText(name, 0, count)) / 2;
+
+        hOffset = dip2px(context, 6);
+
+        float vOffset = (textPaint.getFontMetrics().bottom - textPaint.getFontMetrics().top) / 4;
+        canvas.drawTextOnPath(chars, 0, count, path, hOffset, vOffset, textPaint);
+
+        //参考线
+//        canvas.drawLine(0, 0, dx, dy, textPaint);
+
+    }
+
 
     /**
      * 开启闪光灯
@@ -194,8 +229,8 @@ public class LuckDiskView extends View {
             float pointDistance = innerCircleRadius + outCircleSize * 1.0f / 2;
             int pos = 0;
             for (int i = 0; i <= 360; i += 20) {
-                int x = (int) (pointDistance * Math.sin(Util.change(i))) + CircleX;
-                int y = (int) (pointDistance * Math.cos(Util.change(i))) + CircleY;
+                int x = (int) (pointDistance * Math.sin(change(i))) + CircleX;
+                int y = (int) (pointDistance * Math.cos(change(i))) + CircleY;
 
                 if (firstActive) {
                     if (pos++ % 2 == 0) {
@@ -225,39 +260,36 @@ public class LuckDiskView extends View {
         }
     }
 
-    private void drawText(float startAngle, String text, float mRadius, Paint mTextPaint, Canvas mCanvas, RectF mRange) {
-        Path path = new Path();
 
-        path.addArc(mRange, startAngle, verCellRadius);
-        float textWidth = mTextPaint.measureText(text);
-
-        //圆弧的水平偏移
-        float hOffset = (sellSize % 4 == 0) ? (float) ((mRadius * Math.PI / sellSize / 2)) : (float) ((mRadius * Math.PI / sellSize / 2 - textWidth / 2));
-        //圆弧的垂直偏移
-        float vOffset = mRadius * 1.0f / 2 / 6;
-
-        mCanvas.drawTextOnPath(text, path, hOffset, vOffset, mTextPaint);
-
-    }
-
-    private void drawIcon(float cx, float cy, float mRadius, float startAngle, Bitmap bitmap, Canvas mCanvas) {
+    private void drawIcon(float startAngle, Bitmap bitmap, Canvas mCanvas) {
         if (bitmap == null) {
             Log.e(TAG, "未指定图标");
             return;
         }
-        float imgWidth = mRadius * 1.0f / 4;
+        float imgWidth = innerCircleRadius / 4;
 
         //将度转为弧度
         float angle = (float) Math.toRadians(verCellRadius + startAngle);
 
         //确定图片在圆弧中 中心点的位置
-        float x = (float) (cx + (mRadius * 1.0f / 2 + mRadius * 1.0f / 10) * Math.cos(angle));
-        float y = (float) (cy + (mRadius * 1.0f / 2 + mRadius * 1.0f / 10) * Math.sin(angle));
+        float dx = (float) (Math.cos(angle) * innerCircleRadius) / 2;
+        float dy = (float) (Math.sin(angle) * innerCircleRadius) / 2;
 
         // 确定绘制图片的位置
-        RectF rect = new RectF(x - imgWidth * 2.0f / 3, y - imgWidth * 2.0f / 3, x + imgWidth * 2.0f / 3, y + imgWidth * 2.0f / 3);
+        RectF rect = new RectF(-imgWidth / 2, -imgWidth / 2, imgWidth / 2, imgWidth / 2);
+
+
+        Matrix matrix = new Matrix();
+        matrix.reset();
+        matrix.postTranslate(dx, dy);
+        matrix.mapRect(rect);
+
+//        flashPaint.setColor(Color.RED);
+//        mCanvas.drawRect(rect, flashPaint);
+//        mCanvas.drawCircle(dx, dy, 10, flashPaint);
 
         mCanvas.drawBitmap(bitmap, null, rect, null);
+
     }
 
     /**
@@ -277,7 +309,7 @@ public class LuckDiskView extends View {
             throw new InvalidParameterException("数据不能位空");
         }
 
-        initAngle = 360 * 1.0f / sellSize;
+        initAngle = 0;
         verCellRadius = 360 * 1.0f / sellSize;
         diffRadius = verCellRadius / 2;
 
@@ -325,6 +357,7 @@ public class LuckDiskView extends View {
 
         if (valueAnimator != null && valueAnimator.isRunning()) {
             valueAnimator.cancel();
+
         }
 
         valueAnimator = initValueAnimator((long) time, desRotate);
@@ -341,16 +374,18 @@ public class LuckDiskView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float updateValue = (float) animation.getAnimatedValue();
-                initAngle = (updateValue % 360 + 360) % 360;
+                initAngle = (updateValue) % 360;
                 ViewCompat.postInvalidateOnAnimation(LuckDiskView.this);
             }
         });
 
         valueAnimator.addListener(new AnimatorListenerAdapter() {
+            boolean cancel;
+
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                if (onResultListener != null) {
+                if (onResultListener != null && !cancel) {
                     onResultListener.onSelectedResult(list.get(queryPosition()));
                 }
 
@@ -359,6 +394,7 @@ public class LuckDiskView extends View {
             @Override
             public void onAnimationCancel(Animator animation) {
                 super.onAnimationCancel(animation);
+                this.cancel = true;
             }
 
         });
@@ -374,7 +410,6 @@ public class LuckDiskView extends View {
     private int queryPosition() {
         initAngle = (initAngle % 360 + 360) % 360;
         int pos = (int) (initAngle / verCellRadius);
-        if (sellSize == 4) pos++;
         return calculateAngle(pos);
     }
 
@@ -406,13 +441,35 @@ public class LuckDiskView extends View {
     public void setOnResultListener(OnResultListener onResultListener) {
         this.onResultListener = onResultListener;
     }
+
+
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    public static int sp2px(Context context, float spValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
+    public static double change(double a) {
+        return a * Math.PI / 180;
+    }
+
+    public static double changeAngle(double a) {
+        return a * 180 / Math.PI;
+    }
     // TODO ==================================== 手势处理 ===============================================================
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
+        if (!enableRotate) {
+            return super.onTouchEvent(event);
+        }
         boolean consume = mDetector.onTouchEvent(event);
         if (consume) {
+            //请求父控件不要拦截
             getParent().getParent().requestDisallowInterceptTouchEvent(true);
             return true;
         }
@@ -493,4 +550,76 @@ public class LuckDiskView extends View {
     }
 
 
+    /**
+     * Author：CL
+     * 日期:2020/10/10
+     * 说明：转盘item实列
+     **/
+    public static class Sector implements Serializable {
+        private String name;
+        /**
+         * 绘制的背景颜色
+         */
+        @ColorInt
+        private int bgColor;
+
+        /**
+         * 绘制的文字颜色
+         */
+        @ColorInt
+        private int textColor;
+        /**
+         * 文字的大小，单位sp
+         * 若未指定，这使用默认字体大小
+         */
+        private int textSize;
+        /**
+         * 对应显示的图片
+         */
+        public transient Bitmap bitmap;
+        /**
+         * 用于数据扩展的字段
+         */
+        private transient Object object;
+
+        public Sector() {
+        }
+
+        public Sector(String name, @ColorInt int bgColor, @ColorInt int textColor) {
+            this.name = name;
+            this.bgColor = bgColor;
+            this.textColor = textColor;
+        }
+
+        public Sector(String name, @ColorInt int bgColor, @ColorInt int textColor, Bitmap bitmap) {
+            this.name = name;
+            this.bgColor = bgColor;
+            this.textColor = textColor;
+            this.bitmap = bitmap;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getBgColor() {
+            return bgColor;
+        }
+
+        public int getTextColor() {
+            return textColor;
+        }
+
+        public int getTextSize() {
+            return textSize;
+        }
+
+        public Bitmap getBitmap() {
+            return bitmap;
+        }
+
+        public Object getObject() {
+            return object;
+        }
+    }
 }

@@ -11,6 +11,12 @@
         <attr name="flash_active_color" format="color|reference" />
         <!--闪光灯未激活状态颜色-->
         <attr name="flash_inactive_color" format="color|reference" />
+        <!--是否可以旋转-->
+        <attr name="enable_rotate" format="boolean" />
+        <!--文字大小-->
+        <attr name="textSize" format="dimension" />
 
     </declare-styleable>
+
+
 </resources>
