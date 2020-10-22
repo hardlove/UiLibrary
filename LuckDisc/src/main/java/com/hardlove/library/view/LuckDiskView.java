@@ -23,7 +23,9 @@ import androidx.annotation.ColorInt;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.ScrollerCompat;
+
 import com.hardlove.library.R;
+
 import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -140,6 +142,7 @@ public class LuckDiskView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.translate(width / 2, height / 2);
+        canvas.rotate(-90);
 
         //绘制外环
         drawOutCircle(canvas);
@@ -321,39 +324,19 @@ public class LuckDiskView extends View {
      * @param pos 如果 pos = -1 则随机，如果指定某个值，则转到某个指定区域
      */
     public void startRotate(int pos) {
-
         //Rotate lap.
-        int lap = (int) (Math.random() * 12) + 4;
-
-        //Rotate angle.
-        float angle = 0;
+        int lap = (int) (Math.random() * 2) + 4;
+        long time = lap * 1000;
+        //Rotate desRotate.
+        //角度为负，顺时针旋转
+        float desRotate;
         if (pos < 0) {
-            angle = (float) (Math.random() * 360);
+            desRotate = -(float) (Math.random() * 360) - 360 * lap;
         } else {
-            int initPos = queryPosition();
-            if (pos > initPos) {
-                angle = (pos - initPos) * verCellRadius;
-                lap -= 1;
-                angle = 360 - angle;
-            } else if (pos < initPos) {
-                angle = (initPos - pos) * verCellRadius;
-            } else {
-                //nothing to do.
-            }
+            desRotate = -getAngleByPosition(pos) - 360 * lap;
         }
 
-        //All of the rotate angle.
-        float increaseDegree = lap * 360 + angle;
-        double time = (lap + angle * 1.0f / 360) * ONE_WHEEL_TIME;
-        float desRotate = increaseDegree + initAngle;
-
-        //TODO 为了每次都能旋转到转盘的中间位置
-        double offRotate = desRotate % 360 % verCellRadius;
-        // TODO: 2020/10/10 在可控范围内增加一些随机性
-        offRotate = Math.random() * (-offRotate / 2) + offRotate;
-        Log.d(TAG, "offRotate~~~~~~~~~:" + offRotate);
-        desRotate -= offRotate;
-        desRotate += diffRadius;
+        initAngle = initAngle % 360;
 
         if (valueAnimator != null && valueAnimator.isRunning()) {
             valueAnimator.cancel();
@@ -374,7 +357,7 @@ public class LuckDiskView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float updateValue = (float) animation.getAnimatedValue();
-                initAngle = (updateValue) % 360;
+                initAngle = (updateValue);
                 ViewCompat.postInvalidateOnAnimation(LuckDiskView.this);
             }
         });
@@ -402,22 +385,21 @@ public class LuckDiskView extends View {
     }
 
 
+    private int getAngleByPosition(int pos) {
+        int angle = (int) ((verCellRadius * pos));
+        return angle;
+    }
+
+
     /**
      * 查询当前选择结果
      *
      * @return
      */
     private int queryPosition() {
-        initAngle = (initAngle % 360 + 360) % 360;
-        int pos = (int) (initAngle / verCellRadius);
-        return calculateAngle(pos);
-    }
-
-    private int calculateAngle(int pos) {
-        if (pos >= 0 && pos <= sellSize / 2) {
-            pos = sellSize / 2 - pos;
-        } else {
-            pos = (sellSize - pos) + sellSize / 2;
+        int pos = (int) (Math.abs(initAngle % 360) / verCellRadius);
+        if (pos >= sellSize) {
+            pos = sellSize - 1;
         }
         return pos;
     }
