@@ -34,6 +34,7 @@ dependencies {
     implementation project(path: ':Wallpaper')
     implementation project(path: ':ShortCut')
     implementation project(path: ':LuckDisc')
+    implementation project(path: ':RecordButton')
 
 //      implementation 'com.github.hardlove:BaseLibrary:1.0.2'
 

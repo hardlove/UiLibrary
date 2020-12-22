@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.hardlove.library.bean.Sector;
 import com.hardlove.library.utils.ColorUtil;
 import com.hardlove.library.view.LuckDiskView;
 import com.hardlove.library.view.SendVerifyCodeView;
@@ -43,8 +42,9 @@ public class MainActivity extends AppCompatActivity {
         final LuckDiskView luckDiskView = findViewById(R.id.luckDisk2);
         luckDiskView.setData(getLuckDisKData());
         luckDiskView.setOnResultListener(new LuckDiskView.OnResultListener() {
+
             @Override
-            public void onSelectedResult(Sector sector) {
+            public void onSelectedResult(LuckDiskView.Sector sector) {
                 Toast.makeText(getApplicationContext(), sector.getName(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -58,10 +58,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private List<Sector> getLuckDisKData() {
-        List<Sector> list = new ArrayList<>();
+    private List<LuckDiskView.Sector> getLuckDisKData() {
+        List<LuckDiskView.Sector> list = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            Sector sector = new Sector("Item" + i, ColorUtil.getRandomColor(), ColorUtil.getRandomColor(), BitmapFactory.decodeResource(getResources(), R.mipmap.action));
+            LuckDiskView.Sector sector = new LuckDiskView.Sector("Item" + i, ColorUtil.getRandomColor(), ColorUtil.getRandomColor(), BitmapFactory.decodeResource(getResources(), R.mipmap.action));
             list.add(sector);
         }
         return list;
