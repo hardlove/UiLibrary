@@ -9,7 +9,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.hardlove.library.utils.ColorUtil;
+import com.hardlove.library.view.CToolBar;
 import com.hardlove.library.view.LuckDiskView;
+import com.hardlove.library.view.SearchLayout;
 import com.hardlove.library.view.SendVerifyCodeView;
 
 import java.util.ArrayList;
@@ -54,6 +56,15 @@ public class MainActivity extends AppCompatActivity {
                 luckDiskView.startRotate(-1);
             }
         });
+
+        SearchLayout searchLayout = findViewById(R.id.search_layout2);
+        searchLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "3333333333", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 
     }

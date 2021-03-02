@@ -180,7 +180,35 @@
                 app:c_show_search_delete_icon="true"
                 app:c_show_search_layout="true" />
 
+            <Button
+                android:id="@+id/button"
+                android:text="button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.hardlove.library.view.SearchLayout
+                android:background="#ff0000"
+                android:id="@+id/search_layout2"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                app:c_search_enable_edit="false"
+                app:c_search_gravity="start"
+                app:c_search_hint_text="请输入您要搜索的内容111"
+                app:c_search_hint_text_color="#999999"
+                app:c_search_icon_size="40dp"
+                app:c_search_layout_radius="40dp"
+                app:c_search_layout_solid_color="@color/white"
+                app:c_search_layout_stroke_color="@color/white"
+                app:c_search_text_padding_left_right="20dp"
+                app:c_search_text_size="20sp"
+                app:c_show_search_delete_icon="false"
+                app:c_show_search_search_icon="true" />
+
             <com.hardlove.library.view.CToolBar
+                android:id="@+id/ctoolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:c_left_back_drawable_padding="10dp"

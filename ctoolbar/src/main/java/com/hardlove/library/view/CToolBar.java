@@ -29,6 +29,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hardlove.library.view.ctoobar.R;
@@ -209,9 +210,9 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
     @Override
     public void setBackgroundColor(int color) {
-        root.setBackgroundColor(c_bar_background);
-        statusBar.setBackgroundColor(status_bar_color);
-        custom_layer.setBackgroundColor(custom_layer_color);
+        root.setBackgroundColor(color);
+        statusBar.setBackgroundColor(color);
+        custom_layer.setBackgroundColor(color);
     }
 
     @Override
@@ -844,6 +845,10 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
     }
 
+    public void setupWithScrollView(NestedScrollView nestedScrollView,View headView, int reverseColor) {
+
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -1244,7 +1249,10 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         v.setPadding(settings.paddingLeft, settings.paddingTop, settings.paddingRight, settings.paddingBottom);
         v.setAlpha(settings.alpha);
         v.setVisibility(settings.isShow ? VISIBLE : GONE);
-        //設置icon顔色
-        v.setColorFilter(settings.iconColor, PorterDuff.Mode.SRC_IN);
+        //设置icon颜色(颜色透明时，不改变icon颜色)
+        if (settings.iconColor != Color.TRANSPARENT) {
+            v.setColorFilter(settings.iconColor, PorterDuff.Mode.SRC_IN);
+        }
+
     }
 }
