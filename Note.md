@@ -19,3 +19,6 @@ gradlew :QRCodeView:bintrayUpload -PbintrayUser=carloso -PbintrayKey=76871364a0b
 gradlew :ResLibrary:bintrayUpload -PbintrayUser=carloso -PbintrayKey=76871364a0b33e1d2f6bb5b051b04abec05564ed -PdryRun=false
 
 gradlew :ResLibrary:clean :ResLibrary:build :ResLibrary:bintrayUpload -PbintrayUser=carloso -PbintrayKey=76871364a0b33e1d2f6bb5b051b04abec05564ed -PdryRun=false
+
+
+gradlew :ctoolbar:clean :ctoolbar:build :ctoolbar:bintrayUpload -PbintrayUser=carloso -PbintrayKey=76871364a0b33e1d2f6bb5b051b04abec05564ed -PdryRun=false
