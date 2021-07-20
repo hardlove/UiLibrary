@@ -8,8 +8,9 @@ buildscript {
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
         maven { url 'https://maven.aliyun.com/repository/snapshots' }
 
-        maven { url 'https://dl.bintray.com/carloso/maven' }
+//        maven { url 'https://dl.bintray.com/carloso/maven' }
         maven { url "https://jitpack.io" }
+
 
     }
     dependencies {
@@ -30,7 +31,7 @@ allprojects {
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
         maven { url 'https://maven.aliyun.com/repository/snapshots' }
 
-        maven { url 'https://dl.bintray.com/carloso/maven' }
+//        maven { url 'https://dl.bintray.com/carloso/maven' }
         maven { url "https://jitpack.io" }
 
     }
