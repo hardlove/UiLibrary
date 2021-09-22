@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--阴影-->
+    <item
+        android:bottom="@dimen/common_res_shadow_out_bottom"
+        android:left="@dimen/common_res_shadow_out_left"
+        android:right="@dimen/common_res_shadow_out_right"
+        android:top="@dimen/common_res_shadow_out_top">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:endColor="@color/common_res_shadow_out_endColor"
+                android:startColor="@color/common_res_shadow_out_startColor" />
+
+            <corners
+                android:bottomLeftRadius="23dp"
+                android:bottomRightRadius="23dp"
+                android:topLeftRadius="23dp"
+                android:topRightRadius="23dp" />
+        </shape>
+    </item>
+    <!--阴影-->
+
+    <!--白色背景-->
+    <item
+        android:bottom="@dimen/common_res_shadow_inner_bottom"
+        android:left="@dimen/common_res_shadow_inner_left"
+        android:right="@dimen/common_res_shadow_inner_right"
+        android:top="@dimen/common_res_shadow_inner_top">
+
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:endColor="@color/common_res_shadow_inner_endColor"
+                android:startColor="@color/white" />
+
+            <corners
+                android:bottomLeftRadius="23dp"
+                android:bottomRightRadius="23dp"
+                android:topLeftRadius="23dp"
+                android:topRightRadius="23dp" />
+        </shape>
+    </item>
+
+</layer-list>
