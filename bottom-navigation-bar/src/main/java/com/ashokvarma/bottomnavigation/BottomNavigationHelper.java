@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 
@@ -142,6 +143,14 @@ class BottomNavigationHelper {
         }
 
         bottomNavigationTab.setItemBackgroundColor(bottomNavigationBar.getBackgroundColor());
+
+        if (!TextUtils.isEmpty(bottomNavigationItem.getIconUrl() )) {
+            bottomNavigationTab.setCompactIconUrl(bottomNavigationItem.getIconUrl());
+        }
+
+        if (!TextUtils.isEmpty(bottomNavigationItem.getInActiveIconUrl() )) {
+            bottomNavigationTab.setCompactInActiveIconUrl(bottomNavigationItem.getInActiveIconUrl());
+        }
 
         BadgeItem badgeItem = bottomNavigationItem.getBadgeItem();
         if (badgeItem != null) {

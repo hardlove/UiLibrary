@@ -268,6 +268,11 @@
                 app:c_search_text_size="16sp" />
 
 
+            <com.ashokvarma.bottomnavigation.BottomNavigationBar
+                android:id="@+id/bottomNavigationBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
 

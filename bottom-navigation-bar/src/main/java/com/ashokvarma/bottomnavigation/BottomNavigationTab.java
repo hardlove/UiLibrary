@@ -18,6 +18,8 @@ import android.widget.TextView;
 import androidx.annotation.CallSuper;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.bumptech.glide.Glide;
+
 /**
  * Class description
  *
@@ -42,7 +44,10 @@ abstract class BottomNavigationTab extends FrameLayout {
 
     protected Drawable mCompactIcon;
     protected Drawable mCompactInActiveIcon;
+    protected String mCompactIconUrl;
+    protected String mCompactInActiveIconUrl;
     protected boolean isInActiveIconSet = false;
+    protected boolean isNetUrl = false;
     protected String mLabel;
 
     protected BadgeItem badgeItem;
@@ -106,6 +111,15 @@ abstract class BottomNavigationTab extends FrameLayout {
         isInActiveIconSet = true;
     }
 
+    public void setCompactIconUrl(String mCompactIconUrl) {
+        this.mCompactIconUrl = mCompactIconUrl;
+    }
+
+    public void setCompactInActiveIconUrl(String mCompactInActiveIconUrl) {
+        this.mCompactInActiveIconUrl = mCompactInActiveIconUrl;
+        this.isNetUrl = true;
+    }
+
     public void setLabel(String label) {
         mLabel = label;
         labelView.setText(label);
@@ -166,6 +180,12 @@ abstract class BottomNavigationTab extends FrameLayout {
         if (badgeItem != null) {
             badgeItem.select();
         }
+        if (mCompactIcon == null) {
+            Glide.with(iconView).load(mCompactIconUrl)
+                    .error(mCompactIcon)
+                    .placeholder(mCompactIcon)
+                    .into(iconView);
+        }
     }
 
     public void unSelect(boolean setActiveColor, int animationDuration) {
@@ -190,49 +210,71 @@ abstract class BottomNavigationTab extends FrameLayout {
         if (badgeItem != null) {
             badgeItem.unSelect();
         }
+
+        if (mCompactInActiveIcon == null) {
+            Glide.with(iconView).load(mCompactInActiveIconUrl)
+                    .error(mCompactInActiveIcon)
+                    .placeholder(mCompactInActiveIcon)
+                    .into(iconView);
+        }
     }
 
     @CallSuper
     public void initialise(boolean setActiveColor) {
         iconView.setSelected(false);
-        if (isInActiveIconSet) {
-            StateListDrawable states = new StateListDrawable();
-            states.addState(new int[]{android.R.attr.state_selected},
-                    mCompactIcon);
-            states.addState(new int[]{-android.R.attr.state_selected},
-                    mCompactInActiveIcon);
-            states.addState(new int[]{},
-                    mCompactInActiveIcon);
-            iconView.setImageDrawable(states);
-        } else {
-            if (setActiveColor) {
-                DrawableCompat.setTintList(mCompactIcon, new ColorStateList(
-                        new int[][]{
-                                new int[]{android.R.attr.state_selected}, //1
-                                new int[]{-android.R.attr.state_selected}, //2
-                                new int[]{}
-                        },
-                        new int[]{
-                                mActiveColor, //1
-                                mInActiveColor, //2
-                                mInActiveColor //3
-                        }
-                ));
+        if (!isNetUrl) {
+            if (isInActiveIconSet) {
+                StateListDrawable states = new StateListDrawable();
+                states.addState(new int[]{android.R.attr.state_selected},
+                        mCompactIcon);
+                states.addState(new int[]{-android.R.attr.state_selected},
+                        mCompactInActiveIcon);
+                states.addState(new int[]{},
+                        mCompactInActiveIcon);
+                iconView.setImageDrawable(states);
             } else {
-                DrawableCompat.setTintList(mCompactIcon, new ColorStateList(
-                        new int[][]{
-                                new int[]{android.R.attr.state_selected}, //1
-                                new int[]{-android.R.attr.state_selected}, //2
-                                new int[]{}
-                        },
-                        new int[]{
-                                mBackgroundColor, //1
-                                mInActiveColor, //2
-                                mInActiveColor //3
-                        }
-                ));
+                if (setActiveColor) {
+                    DrawableCompat.setTintList(mCompactIcon, new ColorStateList(
+                            new int[][]{
+                                    new int[]{android.R.attr.state_selected}, //1
+                                    new int[]{-android.R.attr.state_selected}, //2
+                                    new int[]{}
+                            },
+                            new int[]{
+                                    mActiveColor, //1
+                                    mInActiveColor, //2
+                                    mInActiveColor //3
+                            }
+                    ));
+                } else {
+                    DrawableCompat.setTintList(mCompactIcon, new ColorStateList(
+                            new int[][]{
+                                    new int[]{android.R.attr.state_selected}, //1
+                                    new int[]{-android.R.attr.state_selected}, //2
+                                    new int[]{}
+                            },
+                            new int[]{
+                                    mBackgroundColor, //1
+                                    mInActiveColor, //2
+                                    mInActiveColor //3
+                            }
+                    ));
+                }
+                iconView.setImageDrawable(mCompactIcon);
             }
-            iconView.setImageDrawable(mCompactIcon);
+        }else {
+            if (mCompactIcon == null) {
+                Glide.with(iconView).load(mCompactIconUrl)
+                        .error(mCompactIcon)
+                        .placeholder(mCompactIcon)
+                        .into(iconView);
+            }
+            if (mCompactInActiveIcon == null) {
+                Glide.with(iconView).load(mCompactInActiveIconUrl)
+                        .error(mCompactInActiveIcon)
+                        .placeholder(mCompactInActiveIcon)
+                        .into(iconView);
+            }
         }
 
         if (isNoTitleMode) {

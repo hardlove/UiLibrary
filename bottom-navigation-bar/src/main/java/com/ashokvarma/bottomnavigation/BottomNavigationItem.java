@@ -41,6 +41,9 @@ public class BottomNavigationItem {
     private String mInActiveColorCode;
     private int mInActiveColor;
 
+    protected String mIconUrl;
+    protected String mInActiveIconUrl;
+
     private BadgeItem mBadgeItem;
 
     /**
@@ -77,6 +80,18 @@ public class BottomNavigationItem {
     public BottomNavigationItem(@DrawableRes int mIconResource, @StringRes int mTitleResource) {
         this.mIconResource = mIconResource;
         this.mTitleResource = mTitleResource;
+    }
+
+    public BottomNavigationItem(String mIconUrl, String mInActiveIconUrl, String mTitle) {
+        this.mTitle = mTitle;
+        this.mIconUrl = mIconUrl;
+        this.mInActiveIconUrl = mInActiveIconUrl;
+    }
+
+    public BottomNavigationItem(String mIconUrl, String mInActiveIconUrl, int mTitleResource) {
+        this.mTitleResource = mTitleResource;
+        this.mIconUrl = mIconUrl;
+        this.mInActiveIconUrl = mInActiveIconUrl;
     }
 
     /**
@@ -159,6 +174,24 @@ public class BottomNavigationItem {
      */
     public BottomNavigationItem setInActiveColor(int color) {
         this.mInActiveColor = color;
+        return this;
+    }
+
+    public String getIconUrl() {
+        return mIconUrl;
+    }
+
+    public BottomNavigationItem setIconUrl(String mIconUrl) {
+        this.mIconUrl = mIconUrl;
+        return this;
+    }
+
+    public String getInActiveIconUrl() {
+        return mInActiveIconUrl;
+    }
+
+    public BottomNavigationItem setInActiveIconUrl(String mInActiveIconUrl) {
+        this.mInActiveIconUrl = mInActiveIconUrl;
         return this;
     }
 
