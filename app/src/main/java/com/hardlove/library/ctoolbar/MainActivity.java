@@ -2,17 +2,18 @@ package com.hardlove.library.ctoolbar;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+import com.ashokvarma.bottomnavigation.imageloader.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.hardlove.library.utils.ColorUtil;
-import com.hardlove.library.view.CToolBar;
 import com.hardlove.library.view.LuckDiskView;
 import com.hardlove.library.view.SearchLayout;
 import com.hardlove.library.view.SendVerifyCodeView;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationBar bottomNavigationBar = findViewById(R.id.bottomNavigationBar);
 
-        BottomNavigationItem item = new BottomNavigationItem("https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF", "https://t7.baidu.com/it/u=4198287529,2774471735&fm=193&f=GIF", "哈哈");
+        BottomNavigationItem item = new BottomNavigationItem("https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF", "https://t7.baidu.com/it/u=4198287529,2774471735&fm=193&f=GIF", R.mipmap.iphone, R.mipmap.adventure, "哈哈");
         bottomNavigationBar.addItem(item);
 
         item = new BottomNavigationItem("https://img0.baidu.com/it/u=2394303781,1797253216&fm=26&fmt=auto", "https://img2.baidu.com/it/u=1757366683,4113258251&fm=26&fmt=auto", "哈哈");
@@ -85,6 +86,14 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationBar.setBarBackgroundColor(R.color.white);
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         bottomNavigationBar.setFirstSelectedPosition(0);
+        bottomNavigationBar.setImageLoader(new ImageLoader() {
+            @Override
+            public void load(ImageView iv, String url, int error) {
+
+                Glide.with(iv).load(url).error(error).into(iv);
+
+            }
+        });
         bottomNavigationBar.initialise();
 
     }

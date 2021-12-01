@@ -16,9 +16,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.DrawableRes;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-import com.bumptech.glide.Glide;
+import com.ashokvarma.bottomnavigation.imageloader.ImageLoader;
+import com.ashokvarma.bottomnavigation.imageloader.ImageLoaderManger;
 
 /**
  * Class description
@@ -59,6 +61,11 @@ abstract class BottomNavigationTab extends FrameLayout {
     ImageView iconView;
     FrameLayout iconContainerView;
     BadgeTextView badgeView;
+    ImageLoader imageLoader;
+    @DrawableRes
+    int errorRes;
+    @DrawableRes
+    int inActiveErrorIconRes;
 
     public BottomNavigationTab(Context context) {
         this(context, null);
@@ -81,6 +88,7 @@ abstract class BottomNavigationTab extends FrameLayout {
 
     void init() {
         setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        imageLoader = ImageLoaderManger.getInstance();
     }
 
     public void setIsNoTitleMode(boolean isNoTitleMode) {
@@ -118,6 +126,14 @@ abstract class BottomNavigationTab extends FrameLayout {
     public void setCompactInActiveIconUrl(String mCompactInActiveIconUrl) {
         this.mCompactInActiveIconUrl = mCompactInActiveIconUrl;
         this.isNetUrl = true;
+    }
+
+    public void setErrorRes(int errorRes) {
+        this.errorRes = errorRes;
+    }
+
+    public void setInActiveErrorIconRes(int inActiveErrorIconRes) {
+        this.inActiveErrorIconRes = inActiveErrorIconRes;
     }
 
     public void setLabel(String label) {
@@ -181,10 +197,7 @@ abstract class BottomNavigationTab extends FrameLayout {
             badgeItem.select();
         }
         if (mCompactIcon == null) {
-            Glide.with(iconView).load(mCompactIconUrl)
-                    .error(mCompactIcon)
-                    .placeholder(mCompactIcon)
-                    .into(iconView);
+            imageLoader.load(iconView, mCompactIconUrl, errorRes);
         }
     }
 
@@ -212,10 +225,7 @@ abstract class BottomNavigationTab extends FrameLayout {
         }
 
         if (mCompactInActiveIcon == null) {
-            Glide.with(iconView).load(mCompactInActiveIconUrl)
-                    .error(mCompactInActiveIcon)
-                    .placeholder(mCompactInActiveIcon)
-                    .into(iconView);
+            imageLoader.load(iconView, mCompactInActiveIconUrl, inActiveErrorIconRes);
         }
     }
 
@@ -262,36 +272,35 @@ abstract class BottomNavigationTab extends FrameLayout {
                 }
                 iconView.setImageDrawable(mCompactIcon);
             }
-        }else {
-            if (mCompactIcon == null) {
-                Glide.with(iconView).load(mCompactIconUrl)
-                        .error(mCompactIcon)
-                        .placeholder(mCompactIcon)
-                        .into(iconView);
-            }
-            if (mCompactInActiveIcon == null) {
-                Glide.with(iconView).load(mCompactInActiveIconUrl)
-                        .error(mCompactInActiveIcon)
-                        .placeholder(mCompactInActiveIcon)
-                        .into(iconView);
+        } else {
+            if (iconView.isSelected()) {
+                if (mCompactIcon == null) {
+                    imageLoader.load(iconView, mCompactIconUrl, errorRes);
+                }
+            } else {
+                if (mCompactInActiveIcon == null) {
+                    imageLoader.load(iconView, mCompactInActiveIconUrl, inActiveErrorIconRes);
+                }
             }
         }
 
         if (isNoTitleMode) {
             labelView.setVisibility(GONE);
 
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) iconContainerView.getLayoutParams();
+            LayoutParams layoutParams = (LayoutParams) iconContainerView.getLayoutParams();
             layoutParams.gravity = Gravity.CENTER;
             setNoTitleIconContainerParams(layoutParams);
             iconContainerView.setLayoutParams(layoutParams);
 
-            FrameLayout.LayoutParams iconLayoutParams = (FrameLayout.LayoutParams) iconView.getLayoutParams();
+            LayoutParams iconLayoutParams = (LayoutParams) iconView.getLayoutParams();
             setNoTitleIconParams(iconLayoutParams);
             iconView.setLayoutParams(iconLayoutParams);
         }
     }
 
-    protected abstract void setNoTitleIconContainerParams(FrameLayout.LayoutParams layoutParams);
+    protected abstract void setNoTitleIconContainerParams(LayoutParams layoutParams);
 
-    protected abstract void setNoTitleIconParams(FrameLayout.LayoutParams layoutParams);
+    protected abstract void setNoTitleIconParams(LayoutParams layoutParams);
+
+
 }

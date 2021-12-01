@@ -23,6 +23,7 @@ import com.ashokvarma.bottomnavigation.utils.Utils;
  */
 public class BottomNavigationItem {
 
+
     private int mIconResource;
     private Drawable mIcon;
 
@@ -43,6 +44,8 @@ public class BottomNavigationItem {
 
     protected String mIconUrl;
     protected String mInActiveIconUrl;
+    private int errorIconRes;//使用网络图片加载失败时的占位图
+    private int inActiveErrorIconRes;
 
     private BadgeItem mBadgeItem;
 
@@ -92,6 +95,22 @@ public class BottomNavigationItem {
         this.mTitleResource = mTitleResource;
         this.mIconUrl = mIconUrl;
         this.mInActiveIconUrl = mInActiveIconUrl;
+    }
+
+    public BottomNavigationItem(String mIconUrl, String mInActiveIconUrl, int errorIconRes, int inActiveErrorIconRes, String mTitle) {
+        this.mTitle = mTitle;
+        this.mIconUrl = mIconUrl;
+        this.mInActiveIconUrl = mInActiveIconUrl;
+        this.errorIconRes = errorIconRes;
+        this.inActiveErrorIconRes = inActiveErrorIconRes;
+    }
+
+    public BottomNavigationItem(String mIconUrl, String mInActiveIconUrl, int errorIconRes, int inActiveErrorIconRes, int mTitleResource) {
+        this.mTitleResource = mTitleResource;
+        this.mIconUrl = mIconUrl;
+        this.mInActiveIconUrl = mInActiveIconUrl;
+        this.errorIconRes = errorIconRes;
+        this.inActiveErrorIconRes = inActiveErrorIconRes;
     }
 
     /**
@@ -193,6 +212,23 @@ public class BottomNavigationItem {
     public BottomNavigationItem setInActiveIconUrl(String mInActiveIconUrl) {
         this.mInActiveIconUrl = mInActiveIconUrl;
         return this;
+    }
+
+    public int getErrorIconRes() {
+        return errorIconRes;
+    }
+
+    public BottomNavigationItem setErrorIconRes(int errorIconRes) {
+        this.errorIconRes = errorIconRes;
+        return this;
+    }
+
+    public int getInActiveErrorIconRes() {
+        return inActiveErrorIconRes;
+    }
+
+    public void setInActiveErrorIconRes(int inActiveErrorIconRes) {
+        this.inActiveErrorIconRes = inActiveErrorIconRes;
     }
 
     /**
@@ -298,5 +334,6 @@ public class BottomNavigationItem {
     BadgeItem getBadgeItem() {
         return mBadgeItem;
     }
+
 
 }

@@ -151,6 +151,12 @@ class BottomNavigationHelper {
         if (!TextUtils.isEmpty(bottomNavigationItem.getInActiveIconUrl() )) {
             bottomNavigationTab.setCompactInActiveIconUrl(bottomNavigationItem.getInActiveIconUrl());
         }
+        if (bottomNavigationItem.getErrorIconRes()!=0) {
+            bottomNavigationTab.setErrorRes(bottomNavigationItem.getErrorIconRes());
+        }
+        if (bottomNavigationItem.getInActiveErrorIconRes()!=0) {
+            bottomNavigationTab.setInActiveErrorIconRes(bottomNavigationItem.getInActiveErrorIconRes());
+        }
 
         BadgeItem badgeItem = bottomNavigationItem.getBadgeItem();
         if (badgeItem != null) {

@@ -24,6 +24,8 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 
 import com.ashokvarma.bottomnavigation.behaviour.BottomNavBarFabBehaviour;
 import com.ashokvarma.bottomnavigation.behaviour.BottomVerticalScrollBehavior;
+import com.ashokvarma.bottomnavigation.imageloader.ImageLoader;
+import com.ashokvarma.bottomnavigation.imageloader.ImageLoaderManger;
 import com.ashokvarma.bottomnavigation.utils.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -49,6 +51,8 @@ public class BottomNavigationBar extends FrameLayout {
     public static final int MODE_SHIFTING = 2;
     public static final int MODE_FIXED_NO_TITLE = 3;
     public static final int MODE_SHIFTING_NO_TITLE = 4;
+    private ImageLoader imageLoader;
+
 
     @IntDef({MODE_DEFAULT, MODE_FIXED, MODE_SHIFTING, MODE_FIXED_NO_TITLE, MODE_SHIFTING_NO_TITLE})
     @Retention(RetentionPolicy.SOURCE)
@@ -350,6 +354,16 @@ public class BottomNavigationBar extends FrameLayout {
         return this;
     }
 
+    /**
+     * 图片加载器
+     * @param imageLoader
+     * @return
+     */
+    public BottomNavigationBar setImageLoader(ImageLoader imageLoader) {
+        this.imageLoader = imageLoader;
+        return this;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Initialise Method
     ///////////////////////////////////////////////////////////////////////////
@@ -359,6 +373,8 @@ public class BottomNavigationBar extends FrameLayout {
      * This method will take all changes in to consideration and redraws tabs.
      */
     public void initialise() {
+        ImageLoaderManger.init(imageLoader);
+
         mSelectedPosition = DEFAULT_SELECTED_POSITION;
         mBottomNavigationTabs.clear();
 
