@@ -25,7 +25,6 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 import com.ashokvarma.bottomnavigation.behaviour.BottomNavBarFabBehaviour;
 import com.ashokvarma.bottomnavigation.behaviour.BottomVerticalScrollBehavior;
 import com.ashokvarma.bottomnavigation.imageloader.ImageLoader;
-import com.ashokvarma.bottomnavigation.imageloader.ImageLoaderManger;
 import com.ashokvarma.bottomnavigation.utils.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -364,6 +363,10 @@ public class BottomNavigationBar extends FrameLayout {
         return this;
     }
 
+    public ImageLoader getImageLoader() {
+        return imageLoader;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Initialise Method
     ///////////////////////////////////////////////////////////////////////////
@@ -373,8 +376,6 @@ public class BottomNavigationBar extends FrameLayout {
      * This method will take all changes in to consideration and redraws tabs.
      */
     public void initialise() {
-        ImageLoaderManger.init(imageLoader);
-
         mSelectedPosition = DEFAULT_SELECTED_POSITION;
         mBottomNavigationTabs.clear();
 

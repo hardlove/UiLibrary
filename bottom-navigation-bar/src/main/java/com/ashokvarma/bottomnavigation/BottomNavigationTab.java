@@ -20,7 +20,6 @@ import androidx.annotation.DrawableRes;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.ashokvarma.bottomnavigation.imageloader.ImageLoader;
-import com.ashokvarma.bottomnavigation.imageloader.ImageLoaderManger;
 
 /**
  * Class description
@@ -88,7 +87,6 @@ abstract class BottomNavigationTab extends FrameLayout {
 
     void init() {
         setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        imageLoader = ImageLoaderManger.getInstance();
     }
 
     public void setIsNoTitleMode(boolean isNoTitleMode) {
@@ -197,6 +195,7 @@ abstract class BottomNavigationTab extends FrameLayout {
             badgeItem.select();
         }
         if (mCompactIcon == null) {
+            checkImageLoader();
             imageLoader.load(iconView, mCompactIconUrl, errorRes);
         }
     }
@@ -225,6 +224,7 @@ abstract class BottomNavigationTab extends FrameLayout {
         }
 
         if (mCompactInActiveIcon == null) {
+            checkImageLoader();
             imageLoader.load(iconView, mCompactInActiveIconUrl, inActiveErrorIconRes);
         }
     }
@@ -275,10 +275,12 @@ abstract class BottomNavigationTab extends FrameLayout {
         } else {
             if (iconView.isSelected()) {
                 if (mCompactIcon == null) {
+                    checkImageLoader();
                     imageLoader.load(iconView, mCompactIconUrl, errorRes);
                 }
             } else {
                 if (mCompactInActiveIcon == null) {
+                    checkImageLoader();
                     imageLoader.load(iconView, mCompactInActiveIconUrl, inActiveErrorIconRes);
                 }
             }
@@ -303,4 +305,13 @@ abstract class BottomNavigationTab extends FrameLayout {
     protected abstract void setNoTitleIconParams(LayoutParams layoutParams);
 
 
+    public void setImageLoader(ImageLoader imageLoader) {
+        this.imageLoader = imageLoader;
+    }
+
+    public void checkImageLoader() {
+        if (imageLoader == null) {
+            throw new NullPointerException("请调用BottomNavigationBar.setImageLoader()初始化imageloader");
+        }
+    }
 }

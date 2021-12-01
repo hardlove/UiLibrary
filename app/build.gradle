@@ -44,18 +44,18 @@ dependencies {
 
 
     //单独引用
-    implementation 'com.github.hardlove.UiLibrary:QRCodeView:v2.0.0'
-    implementation 'com.github.hardlove.UiLibrary:CToolBar:v2.0.0'
-    implementation 'com.github.hardlove.UiLibrary:VerifyCodeView:v2.0.0'
-    implementation 'com.github.hardlove.UiLibrary:ResLibrary:v2.0.0'
-    implementation 'com.github.hardlove.UiLibrary:Wallpaper:v2.0.0'
-    implementation 'com.github.hardlove.UiLibrary:ShortCut:v2.0.0'
-    implementation 'com.github.hardlove.UiLibrary:LuckDisc:v2.0.0'
-    implementation 'com.github.hardlove.UiLibrary:RecordButton:v2.0.0'
-    implementation 'com.github.hardlove.UiLibrary:BottomNavigationBar:v2.0.0'
+    implementation 'com.github.hardlove.UiLibrary:QRCodeView:v2.0.2'
+    implementation 'com.github.hardlove.UiLibrary:CToolBar:v2.0.2'
+    implementation 'com.github.hardlove.UiLibrary:VerifyCodeView:v2.0.2'
+    implementation 'com.github.hardlove.UiLibrary:ResLibrary:v2.0.2'
+    implementation 'com.github.hardlove.UiLibrary:Wallpaper:v2.0.2'
+    implementation 'com.github.hardlove.UiLibrary:ShortCut:v2.0.2'
+    implementation 'com.github.hardlove.UiLibrary:LuckDisc:v2.0.2'
+    implementation 'com.github.hardlove.UiLibrary:RecordButton:v2.0.2'
+    implementation 'com.github.hardlove.UiLibrary:BottomNavigationBar:v2.0.2'
 
     //全部引用
-//    implementation 'com.github.hardlove:UiLibrary:v2.0.0'
+//    implementation 'com.github.hardlove:UiLibrary:v2.0.2'
 
 
 //    implementation 'com.carloso.widgets:CToolBar:1.1.0'

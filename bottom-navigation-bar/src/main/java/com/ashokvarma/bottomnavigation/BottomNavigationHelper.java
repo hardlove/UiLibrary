@@ -157,6 +157,8 @@ class BottomNavigationHelper {
         if (bottomNavigationItem.getInActiveErrorIconRes()!=0) {
             bottomNavigationTab.setInActiveErrorIconRes(bottomNavigationItem.getInActiveErrorIconRes());
         }
+        //绑定imageloader用于加载网络图标
+        bottomNavigationTab.setImageLoader(bottomNavigationBar.getImageLoader());
 
         BadgeItem badgeItem = bottomNavigationItem.getBadgeItem();
         if (badgeItem != null) {
