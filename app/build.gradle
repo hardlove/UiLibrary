@@ -32,30 +32,30 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-//    implementation project(path: ':QRCodeView')
-//    implementation project(path: ':ctoolbar')
-//    implementation project(path: ':VerifyCodeView')
-//    implementation project(path: ':ResLibrary')
-//    implementation project(path: ':Wallpaper')
-//    implementation project(path: ':ShortCut')
-//    implementation project(path: ':LuckDisc')
-//    implementation project(path: ':RecordButton')
-//    implementation project(path: ':bottom-navigation-bar')
+    implementation project(path: ':QRCodeView')
+    implementation project(path: ':ctoolbar')
+    implementation project(path: ':VerifyCodeView')
+    implementation project(path: ':ResLibrary')
+    implementation project(path: ':Wallpaper')
+    implementation project(path: ':ShortCut')
+    implementation project(path: ':LuckDisc')
+    implementation project(path: ':RecordButton')
+    implementation project(path: ':bottom-navigation-bar')
 
 
     //单独引用
-    implementation 'com.github.hardlove.UiLibrary:QRCodeView:v2.0.2'
-    implementation 'com.github.hardlove.UiLibrary:CToolBar:v2.0.2'
-    implementation 'com.github.hardlove.UiLibrary:VerifyCodeView:v2.0.2'
-    implementation 'com.github.hardlove.UiLibrary:ResLibrary:v2.0.2'
-    implementation 'com.github.hardlove.UiLibrary:Wallpaper:v2.0.2'
-    implementation 'com.github.hardlove.UiLibrary:ShortCut:v2.0.2'
-    implementation 'com.github.hardlove.UiLibrary:LuckDisc:v2.0.2'
-    implementation 'com.github.hardlove.UiLibrary:RecordButton:v2.0.2'
-    implementation 'com.github.hardlove.UiLibrary:BottomNavigationBar:v2.0.2'
+//    implementation 'com.github.hardlove.UiLibrary:QRCodeView:2.0.2'
+//    implementation 'com.github.hardlove.UiLibrary:CToolBar:2.0.2'
+//    implementation 'com.github.hardlove.UiLibrary:VerifyCodeView:2.0.2'
+//    implementation 'com.github.hardlove.UiLibrary:ResLibrary:2.0.2'
+//    implementation 'com.github.hardlove.UiLibrary:Wallpaper:2.0.2'
+//    implementation 'com.github.hardlove.UiLibrary:ShortCut:2.0.2'
+//    implementation 'com.github.hardlove.UiLibrary:LuckDisc:2.0.2'
+//    implementation 'com.github.hardlove.UiLibrary:RecordButton:2.0.2'
+//    implementation 'com.github.hardlove.UiLibrary:BottomNavigationBar:2.0.2'
 
     //全部引用
-//    implementation 'com.github.hardlove:UiLibrary:v2.0.2'
+//    implementation 'com.github.hardlove:UiLibrary:2.0.2'
 
 
 //    implementation 'com.carloso.widgets:CToolBar:1.1.0'
