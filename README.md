@@ -1,7 +1,7 @@
-# IMChat
+# UILibrary
 
 #### 介绍
-IM SDK
+UI组件库
 
 #### 软件架构
 软件架构说明
