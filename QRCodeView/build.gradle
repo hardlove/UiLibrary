@@ -1,6 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
-
 android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -29,35 +27,4 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0-alpha02'
-}
-
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-task androidJavadocsJar(type: Jar) {
-    classifier = 'javadoc'
-}
-
-artifacts {
-    archives androidJavadocsJar
-    archives sourcesJar
-}
-
-//上传到jcenter 执行
-
-publish {
-    userOrg = 'carloso'//bintray.com用户名
-    groupId = 'com.carloso.widgets'//jcenter上的路径
-    artifactId = 'QRCodeView'//项目名称
-    publishVersion = '2.1.0'//版本号
-    desc = '二维码'//描述，不重要
-    website = 'https://github.com/hardlove/UiLibrary.git'
-//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }
