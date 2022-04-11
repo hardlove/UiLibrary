@@ -47,8 +47,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class PermissionHelper {
     private final static String PERMISSION_REQUEST_RECORD = "PERMISSION_REQUEST_RECORD";
-    private PermissionUtils.SimpleCallback mSimpleCallback;
-    private PermissionUtils.FullCallback mFullCallback;
+    private SimpleCallback mSimpleCallback;
+    private FullCallback mFullCallback;
     private boolean ignore = true;//48小时内请求过的权限不再重复请求
     /**
      * 权限申请记录
@@ -193,8 +193,8 @@ public class PermissionHelper {
                         if (ignore) {
                             addRequestedPermission(permission);
                         }
-                        PermissionUtils.permission(permission)
-                                .callback(new PermissionUtils.SimpleCallback() {
+                        permission(permission)
+                                .callback(new SimpleCallback() {
                                     @Override
                                     public void onGranted() {
                                         if (subscription.isEmpty()) {
@@ -239,8 +239,8 @@ public class PermissionHelper {
                 });
 
 
-//        PermissionUtils.permission(temp)
-//                .callback(new PermissionUtils.FullCallback() {
+//        permission(temp)
+//                .callback(new FullCallback() {
 //                    @Override
 //                    public void onGranted(@NonNull List<String> granted) {
 //                        if (CollectionUtils.isEmpty(o2)) {
@@ -295,7 +295,7 @@ public class PermissionHelper {
 //                        }
 //                    }
 //                })
-//                .callback(new PermissionUtils.SimpleCallback() {
+//                .callback(new SimpleCallback() {
 //                    @Override
 //                    public void onGranted() {
 //                        if (CollectionUtils.isEmpty(o2)) {
@@ -388,7 +388,7 @@ public class PermissionHelper {
      * @param callback the simple call back
      * @return the single {@link PermissionUtils} instance
      */
-    public PermissionHelper callback(final PermissionUtils.SimpleCallback callback) {
+    public PermissionHelper callback(final SimpleCallback callback) {
         mSimpleCallback = callback;
         return this;
     }
@@ -399,11 +399,24 @@ public class PermissionHelper {
      * @param callback the full call back
      * @return the single {@link PermissionUtils} instance
      */
-    public PermissionHelper callback(final PermissionUtils.FullCallback callback) {
+    public PermissionHelper callback(final FullCallback callback) {
         mFullCallback = callback;
         return this;
     }
 
+
+    public interface FullCallback {
+        void onGranted(@NonNull List<String> var1);
+
+        void onDenied(@NonNull List<String> var1, @NonNull List<String> var2);
+    }
+
+    public interface SimpleCallback {
+        void onGranted();
+
+        void onDenied();
+    }
+    
     public static class ReasonDialog extends Dialog {
         private TextView tvReason;
         private String reason;
