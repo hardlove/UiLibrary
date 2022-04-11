@@ -41,7 +41,7 @@ dependencies {
     implementation project(path: ':LuckDisc')
     implementation project(path: ':RecordButton')
     implementation project(path: ':bottom-navigation-bar')
-    implementation project(path: ':Permissionhelper')
+    implementation project(path: ':PermissionHelper')
 
 
     //单独引用
