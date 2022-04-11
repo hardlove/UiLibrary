@@ -22,6 +22,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/bottom-navigation-bar" />
             <option value="$PROJECT_DIR$/ctoolbar" />
+            <option value="$PROJECT_DIR$/permissionhelper" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

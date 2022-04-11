@@ -61,7 +61,7 @@ publish {
     userOrg = 'carloso'//bintray.com用户名
     groupId = 'com.carloso.widgets'//jcenter上的路径
     artifactId = 'CToolBar'//项目名称
-    publishVersion = '2.0.0'//版本号
+    publishVersion = '2.0.1'//版本号
     desc = '一个通用的好用的ToolBar'//描述，不重要
     website = 'https://github.com/hardlove/UiLibrary.git'
 //网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
