@@ -7,32 +7,35 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     compileSdkVersion 29
-    defaultConfig {
-        defaultConfig {
-            minSdkVersion 19
-            targetSdkVersion 29
-            versionCode 1
-            versionName "1.0"
+    buildToolsVersion "29.0.3"
 
-        }
-        buildTypes {
-            release {
-                minifyEnabled false
-                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            }
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.blankj:utilcodex:1.30.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.18'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+
 }
+
+
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -57,10 +60,10 @@ artifacts {
 
 publish {
     userOrg = 'carloso'//bintray.com用户名
-    groupId = 'com.carloso.utils'//jcenter上的路径
+    groupId = 'com.carloso.widgets'//jcenter上的路径
     artifactId = 'PermissionHelper'//项目名称
     publishVersion = '2.1.0'//版本号
-    desc = '权限申请帮助类'//描述，不重要
+    desc = 'PermissionHelper'//描述，不重要
     website = 'https://github.com/hardlove/UiLibrary.git'
 //网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }
