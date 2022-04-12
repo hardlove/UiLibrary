@@ -54,6 +54,7 @@ dependencies {
     implementation 'com.github.hardlove.UiLibrary:LuckDisc:v2.1.4'
     implementation 'com.github.hardlove.UiLibrary:RecordButton:v2.1.4'
     implementation 'com.github.hardlove.UiLibrary:BottomNavigationBar:v2.1.4'
+    implementation 'com.github.hardlove.UiLibrary:PermissionHelper:v2.1.4'
 
     //全部引用
 //    implementation 'com.github.hardlove:UiLibrary:v2.1.4'
