@@ -1,0 +1,90 @@
+<resources>
+    <color name="c_tool_bar_text_color">#000000</color>
+    <color name="c_tool_bar_icon_color">#000000</color>
+    <dimen name="c_tool_bar_text_size">17sp</dimen>
+    <dimen name="c_tool_bar_padding">20dp</dimen>
+    <dimen name="c_tool_bar_back_view_min_width">40dp</dimen>
+    <color name="c_bar_background">#FFFFFF</color>
+
+
+    <style name="CToolBar">
+        <!--bar的基本属性-->
+        <item name="c_bar_alpha_press">0.6</item><!--注意：小数不能写成0.6f-->
+        <!--是否显示Back键-->
+        <item name="c_show_back">false</item>
+        <item name="c_bar_text_color" >@color/c_tool_bar_text_color</item>
+        <item name="c_bar_icon_color" >@color/c_tool_bar_icon_color</item>
+
+        <!--返回键的文字 \ icon \ width -->
+        <item name="c_left_back_text"></item>
+        <item name="c_left_back_min_width">@dimen/c_tool_bar_back_view_min_width</item>
+        <item name="c_left_back_icon">@drawable/ic_back_arrow</item>
+        <!--<item name="c_left_back_icon_color">@color/c_tool_bar_icon_color</item>-->
+        <!--<item name="c_left_back_text_color">@color/c_tool_bar_text_color</item>-->
+        <item name="c_left_back_text_size">@dimen/c_tool_bar_text_size</item>
+        <item name="c_left_back_paddingLeft">@dimen/c_tool_bar_padding</item>
+        <item name="c_left_back_paddingRight">@dimen/c_tool_bar_padding</item>
+        <item name="c_left_back_drawable_padding">@dimen/c_tool_bar_padding</item>
+
+        <!--左边的文字和icon-->
+        <item name="c_left_tv_text"></item>
+        <item name="c_left_tv_text_color">@color/c_tool_bar_text_color</item>
+        <item name="c_left_tv_text_size">@dimen/c_tool_bar_text_size</item>
+        <!--<item name="c_left_iv_icon">@mipmap/ic_launcher</item>-->
+        <!--<item name="c_left_iv_icon_color">@color/c_tool_bar_icon_color</item>-->
+        <item name="c_left_tv_text_paddingLeft">@dimen/c_tool_bar_padding</item>
+        <item name="c_left_tv_text_paddingRight">@dimen/c_tool_bar_padding</item>
+        <item name="c_left_iv_icon_paddingLeft">@dimen/c_tool_bar_padding</item>
+        <item name="c_left_iv_icon_paddingRight">@dimen/c_tool_bar_padding</item>
+
+        <!--中间的文字-->
+        <item name="c_center_tv_text"></item>
+        <!--<item name="c_center_tv_text_color">@color/c_tool_bar_text_color</item>-->
+        <item name="c_center_tv_text_size">@dimen/c_tool_bar_text_size</item>
+
+
+        <!--中间的自定义布局-->
+        <!--<item name="c_center_other_layout"></item>-->
+
+        <!--右边的文字和icon  1 -->
+        <item name="c_right_tv1_text"></item>
+        <!--<item name="c_right_tv1_text_color">@color/c_tool_bar_text_color</item>-->
+        <item name="c_right_tv1_text_size">@dimen/c_tool_bar_text_size</item>
+        <!--<item name="c_right_iv1_icon">@mipmap/ic_launcher</item>-->
+        <!--<item name="c_right_iv1_icon_color">@color/c_tool_bar_icon_color</item>-->
+        <item name="c_right_tv1_text_paddingLeft">@dimen/c_tool_bar_padding</item>
+        <item name="c_right_tv1_text_paddingRight">@dimen/c_tool_bar_padding</item>
+        <item name="c_right_iv1_icon_paddingLeft">0dp</item>
+        <item name="c_right_iv1_icon_paddingRight">@dimen/c_tool_bar_padding</item>
+
+        <!--右边的文字和icon  2 -->
+        <item name="c_right_tv2_text"></item>
+        <!--<item name="c_right_tv2_text_color">@color/c_tool_bar_text_color</item>-->
+        <item name="c_right_tv2_text_size">@dimen/c_tool_bar_text_size</item>
+        <!--<item name="c_right_iv2_icon">@mipmap/ic_launcher</item>-->
+        <!--<item name="c_right_iv2_icon_color">@color/c_tool_bar_icon_color</item>-->
+        <item name="c_right_tv2_text_paddingLeft">@dimen/c_tool_bar_padding</item>
+        <item name="c_right_tv2_text_paddingRight">@dimen/c_tool_bar_padding</item>
+        <item name="c_right_iv2_icon_paddingLeft">0dp</item>
+        <item name="c_right_iv2_icon_paddingRight">@dimen/c_tool_bar_padding</item>
+
+        <!--右边的文字和icon  3 -->
+        <item name="c_right_tv3_text"></item>
+        <!--<item name="c_right_tv3_text_color">@color/c_tool_bar_text_color</item>-->
+        <item name="c_right_tv3_text_size">@dimen/c_tool_bar_text_size</item>
+        <item name="c_right_iv3_icon">@drawable/ic_back_arrow</item>
+        <!--<item name="c_right_iv3_icon_color">@color/c_tool_bar_icon_color</item>-->
+        <item name="c_right_tv3_text_paddingLeft">@dimen/c_tool_bar_padding</item>
+        <item name="c_right_tv3_text_paddingRight">@dimen/c_tool_bar_padding</item>
+        <item name="c_right_iv3_icon_paddingLeft">0dp</item>
+        <item name="c_right_iv3_icon_paddingRight">@dimen/c_tool_bar_padding</item>
+
+    </style>
+
+    <style name="SearchLayoutStyle" >
+
+
+
+    </style>
+
+</resources>

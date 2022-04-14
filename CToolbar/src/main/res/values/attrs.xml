@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CToolBar">
+        <!--bar的背景的 Alpha-->
+        <attr name="c_bar_alpha_press" format="float|reference" />
+        <attr name="c_bar_background" format="color|reference" />
+
+        <!--是否在顶部添加系统状态栏-->
+        <attr name="c_add_status_bar" format="boolean|reference" />
+        <attr name="c_status_bar_color" format="color|reference" />
+        <attr name="c_custom_layer_color" format="color|reference" />
+
+        <!--所有文字和icon的颜色，如果子控件有设置，颜色将会覆盖-->
+        <attr name="c_bar_text_color" format="color|reference" />
+        <attr name="c_bar_icon_color" format="color|reference" />
+        <!--是否显示Back键-->
+        <attr name="c_show_back" format="boolean" />
+        <!--是否禁用back点击时关闭页面-->
+        <attr name="c_back_finish_enable" format="boolean" />
+        <!--是否显示对应的view-->
+        <attr name="c_show_left_tv" format="boolean" />
+        <attr name="c_show_left_iv" format="boolean" />
+        <attr name="c_show_center_tv" format="boolean" />
+        <attr name="c_show_center_iv" format="boolean" />
+        <attr name="c_show_right_tv1" format="boolean" />
+        <attr name="c_show_right_tv2" format="boolean" />
+        <attr name="c_show_right_tv3" format="boolean" />
+        <attr name="c_show_right_iv1" format="boolean" />
+        <attr name="c_show_right_iv2" format="boolean" />
+        <attr name="c_show_right_iv3" format="boolean" />
+
+        <!--返回键的文字 \ icon \ width -->
+        <attr name="c_left_back_min_width" format="dimension|reference" />
+        <attr name="c_left_back_icon" format="reference" />
+        <attr name="c_left_back_icon_color" format="color|reference" />
+        <attr name="c_left_back_alpha_press" format="float|reference" />
+        <attr name="c_left_back_text" format="reference|string" />
+        <attr name="c_left_back_text_color" format="color|reference" />
+        <attr name="c_left_back_text_size" format="dimension|reference" />
+        <attr name="c_left_back_paddingLeft" format="dimension|reference" />
+        <attr name="c_left_back_paddingRight" format="dimension|reference" />
+        <attr name="c_left_back_drawable_padding" format="dimension|reference" />
+
+        <!--左边的文字和icon-->
+        <attr name="c_left_tv_text" format="string|reference" />
+        <attr name="c_left_tv_text_color" format="color|reference" />
+        <attr name="c_left_tv_text_size" format="dimension|reference" />
+        <attr name="c_left_tv_text_alpha_press" format="float|reference" />
+        <attr name="c_left_iv_icon" format="reference" />
+        <attr name="c_left_iv_icon_color" format="color|reference" />
+        <attr name="c_left_iv_icon_alpha_press" format="float|reference" />
+        <attr name="c_left_tv_text_paddingLeft" format="dimension|reference" />
+        <attr name="c_left_tv_text_paddingRight" format="dimension|reference" />
+        <attr name="c_left_iv_icon_paddingLeft" format="dimension|reference" />
+        <attr name="c_left_iv_icon_paddingRight" format="dimension|reference" />
+
+        <!--中间的文字-->
+        <attr name="c_center_tv_text" format="string|reference" />
+        <attr name="c_center_tv_text_color" format="color|reference" />
+        <attr name="c_center_tv_text_size" format="dimension|reference" />
+        <attr name="c_center_tv_text_alpha_press" format="float|reference" />
+
+
+        <!--中间的自定义布局-->
+        <attr name="c_center_other_layout" format="reference" />
+
+        <!--右边的文字和icon  1 -->
+        <attr name="c_right_tv1_text" format="string|reference" />
+        <attr name="c_right_tv1_text_color" format="color|reference" />
+        <attr name="c_right_tv1_text_size" format="dimension|reference" />
+        <attr name="c_right_tv1_text_alpha_press" format="float|reference" />
+        <attr name="c_right_iv1_icon" format="reference" />
+        <attr name="c_right_iv1_icon_color" format="color|reference" />
+        <attr name="c_right_iv1_icon_alpha_press" format="float|reference" />
+        <attr name="c_right_tv1_text_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_tv1_text_paddingRight" format="dimension|reference" />
+        <attr name="c_right_iv1_icon_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_iv1_icon_paddingRight" format="dimension|reference" />
+
+        <!--右边的文字和icon  2 -->
+        <attr name="c_right_tv2_text" format="string|reference" />
+        <attr name="c_right_tv2_text_color" format="color|reference" />
+        <attr name="c_right_tv2_text_size" format="dimension|reference" />
+        <attr name="c_right_tv2_text_alpha_press" format="float|reference" />
+        <attr name="c_right_iv2_icon" format="reference" />
+        <attr name="c_right_iv2_icon_color" format="color|reference" />
+        <attr name="c_right_iv2_icon_alpha_press" format="float|reference" />
+        <attr name="c_right_tv2_text_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_tv2_text_paddingRight" format="dimension|reference" />
+        <attr name="c_right_iv2_icon_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_iv2_icon_paddingRight" format="dimension|reference" />
+
+        <!--右边的文字和icon  3 -->
+        <attr name="c_right_tv3_text" format="string|reference" />
+        <attr name="c_right_tv3_text_color" format="color|reference" />
+        <attr name="c_right_tv3_text_size" format="dimension|reference" />
+        <attr name="c_right_tv3_text_alpha_press" format="float|reference" />
+        <attr name="c_right_iv3_icon" format="reference" />
+        <attr name="c_right_iv3_icon_color" format="color|reference" />
+        <attr name="c_right_iv3_icon_alpha_press" format="float|reference" />
+        <attr name="c_right_tv3_text_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_tv3_text_paddingRight" format="dimension|reference" />
+        <attr name="c_right_iv3_icon_paddingLeft" format="dimension|reference" />
+        <attr name="c_right_iv3_icon_paddingRight" format="dimension|reference" />
+
+        <!--底部分割线-->
+        <attr name="c_bottom_line_color" format="color|reference" />
+        <attr name="c_show_bottom_line" format="boolean|reference" />
+
+        <!--显示搜索框-->
+        <attr name="c_show_search_layout" format="boolean|reference" />
+        <attr name="c_search_layout_margin_top" format="dimension|reference" />
+        <attr name="c_search_layout_margin_bottom" format="dimension|reference" />
+        <attr name="c_search_layout_margin_left" format="dimension|reference" />
+        <attr name="c_search_layout_margin_right" format="dimension|reference" />
+        <attr name="c_search_layout_padding_left_right" format="dimension|reference" />
+
+
+        <attr name="c_search_layout_radius" />
+        <attr name="c_search_layout_solid_color" />
+        <attr name="c_search_layout_stroke_color" />
+        <attr name="c_search_layout_stroke_width" />
+
+        <attr name="c_search_icon_size" />
+        <attr name="c_search_icon_color" />
+        <attr name="c_search_icon" />
+
+        <attr name="c_search_delete_icon_size" />
+        <attr name="c_search_delete_icon_color" />
+        <attr name="c_search_delete_icon" />
+
+        <attr name="c_search_hint_text" />
+        <attr name="c_search_hint_text_color" />
+        <attr name="c_search_text" />
+        <attr name="c_search_text_color" />
+        <attr name="c_search_text_size" />
+
+        <attr name="c_search_enable_edit" />
+        <attr name="c_search_text_padding_left_right" />
+
+        <attr name="c_search_gravity"/>
+
+        <attr name="c_show_search_search_icon" />
+        <attr name="c_show_search_delete_icon" />
+
+
+    </declare-styleable>
+
+
+    <declare-styleable name="SearchLayout">
+        <attr name="c_search_layout_radius" format="dimension|reference" />
+        <attr name="c_search_layout_solid_color" format="color|reference" />
+        <attr name="c_search_layout_stroke_color" format="color|reference" />
+        <attr name="c_search_layout_stroke_width" format="dimension|reference" />
+
+        <attr name="c_search_icon_size" format="dimension|reference" />
+        <attr name="c_search_icon_color" format="color|reference" />
+        <attr name="c_search_icon" format="reference" />
+
+        <attr name="c_search_delete_icon_size" format="dimension|reference" />
+        <attr name="c_search_delete_icon_color" format="color|reference" />
+        <attr name="c_search_delete_icon" format="reference" />
+
+        <attr name="c_search_hint_text" format="string|reference" />
+        <attr name="c_search_hint_text_color" format="color|reference" />
+        <attr name="c_search_text" format="string|reference" />
+        <attr name="c_search_text_color" format="color|reference" />
+        <attr name="c_search_text_size" format="dimension|reference" />
+
+        <attr name="c_search_enable_edit" format="boolean|reference" />
+        <attr name="c_search_text_padding_left_right" format="dimension|reference" />
+
+        <attr name="c_search_gravity">
+            <enum name="start" value="1" />
+            <enum name="center" value="2" />
+        </attr>
+
+        <attr name="c_show_search_search_icon" format="boolean|reference" />
+        <attr name="c_show_search_delete_icon" format="boolean|reference" />
+
+
+    </declare-styleable>
+
+
+</resources>
