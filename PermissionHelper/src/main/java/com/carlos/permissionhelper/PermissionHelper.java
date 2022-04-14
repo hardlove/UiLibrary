@@ -193,8 +193,8 @@ public class PermissionHelper {
                         if (ignore) {
                             addRequestedPermission(permission);
                         }
-                        permission(permission)
-                                .callback(new SimpleCallback() {
+                        PermissionUtils.permission(permission)
+                                .callback(new PermissionUtils.SimpleCallback() {
                                     @Override
                                     public void onGranted() {
                                         if (subscription.isEmpty()) {
@@ -237,97 +237,6 @@ public class PermissionHelper {
 
                     }
                 });
-
-
-//        permission(temp)
-//                .callback(new FullCallback() {
-//                    @Override
-//                    public void onGranted(@NonNull List<String> granted) {
-//                        if (CollectionUtils.isEmpty(o2)) {
-//                            if (mFullCallback != null) {
-//                                mFullCallback.onGranted(granted);
-//                            }
-//                        } else {
-//                            if (mFullCallback != null) {
-//                                boolean flag = true;
-//                                List<String> deniedForever = new ArrayList<>();
-//                                List<String> denied = new ArrayList<>();
-//                                for (String permission : o2) {
-//                                    if (ContextCompat.checkSelfPermission(Utils.getApp(), permission) != PackageManager.PERMISSION_GRANTED) {
-//                                        denied.add(permission);
-//                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                            if (!ActivityUtils.getTopActivity().shouldShowRequestPermissionRationale(permission)) {
-//                                                if (!deniedForever.contains(permission)) {
-//                                                    deniedForever.add(permission);
-//                                                }
-//
-//                                            }
-//                                        }
-//                                        flag = false;
-//                                    } else {
-//                                        if (!granted.contains(permission)) {
-//                                            granted.add(permission);
-//                                        }
-//                                    }
-//                                }
-//                                if (flag) {
-//                                    mFullCallback.onGranted(granted);
-//                                } else {
-//                                    mFullCallback.onDenied(deniedForever, denied);
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied) {
-//                        for (String permission : o2) {
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                if (!ActivityUtils.getTopActivity().shouldShowRequestPermissionRationale(permission)) {
-//                                    if (!deniedForever.contains(permission)) {
-//                                        deniedForever.add(permission);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        if (mFullCallback != null) {
-//                            mFullCallback.onDenied(deniedForever, denied);
-//                        }
-//                    }
-//                })
-//                .callback(new SimpleCallback() {
-//                    @Override
-//                    public void onGranted() {
-//                        if (CollectionUtils.isEmpty(o2)) {
-//                            if (mSimpleCallback != null) {
-//                                mSimpleCallback.onGranted();
-//                            }
-//                        } else {
-//                            if (mSimpleCallback != null) {
-//                                boolean flag = true;
-//                                for (String permission : o2) {
-//                                    if (ContextCompat.checkSelfPermission(Utils.getApp(), permission) != PackageManager.PERMISSION_GRANTED) {
-//                                        flag = false;
-//                                        break;
-//                                    }
-//                                }
-//                                if (flag) {
-//                                    mSimpleCallback.onGranted();
-//                                } else {
-//                                    mSimpleCallback.onDenied();
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onDenied() {
-//                        if (mSimpleCallback != null) {
-//                            mSimpleCallback.onDenied();
-//                        }
-//                    }
-//                }).request();
-
     }
 
     private void checkPermissionResult(List<String> permissions) {
