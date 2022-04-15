@@ -4,7 +4,9 @@
     <declare-styleable name="SendVerifyCodeView">
         <!--总倒计时长-->
         <attr name="totalCountDownTime" format="integer" />
+        <!--若未指定，则使用textColor默认值-->
         <attr name="normalTextColor" format="color" />
+        <!--若未指定，则使用textColor默认值-->
         <attr name="unableTextColor" format="color" />
         <attr name="normalTips" format="string|reference" />
         <attr name="resendTips" format="string|reference" />

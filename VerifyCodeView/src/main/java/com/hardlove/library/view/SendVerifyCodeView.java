@@ -17,8 +17,8 @@ import androidx.appcompat.widget.AppCompatTextView;
  * 发送验证码View
  */
 public class SendVerifyCodeView extends AppCompatTextView implements View.OnClickListener {
-    private final int normalTextColor;
-    private final int unableTextColor;
+    private final int normalTextColor;//倒计时结束时的颜色（可点击时的颜色）
+    private final int unableTextColor;//倒计时过程中的颜色（不可点击时的颜色）
     private int total = 30;//默认30秒
     private Handler mHandler;
     private int i;
@@ -34,8 +34,8 @@ public class SendVerifyCodeView extends AppCompatTextView implements View.OnClic
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SendVerifyCodeView);
         total = typedArray.getInt(R.styleable.SendVerifyCodeView_totalCountDownTime, total);
-        normalTextColor = typedArray.getColor(R.styleable.SendVerifyCodeView_normalTextColor, Color.BLACK);
-        unableTextColor = typedArray.getColor(R.styleable.SendVerifyCodeView_unableTextColor, Color.GRAY);
+        normalTextColor = typedArray.getColor(R.styleable.SendVerifyCodeView_normalTextColor, getCurrentTextColor());
+        unableTextColor = typedArray.getColor(R.styleable.SendVerifyCodeView_unableTextColor, getCurrentTextColor());
         normalTips = typedArray.getString(R.styleable.SendVerifyCodeView_normalTips);
         resendTips = typedArray.getString(R.styleable.SendVerifyCodeView_resendTips);
 
@@ -43,7 +43,7 @@ public class SendVerifyCodeView extends AppCompatTextView implements View.OnClic
 
         setGravity(Gravity.CENTER);
         setText(normalTips);
-
+        setTextColor(normalTextColor);
         setOnClickListener(this);
     }
 
