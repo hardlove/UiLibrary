@@ -325,7 +325,7 @@ public class PermissionHelper {
 
         void onDenied();
     }
-    
+
     public static class ReasonDialog extends Dialog {
         private TextView tvReason;
         private String reason;
@@ -377,5 +377,27 @@ public class PermissionHelper {
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
         return dialog;
+    }
+
+    /**
+     * 判断是否具有某权限
+     *
+     * @param object
+     * @param perms
+     * @return
+     */
+    public static boolean hasPermissions(@NonNull Object object, @NonNull String... perms) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+
+        for (String perm : perms) {
+            boolean hasPerm = (ContextCompat.checkSelfPermission(Utils.getApp(), perm) == PackageManager.PERMISSION_GRANTED);
+            if (!hasPerm) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
