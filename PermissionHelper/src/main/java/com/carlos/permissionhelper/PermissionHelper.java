@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -50,6 +51,7 @@ public class PermissionHelper {
     private SimpleCallback mSimpleCallback;
     private FullCallback mFullCallback;
     private boolean ignore = true;//48小时内请求过的权限不再重复请求
+    private boolean goSetting;//跳转系统权限设置页面
     /**
      * 权限申请记录
      */
@@ -83,6 +85,11 @@ public class PermissionHelper {
         for (int i = 0; i < reasons.length; i++) {
             requestReasons.put(requestPermissions[i], reasons[i]);
         }
+        return this;
+    }
+
+    public PermissionHelper goSettingUI(boolean goSetting) {
+        this.goSetting = goSetting;
         return this;
     }
 
@@ -359,6 +366,9 @@ public class PermissionHelper {
                     mFullCallback.onGranted(granted);
                 }
                 mFullCallback.onDenied(deniedForever, denied);
+                if (goSetting) {
+                    showOpenAppSettingDialog(ActivityUtils.getTopActivity());
+                }
             }
         }
         if (mSimpleCallback != null) {
@@ -366,9 +376,13 @@ public class PermissionHelper {
                 mSimpleCallback.onGranted();
             } else {
                 mSimpleCallback.onDenied();
+                if (goSetting) {
+                    showOpenAppSettingDialog(ActivityUtils.getTopActivity());
+                }
             }
         }
     }
+
 
     /**
      * 48小时内请求过的权限不再请求
@@ -416,7 +430,7 @@ public class PermissionHelper {
 
         void onDenied();
     }
-    
+
     public static class ReasonDialog extends Dialog {
         private TextView tvReason;
         private String reason;
@@ -468,5 +482,21 @@ public class PermissionHelper {
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
         return dialog;
+    }
+
+
+    public static void showOpenAppSettingDialog(Context context) {
+        showOpenAppSettingDialog(context, "注意", "您已限制授权我们申请的权限，请选择“允许”，否则该功能将无法正常使用！");
+    }
+
+    public static void showOpenAppSettingDialog(Context context, String title, String content) {
+        new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(content)
+                .setCancelable(false)
+                .setNegativeButton("取消", (dialog, which) -> {
+
+                })
+                .setPositiveButton("去设置", (dialog, which) -> PermissionUtils.launchAppDetailsSettings()).show();
     }
 }
