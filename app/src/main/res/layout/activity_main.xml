@@ -242,10 +242,11 @@
                 android:layout_marginTop="40dp"
                 android:padding="5dp"
                 app:normalTextColor="@color/colorAccent"
+                app:unableTextColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimary"
                 app:normalTips="发送验证码"
                 app:resendTips="重新获取"
-                app:totalCountDownTime="60"
-                app:unableTextColor="@color/colorPrimary" />
+                app:totalCountDownTime="60" />
 
             <com.hardlove.library.view.SearchLayout
                 android:layout_width="match_parent"

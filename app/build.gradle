@@ -32,37 +32,33 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-//    implementation project(path: ':QRCodeView')
-//    implementation project(path: ':ctoolbar')
-//    implementation project(path: ':VerifyCodeView')
-//    implementation project(path: ':ResLibrary')
-//    implementation project(path: ':Wallpaper')
-//    implementation project(path: ':ShortCut')
-//    implementation project(path: ':LuckDisc')
-//    implementation project(path: ':RecordButton')
-//    implementation project(path: ':bottom-navigation-bar')
-//    implementation project(path: ':PermissionHelper')
+    implementation project(path: ':QRCodeView')
+    implementation project(path: ':CToolBar')
+    implementation project(path: ':VerifyCodeView')
+    implementation project(path: ':ResLibrary')
+    implementation project(path: ':Wallpaper')
+    implementation project(path: ':ShortCut')
+    implementation project(path: ':LuckDisc')
+    implementation project(path: ':RecordButton')
+    implementation project(path: ':bottom-navigation-bar')
+    implementation project(path: ':PermissionHelper')
 
 
     //单独引用
-    implementation 'com.github.hardlove.UiLibrary:QRCodeView:v2.1.4'
-    implementation 'com.github.hardlove.UiLibrary:CToolBar:v2.1.4'
-    implementation 'com.github.hardlove.UiLibrary:VerifyCodeView:v2.1.4'
-    implementation 'com.github.hardlove.UiLibrary:ResLibrary:v2.1.4'
-    implementation 'com.github.hardlove.UiLibrary:Wallpaper:v2.1.4'
-    implementation 'com.github.hardlove.UiLibrary:ShortCut:v2.1.4'
-    implementation 'com.github.hardlove.UiLibrary:LuckDisc:v2.1.4'
-    implementation 'com.github.hardlove.UiLibrary:RecordButton:v2.1.4'
-    implementation 'com.github.hardlove.UiLibrary:BottomNavigationBar:v2.1.4'
-    implementation 'com.github.hardlove.UiLibrary:PermissionHelper:v2.1.4'
+//    implementation 'com.github.hardlove.UiLibrary:QRCodeView:2.1.7'
+//    implementation 'com.github.hardlove.UiLibrary:CToolBar:2.1.7'
+//    implementation 'com.github.hardlove.UiLibrary:VerifyCodeView:2.1.7'
+//    implementation 'com.github.hardlove.UiLibrary:ResLibrary:2.1.7'
+//    implementation 'com.github.hardlove.UiLibrary:Wallpaper:2.1.7'
+//    implementation 'com.github.hardlove.UiLibrary:ShortCut:2.1.7'
+//    implementation 'com.github.hardlove.UiLibrary:LuckDisc:2.1.7'
+//    implementation 'com.github.hardlove.UiLibrary:RecordButton:2.1.7'
+//    implementation 'com.github.hardlove.UiLibrary:bottom-navigation-bar:2.1.7'
+//    implementation 'com.github.hardlove.UiLibrary:PermissionHelper:2.1.7'
 
     //全部引用
-//    implementation 'com.github.hardlove:UiLibrary:v2.1.4'
+//    implementation 'com.github.hardlove:UiLibrary:2.1.7'
 
-
-//    implementation 'com.github.hardlove:CToolBar:1.1.0'
-//    implementation 'com.github.hardlove:QRCodeView:1.1.0'
-//    implementation 'com.github.hardlove:VerifyCodeView:1.1.0'
 
     implementation 'com.blankj:utilcodex:1.30.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
