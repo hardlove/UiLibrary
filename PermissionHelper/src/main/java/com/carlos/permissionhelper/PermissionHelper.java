@@ -200,8 +200,8 @@ public class PermissionHelper {
                         if (ignore) {
                             addRequestedPermission(permission);
                         }
-                        permission(permission)
-                                .callback(new SimpleCallback() {
+                        PermissionUtils.permission(permission)
+                                .callback(new PermissionUtils.SimpleCallback() {
                                     @Override
                                     public void onGranted() {
                                         if (subscription.isEmpty()) {
