@@ -52,6 +52,7 @@ public class PermissionHelper {
     private FullCallback mFullCallback;
     private boolean ignore = true;//48小时内请求过的权限不再重复请求
     private boolean goSetting;//跳转系统权限设置页面
+    private CharSequence goSettingMsg;//跳转系统权限设置页面弹框描述内容
     /**
      * 权限申请记录
      */
@@ -88,8 +89,21 @@ public class PermissionHelper {
         return this;
     }
 
+    /**
+     * @param goSetting 是否跳转系统权限设置页面
+     * @return
+     */
     public PermissionHelper goSettingUI(boolean goSetting) {
         this.goSetting = goSetting;
+        return this;
+    }
+
+    /**
+     * @param sequence 跳转系统权限设置页面弹框描述内容
+     * @return
+     */
+    public PermissionHelper goSettingMsg(CharSequence sequence) {
+        this.goSettingMsg = sequence;
         return this;
     }
 
@@ -245,7 +259,7 @@ public class PermissionHelper {
                     }
                 });
     }
-
+    boolean isShowing = false;
     private void checkPermissionResult(List<String> permissions) {
         //申请的权限48小时内已经全部申请过
         List<String> deniedForever = new ArrayList<>();
@@ -276,7 +290,10 @@ public class PermissionHelper {
                 }
                 mFullCallback.onDenied(deniedForever, denied);
                 if (goSetting) {
-                    showOpenAppSettingDialog(ActivityUtils.getTopActivity());
+                    if (!isShowing) {
+                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg);
+                    }
+                    isShowing = true;
                 }
             }
         }
@@ -286,7 +303,10 @@ public class PermissionHelper {
             } else {
                 mSimpleCallback.onDenied();
                 if (goSetting) {
-                    showOpenAppSettingDialog(ActivityUtils.getTopActivity());
+                    if (!isShowing) {
+                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg);
+                    }
+                    isShowing = true;
                 }
             }
         }
@@ -396,17 +416,17 @@ public class PermissionHelper {
     /**
      * 判断是否具有某权限
      *
-     * @param object
+     * @param context
      * @param perms
      * @return
      */
-    public static boolean hasPermissions(@NonNull Object object, @NonNull String... perms) {
+    public static boolean hasPermissions(@NonNull Context context, @NonNull String... perms) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
 
         for (String perm : perms) {
-            boolean hasPerm = (ContextCompat.checkSelfPermission(Utils.getApp(), perm) == PackageManager.PERMISSION_GRANTED);
+            boolean hasPerm = (ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_GRANTED);
             if (!hasPerm) {
                 return false;
             }
@@ -415,11 +435,11 @@ public class PermissionHelper {
         return true;
     }
 
-    public static void showOpenAppSettingDialog(Context context) {
-        showOpenAppSettingDialog(context, "注意", "您已限制授权我们申请的权限，请选择“允许”，否则该功能将无法正常使用！");
-    }
 
-    public static void showOpenAppSettingDialog(Context context, String title, String content) {
+    public static void showOpenAppSettingDialog(Context context, String title, CharSequence content) {
+        if (TextUtils.isEmpty(content)) {
+            content = "您已限制授权我们申请的权限，请选择“允许”，否则该功能将无法正常使用！";
+        }
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(content)
