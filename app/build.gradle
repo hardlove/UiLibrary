@@ -59,7 +59,7 @@ dependencies {
     //全部引用
 //    implementation 'com.github.hardlove:UiLibrary:2.1.7'
 
-
+    api 'com.pangle.cn:ads-sdk-pro:4.4.0.9'
     implementation 'com.blankj:utilcodex:1.30.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
