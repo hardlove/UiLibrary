@@ -56,11 +56,11 @@ public class PermissionHelper {
     /**
      * 权限申请记录
      */
-    private HashMap<String, Long> permissionRecords;
+    private final HashMap<String, Long> permissionRecords;
     /**
      * 要请求的权限
      */
-    private String[] requestPermissions;
+    private final String[] requestPermissions;
     private HashMap<String, String> requestReasons;
 
 
