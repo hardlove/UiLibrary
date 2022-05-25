@@ -124,12 +124,12 @@ public class MainActivity extends AppCompatActivity {
                                 })
                                 .callback(new PermissionHelper.FullCallback() {
                                     @Override
-                                    public void onGranted(@NonNull List<String> granted) {
-                                        LogUtils.dTag("XXX", "FullCallback onGranted~~~~~" + GsonUtils.toJson(granted));
+                                    public void onGranted() {
+                                        LogUtils.dTag("XXX", "FullCallback onGranted~~~~~");
                                     }
 
                                     @Override
-                                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied) {
+                                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied,@NonNull List<String> granted) {
                                         LogUtils.dTag("XXX", "FullCallback onDenied~~~~~deniedForever：" + GsonUtils.toJson(deniedForever) + "   denied：" + GsonUtils.toJson(denied));
 
                                     }

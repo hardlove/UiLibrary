@@ -142,7 +142,7 @@ public class PermissionHelper {
     public void request() {
         if (requestPermissions == null || requestPermissions.length == 0) {
             if (mFullCallback != null) {
-                mFullCallback.onGranted(Collections.emptyList());
+                mFullCallback.onGranted();
             }
             if (mSimpleCallback != null) {
                 mSimpleCallback.onGranted();
@@ -259,7 +259,9 @@ public class PermissionHelper {
                     }
                 });
     }
+
     boolean isShowing = false;
+
     private void checkPermissionResult(List<String> permissions) {
         //申请的权限48小时内已经全部申请过
         List<String> deniedForever = new ArrayList<>();
@@ -282,13 +284,9 @@ public class PermissionHelper {
 
         if (mFullCallback != null) {
             if (flag) {
-                mFullCallback.onGranted(permissions);
+                mFullCallback.onGranted();
             } else {
-                if (!denied.isEmpty()) {
-                    //部分已授权的
-                    mFullCallback.onGranted(granted);
-                }
-                mFullCallback.onDenied(deniedForever, denied);
+                mFullCallback.onDenied(deniedForever, denied, granted);
                 if (goSetting) {
                     if (!isShowing) {
                         showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg);
@@ -349,14 +347,29 @@ public class PermissionHelper {
 
 
     public interface FullCallback {
-        void onGranted(@NonNull List<String> var1);
+        /**
+         * 授予所有权限
+         */
+        void onGranted();
 
-        void onDenied(@NonNull List<String> var1, @NonNull List<String> var2);
+        /**
+         * 部分权限被拒绝
+         * @param deniedForever 被永久拒绝
+         * @param denied 被拒绝
+         * @param granted 已经授予
+         */
+        void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted);
     }
 
     public interface SimpleCallback {
+        /**
+         * 授予所有权限
+         */
         void onGranted();
 
+        /**
+         * 拒绝授予权限
+         */
         void onDenied();
     }
 
