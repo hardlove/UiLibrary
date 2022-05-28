@@ -73,6 +73,10 @@ public class PermissionHelper {
      */
     private final String[] requestPermissions;
     private HashMap<String, String> requestReasons;
+    /**
+     * 分组申请
+     */
+    private boolean useGroupRequest = true;
 
 
     public PermissionHelper(@NonNull final String... permissions) {
@@ -115,6 +119,17 @@ public class PermissionHelper {
      */
     public PermissionHelper goSettingMsg(CharSequence sequence) {
         this.goSettingMsg = sequence;
+        return this;
+    }
+
+    /**
+     * 禁止分组申请，即按单个权限申请
+     *
+     * @param disable
+     * @return
+     */
+    public PermissionHelper disableGroupRequest(boolean disable) {
+        this.useGroupRequest = !disable;
         return this;
     }
 
@@ -193,9 +208,8 @@ public class PermissionHelper {
 
         Flowable.fromArray(temp)
                 // TODO: 2022/5/28 分组后再请求权限:同一group类的permission是否已有被拒绝的，如果有则不再申请该group类的权限
-                .groupBy(new Function<String, String>() {
-                    @Override
-                    public String apply(@NonNull String permission) throws Exception {
+                .groupBy(permission -> {
+                    if (useGroupRequest) {
                         // TODO: 2022/5/28 将权限分组
                         try {
                             String[] split = permission.split("_");
@@ -204,14 +218,11 @@ public class PermissionHelper {
                         } catch (Exception e) {
                             return permission;
                         }
+                    } else {
+                        return permission;
                     }
                 })
-                .flatMap(new Function<GroupedFlowable<String, String>, Publisher<List<String>>>() {
-                    @Override
-                    public Publisher<List<String>> apply(@NonNull GroupedFlowable<String, String> groupedFlowable) throws Exception {
-                        return groupedFlowable.toList().toFlowable();
-                    }
-                })
+                .flatMap((Function<GroupedFlowable<String, String>, Publisher<List<String>>>) groupedFlowable -> groupedFlowable.toList().toFlowable())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FlowableSubscriber<List<String>>() {
@@ -238,6 +249,12 @@ public class PermissionHelper {
                                 } else {
                                     dialog.updateReason(reason);
                                 }
+                                dialog.hide();
+                                dialog.tvReason.postDelayed(() -> {
+                                    if (dialog != null) {
+                                        dialog.show();
+                                    }
+                                }, 500);
                             }
                         }
 
@@ -256,11 +273,11 @@ public class PermissionHelper {
                                 .callback(new PermissionUtils.SimpleCallback() {
                                     @Override
                                     public void onGranted() {
+                                        if (dialog != null) {
+                                            dialog.dismiss();
+                                            dialog = null;
+                                        }
                                         if (subscription.isEmpty()) {
-                                            if (dialog != null) {
-                                                dialog.dismiss();
-                                                dialog = null;
-                                            }
                                             checkPermissionResult(Arrays.asList(requestPermissions));
                                         } else {
                                             subscription.request(1);
@@ -270,11 +287,11 @@ public class PermissionHelper {
 
                                     @Override
                                     public void onDenied() {
+                                        if (dialog != null) {
+                                            dialog.dismiss();
+                                            dialog = null;
+                                        }
                                         if (subscription.isEmpty()) {
-                                            if (dialog != null) {
-                                                dialog.dismiss();
-                                                dialog = null;
-                                            }
                                             checkPermissionResult(Arrays.asList(requestPermissions));
                                         } else {
                                             subscription.request(1);
@@ -392,9 +409,10 @@ public class PermissionHelper {
 
         /**
          * 部分权限被拒绝
+         *
          * @param deniedForever 被永久拒绝
-         * @param denied 被拒绝
-         * @param granted 已经授予
+         * @param denied        被拒绝
+         * @param granted       已经授予
          */
         void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted);
     }
