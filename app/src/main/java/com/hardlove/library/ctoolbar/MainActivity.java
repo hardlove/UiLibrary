@@ -1,6 +1,7 @@
 package com.hardlove.library.ctoolbar;
 
 import android.Manifest;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -25,8 +28,21 @@ import com.hardlove.library.view.LuckDiskView;
 import com.hardlove.library.view.SearchLayout;
 import com.hardlove.library.view.SendVerifyCodeView;
 
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Flowable;
+import io.reactivex.FlowableSubscriber;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.flowables.GroupedFlowable;
+import io.reactivex.functions.Function;
+import io.reactivex.observables.GroupedObservable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +66,128 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+//        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},1)
+//        ;
+
+
+        PermissionHelper.permission(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .ignoreRequestedIn48H(false)
+                .addReasons("1111111111111111", "222222222222","33333333333","4444444444444")
+                .callback(new PermissionHelper.SimpleCallback() {
+                    @Override
+                    public void onGranted() {
+                        LogUtils.d("onGranted~~~~~~~~~");
+                    }
+
+                    @Override
+                    public void onDenied() {
+                        LogUtils.d("onDenied~~~~~~~~~");
+                    }
+                })
+                .request();
+
+
+        // 2. groupBy(Function(T,R)，Function(T,R))
+        // 第一个func对原数据进行分组处理（仅仅分组添加key，不处理原始数据），第二个func对原始数据进行处理
+        Flowable.range(1, 10)
+                .groupBy(new Function<Integer, String>() {
+
+                    @Override
+                    public String apply(Integer t) throws Exception {
+                        // 对原始数据进行分组处理
+                        return t % 2 == 0 ? "even" : "odd";
+                    }
+                }, new Function<Integer, String>() {
+
+                    @Override
+                    public String apply(Integer t) throws Exception {
+                        // 对原始数据进行数据转换处理
+                        return t + " is  == " + (t % 2 == 0 ? "even" : "odd");
+                    }
+                })
+                .flatMap(new Function<GroupedFlowable<String, String>, Publisher<List<String>>>() {
+                    @Override
+                    public Publisher<List<String>> apply(@NonNull GroupedFlowable<String, String> observable) throws Exception {
+                        return observable.toList().toFlowable();
+
+                    }
+                })
+                .subscribe(new FlowableSubscriber<List<String>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Subscription subscription) {
+                        subscription.request(10);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull List<String> list) {
+                        LogUtils.dTag("Carlos", "=====>" + GsonUtils.toJson(list));
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable throwable) {
+                        LogUtils.dTag("Carlos", "==========>" + throwable.getLocalizedMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+
+        // 2. groupBy(Function(T,R)，Function(T,R))
+        // 第一个func对原数据进行分组处理（仅仅分组添加key，不处理原始数据），第二个func对原始数据进行处理
+        Observable.range(1, 10)
+                .groupBy(new Function<Integer, String>() {
+
+                    @Override
+                    public String apply(Integer t) throws Exception {
+                        // 对原始数据进行分组处理
+                        return t % 2 == 0 ? "even" : "odd";
+                    }
+                }, new Function<Integer, String>() {
+
+                    @Override
+                    public String apply(Integer t) throws Exception {
+                        // 对原始数据进行数据转换处理
+                        return t + " is " + (t % 2 == 0 ? "even" : "odd");
+                    }
+                })
+                .flatMap(new Function<GroupedObservable<String, String>, ObservableSource<List<String>>>() {
+                    @Override
+                    public ObservableSource<List<String>> apply(@NonNull GroupedObservable<String, String> observable) throws Exception {
+                        return observable.toList().toObservable();
+
+                    }
+                })
+                .subscribe(new Observer<List<String>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable disposable) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull List<String> list) {
+                        LogUtils.dTag("Carlos", "=====>" + GsonUtils.toJson(list));
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable throwable) {
+                        LogUtils.dTag("Carlos", "==========>" + throwable.getLocalizedMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
 
 
         final LuckDiskView luckDiskView = findViewById(R.id.luckDisk2);

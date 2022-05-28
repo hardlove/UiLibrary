@@ -28,6 +28,7 @@ import com.blankj.utilcode.util.SPStaticUtils;
 import com.blankj.utilcode.util.Utils;
 import com.google.gson.reflect.TypeToken;
 
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.security.InvalidParameterException;
@@ -43,10 +44,20 @@ import java.util.Set;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.flowables.GroupedFlowable;
+import io.reactivex.functions.Function;
 import io.reactivex.internal.fuseable.QueueSubscription;
 import io.reactivex.schedulers.Schedulers;
 
 public class PermissionHelper {
+    private static final String[] GROUP_CALENDAR = new String[]{"android.permission.READ_CALENDAR", "android.permission.WRITE_CALENDAR"};
+    private static final String[] GROUP_CONTACTS = new String[]{"android.permission.READ_CONTACTS", "android.permission.WRITE_CONTACTS", "android.permission.GET_ACCOUNTS"};
+    private static final String[] GROUP_LOCATION = new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"};
+    private static final String[] GROUP_PHONE = new String[]{"android.permission.READ_PHONE_STATE", "android.permission.READ_PHONE_NUMBERS", "android.permission.CALL_PHONE", "android.permission.READ_CALL_LOG", "android.permission.WRITE_CALL_LOG", "com.android.voicemail.permission.ADD_VOICEMAIL", "android.permission.USE_SIP", "android.permission.PROCESS_OUTGOING_CALLS", "android.permission.ANSWER_PHONE_CALLS"};
+    private static final String[] GROUP_SMS = new String[]{"android.permission.SEND_SMS", "android.permission.RECEIVE_SMS", "android.permission.READ_SMS", "android.permission.RECEIVE_WAP_PUSH", "android.permission.RECEIVE_MMS"};
+    private static final String[] GROUP_STORAGE = new String[]{"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
+
+
     private final static String PERMISSION_REQUEST_RECORD = "PERMISSION_REQUEST_RECORD";
     private SimpleCallback mSimpleCallback;
     private FullCallback mFullCallback;
@@ -177,14 +188,33 @@ public class PermissionHelper {
 
         if (temp == null || temp.length == 0) {
             checkPermissionResult(Arrays.asList(requestPermissions));
-
             return;
         }
 
         Flowable.fromArray(temp)
+                // TODO: 2022/5/28 分组后再请求权限:同一group类的permission是否已有被拒绝的，如果有则不再申请该group类的权限
+                .groupBy(new Function<String, String>() {
+                    @Override
+                    public String apply(@NonNull String permission) throws Exception {
+                        // TODO: 2022/5/28 将权限分组
+                        try {
+                            String[] split = permission.split("_");
+                            String key = split[split.length - 1];
+                            return key;
+                        } catch (Exception e) {
+                            return permission;
+                        }
+                    }
+                })
+                .flatMap(new Function<GroupedFlowable<String, String>, Publisher<List<String>>>() {
+                    @Override
+                    public Publisher<List<String>> apply(@NonNull GroupedFlowable<String, String> groupedFlowable) throws Exception {
+                        return groupedFlowable.toList().toFlowable();
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FlowableSubscriber<String>() {
+                .subscribe(new FlowableSubscriber<List<String>>() {
                     QueueSubscription<String> subscription;
                     ReasonDialog dialog;
                     final FragmentActivity currentActivity = (FragmentActivity) ActivityUtils.getTopActivity();
@@ -196,10 +226,12 @@ public class PermissionHelper {
                     }
 
                     @Override
-                    public void onNext(String permission) {
+                    public void onNext(List<String> permission) {
                         LogUtils.dTag("XXX", "onNext~~~~~~~" + permission);
+
+
                         if (requestReasons != null) {
-                            String reason = requestReasons.get(permission);
+                            String reason = requestReasons.get(permission.get(0));
                             if (!TextUtils.isEmpty(reason)) {
                                 if (dialog == null) {
                                     dialog = showReasonDialog(currentActivity, reason);
@@ -212,9 +244,15 @@ public class PermissionHelper {
 
                         //还有其它需要申请的权限，添加权限请求记录
                         if (ignore) {
-                            addRequestedPermission(permission);
+                            addRequestedPermission(permission.toArray(new String[0]));
                         }
-                        PermissionUtils.permission(permission)
+
+                        //添加到权限申请记录
+                        for (String s : permission) {
+                            permissionRecords.put(s, System.currentTimeMillis());
+                        }
+
+                        PermissionUtils.permission(permission.toArray(new String[0]))
                                 .callback(new PermissionUtils.SimpleCallback() {
                                     @Override
                                     public void onGranted() {
@@ -259,7 +297,9 @@ public class PermissionHelper {
                     }
                 });
     }
+
     boolean isShowing = false;
+
     private void checkPermissionResult(List<String> permissions) {
         //申请的权限48小时内已经全部申请过
         List<String> deniedForever = new ArrayList<>();
