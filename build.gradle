@@ -12,7 +12,7 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'//Android Gradle Plugin
+        classpath 'com.android.tools.build:gradle:4.0.2'//Android Gradle Plugin
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
 
 
@@ -28,6 +28,9 @@ allprojects {
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
         maven { url 'https://maven.aliyun.com/repository/snapshots' }
         maven { url "https://jitpack.io" }
+
+        //穿山甲远程仓库
+        maven { url 'https://artifact.bytedance.com/repository/pangle' }
 
     }
 }
