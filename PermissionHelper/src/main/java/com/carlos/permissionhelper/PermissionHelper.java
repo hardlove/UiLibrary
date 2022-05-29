@@ -83,6 +83,30 @@ public class PermissionHelper {
         return new PermissionHelper();
     }
 
+    /**
+     * @see #builder()
+     * @param permissions
+     * @return
+     */
+    @Deprecated
+    public static PermissionHelper permission(@NonNull final String... permissions) {
+        return builder().addPermission(permissions);
+    }
+
+    @Deprecated
+    public PermissionHelper addReasons(@NonNull final String... reasons) {
+        if (requestPermissions.size() != reasons.length) {
+            throw new InvalidParameterException("requestPermissionReasons.size() != reasons.length");
+        }
+
+        if (requestReasons == null) {
+            requestReasons = new HashMap<>();
+        }
+        for (int i = 0; i < reasons.length; i++) {
+            requestReasons.put(requestPermissions.get(i), reasons[i]);
+        }
+        return this;
+    }
 
     private PermissionHelper() {
         requestPermissions = new ArrayList<>();
