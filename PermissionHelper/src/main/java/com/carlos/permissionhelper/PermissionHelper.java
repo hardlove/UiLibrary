@@ -79,71 +79,31 @@ public class PermissionHelper {
      */
     private boolean useGroupRequest = true;
 
-
-    public static PermissionHelper permission(@NonNull final String... permissions) {
-        return new PermissionHelper(Arrays.asList(permissions), "");
-    }
-
-    public static PermissionHelper permission(@NonNull String permission, @Nullable String reason) {
-        return new PermissionHelper(Collections.singletonList(permission), reason);
-    }
-
-    public static PermissionHelper permission(@NonNull List<String> permissions, @Nullable String reason) {
-        return new PermissionHelper(permissions, reason);
+    public static PermissionHelper builder() {
+        return new PermissionHelper();
     }
 
 
-    public static PermissionHelper permission(@NonNull List<String> permissions, @Nullable List<String> reason) {
-        return new PermissionHelper(permissions, reason);
-    }
-
-    /**
-     * permissions-reason：多对一
-     *
-     * @param permissions
-     * @param reason
-     */
-    private PermissionHelper(@NonNull List<String> permissions, @Nullable String reason) {
-        requestPermissions = permissions;
+    private PermissionHelper() {
+        requestPermissions = new ArrayList<>();
+        requestReasons = new HashMap<>();
         permissionRecords = getPermissionRequestRecords();
-        if (!TextUtils.isEmpty(reason)) {
-            for (String permission : permissions) {
-                requestReasons.put(permission, reason);
-            }
-        }
-    }
-
-    /**
-     * permissions-reason：多对一
-     *
-     * @param permissions
-     * @param reasons
-     */
-    private PermissionHelper(@NonNull List<String> permissions, @NonNull List<String> reasons) {
-        if (permissions.size() != reasons.size()) {
-            throw new InvalidParameterException("权限和说明数量必须保持一致，一一对应！");
-        }
-        requestPermissions = permissions;
-        permissionRecords = getPermissionRequestRecords();
-        for (int i = 0; i < permissions.size(); i++) {
-            requestReasons.put(permissions.get(i), reasons.get(i));
-        }
     }
 
 
     /**
      * 新增Permission
      *
-     * @param permission 权限名
+     * @param permissions 权限名
      * @return
      */
-    public PermissionHelper addPermission(@NonNull String permission) {
-        requestPermissions.add(permission);
+    public PermissionHelper addPermission(@NonNull String... permissions) {
+        requestPermissions.addAll(Arrays.asList(permissions));
         return this;
     }
 
     /**
-     * 新增Permission
+     * 新增Permission：一对一
      *
      * @param permission 权限名
      * @param reason     请求权限对于说明
@@ -158,7 +118,7 @@ public class PermissionHelper {
     }
 
     /**
-     * 新增Permission
+     * 新增Permission:多对一
      *
      * @param permissions 权限名
      * @param reason      请求权限对于说明
@@ -174,17 +134,26 @@ public class PermissionHelper {
         return this;
     }
 
-//    public PermissionHelper addReasons(@NonNull final String... reasons) {
-//        if (requestPermissions.size() != reasons.length) {
-//            throw new InvalidParameterException("requestPermissionReasons.size() != reasons.length");
-//        }
-//
-//        requestReasons = new HashMap<>();
-//        for (int i = 0; i < reasons.length; i++) {
-//            requestReasons.put(requestPermissions.get(i), reasons[i]);
-//        }
-//        return this;
-//    }
+    /**
+     * 新增Permission:多对一
+     *
+     * @param permissions 权限名
+     * @param reasons     请求权限对于说明
+     * @return
+     */
+    public PermissionHelper addPermission(@NonNull List<String> permissions, @NonNull List<String> reasons) {
+        if (permissions.size() != reasons.size()) {
+            throw new InvalidParameterException("权限与对应说明长度不等！");
+        }
+        requestPermissions.addAll(permissions);
+        for (int i = 0; i < permissions.size(); i++) {
+            if (!TextUtils.isEmpty(reasons.get(i))) {
+                requestReasons.put(permissions.get(i), reasons.get(i));
+            }
+        }
+
+        return this;
+    }
 
     /**
      * @param goSetting 是否跳转系统权限设置页面
