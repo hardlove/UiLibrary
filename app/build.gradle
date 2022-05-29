@@ -50,19 +50,19 @@ dependencies {
 
 
     //单独引用
-    implementation 'com.github.hardlove.UiLibrary:QRCodeView:2.2.0'
-    implementation 'com.github.hardlove.UiLibrary:CToolBar:2.2.0'
-    implementation 'com.github.hardlove.UiLibrary:VerifyCodeView:2.2.0'
-    implementation 'com.github.hardlove.UiLibrary:ResLibrary:2.2.0'
-    implementation 'com.github.hardlove.UiLibrary:Wallpaper:2.2.0'
-    implementation 'com.github.hardlove.UiLibrary:ShortCut:2.2.0'
-    implementation 'com.github.hardlove.UiLibrary:LuckDisc:2.2.0'
-    implementation 'com.github.hardlove.UiLibrary:RecordButton:2.2.0'
-    implementation 'com.github.hardlove.UiLibrary:bottom-navigation-bar:2.2.0'
-    implementation 'com.github.hardlove.UiLibrary:PermissionHelper:2.2.0'
+    implementation 'com.github.hardlove.UiLibrary:QRCodeView:2.2.1'
+    implementation 'com.github.hardlove.UiLibrary:CToolBar:2.2.1'
+    implementation 'com.github.hardlove.UiLibrary:VerifyCodeView:2.2.1'
+    implementation 'com.github.hardlove.UiLibrary:ResLibrary:2.2.1'
+    implementation 'com.github.hardlove.UiLibrary:Wallpaper:2.2.1'
+    implementation 'com.github.hardlove.UiLibrary:ShortCut:2.2.1'
+    implementation 'com.github.hardlove.UiLibrary:LuckDisc:2.2.1'
+    implementation 'com.github.hardlove.UiLibrary:RecordButton:2.2.1'
+    implementation 'com.github.hardlove.UiLibrary:bottom-navigation-bar:2.2.1'
+    implementation 'com.github.hardlove.UiLibrary:PermissionHelper:2.2.1'
 
     //全部引用
-//    implementation 'com.github.hardlove:UiLibrary:2.2.0'
+//    implementation 'com.github.hardlove:UiLibrary:2.2.1'
 
     api 'com.pangle.cn:ads-sdk-pro:4.4.0.9'
     implementation 'com.blankj:utilcodex:1.30.0'
