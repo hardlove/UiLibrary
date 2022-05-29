@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -71,7 +72,7 @@ public class PermissionHelper {
     /**
      * 要请求的权限
      */
-    private final String[] requestPermissions;
+    private final List<String> requestPermissions;
     private HashMap<String, String> requestReasons;
     /**
      * 分组申请
@@ -79,30 +80,111 @@ public class PermissionHelper {
     private boolean useGroupRequest = true;
 
 
-    public PermissionHelper(@NonNull final String... permissions) {
-        List<String> permissionList = new ArrayList<>();
-        for (String permission : permissions) {
-            permissionList.addAll(Arrays.asList(PermissionConstants.getPermissions(permission)));
-        }
-        requestPermissions = permissionList.toArray(new String[0]);
-        permissionRecords = getPermissionRequestRecords();
-    }
-
     public static PermissionHelper permission(@NonNull final String... permissions) {
-        return new PermissionHelper(permissions);
+        return new PermissionHelper(Arrays.asList(permissions), "");
     }
 
-    public PermissionHelper addReasons(@NonNull final String... reasons) {
-        if (requestPermissions.length != reasons.length) {
-            throw new InvalidParameterException("requestPermissionReasons.size() != reasons.length");
-        }
+    public static PermissionHelper permission(@NonNull String permission, @Nullable String reason) {
+        return new PermissionHelper(Collections.singletonList(permission), reason);
+    }
 
-        requestReasons = new HashMap<>();
-        for (int i = 0; i < reasons.length; i++) {
-            requestReasons.put(requestPermissions[i], reasons[i]);
+    public static PermissionHelper permission(@NonNull List<String> permissions, @Nullable String reason) {
+        return new PermissionHelper(permissions, reason);
+    }
+
+
+    public static PermissionHelper permission(@NonNull List<String> permissions, @Nullable List<String> reason) {
+        return new PermissionHelper(permissions, reason);
+    }
+
+    /**
+     * permissions-reason：多对一
+     *
+     * @param permissions
+     * @param reason
+     */
+    private PermissionHelper(@NonNull List<String> permissions, @Nullable String reason) {
+        requestPermissions = permissions;
+        permissionRecords = getPermissionRequestRecords();
+        if (!TextUtils.isEmpty(reason)) {
+            for (String permission : permissions) {
+                requestReasons.put(permission, reason);
+            }
+        }
+    }
+
+    /**
+     * permissions-reason：多对一
+     *
+     * @param permissions
+     * @param reasons
+     */
+    private PermissionHelper(@NonNull List<String> permissions, @NonNull List<String> reasons) {
+        if (permissions.size() != reasons.size()) {
+            throw new InvalidParameterException("权限和说明数量必须保持一致，一一对应！");
+        }
+        requestPermissions = permissions;
+        permissionRecords = getPermissionRequestRecords();
+        for (int i = 0; i < permissions.size(); i++) {
+            requestReasons.put(permissions.get(i), reasons.get(i));
+        }
+    }
+
+
+    /**
+     * 新增Permission
+     *
+     * @param permission 权限名
+     * @return
+     */
+    public PermissionHelper addPermission(@NonNull String permission) {
+        requestPermissions.add(permission);
+        return this;
+    }
+
+    /**
+     * 新增Permission
+     *
+     * @param permission 权限名
+     * @param reason     请求权限对于说明
+     * @return
+     */
+    public PermissionHelper addPermission(@NonNull String permission, @Nullable String reason) {
+        requestPermissions.add(permission);
+        if (!TextUtils.isEmpty(reason)) {
+            requestReasons.put(permission, reason);
         }
         return this;
     }
+
+    /**
+     * 新增Permission
+     *
+     * @param permissions 权限名
+     * @param reason      请求权限对于说明
+     * @return
+     */
+    public PermissionHelper addPermission(@NonNull List<String> permissions, @Nullable String reason) {
+        for (String permission : permissions) {
+            requestPermissions.add(permission);
+            if (!TextUtils.isEmpty(reason)) {
+                requestReasons.put(permission, reason);
+            }
+        }
+        return this;
+    }
+
+//    public PermissionHelper addReasons(@NonNull final String... reasons) {
+//        if (requestPermissions.size() != reasons.length) {
+//            throw new InvalidParameterException("requestPermissionReasons.size() != reasons.length");
+//        }
+//
+//        requestReasons = new HashMap<>();
+//        for (int i = 0; i < reasons.length; i++) {
+//            requestReasons.put(requestPermissions.get(i), reasons[i]);
+//        }
+//        return this;
+//    }
 
     /**
      * @param goSetting 是否跳转系统权限设置页面
@@ -166,7 +248,7 @@ public class PermissionHelper {
     }
 
     public void request() {
-        if (requestPermissions == null || requestPermissions.length == 0) {
+        if (requestPermissions == null || requestPermissions.size() == 0) {
             if (mFullCallback != null) {
                 mFullCallback.onGranted();
             }
@@ -179,7 +261,7 @@ public class PermissionHelper {
         Set<Map.Entry<String, Long>> entrySet = permissionRecords.entrySet();
         Iterator<Map.Entry<String, Long>> iterator = entrySet.iterator();
         //总共需要申请的权限
-        List<String> o1 = new ArrayList<>(Arrays.asList(requestPermissions));
+        List<String> o1 = new ArrayList<>(requestPermissions);
         //48小时内已经申请过的权限
         List<String> o2 = new ArrayList<>();
         if (ignore) {
@@ -202,7 +284,7 @@ public class PermissionHelper {
 
 
         if (temp == null || temp.length == 0) {
-            checkPermissionResult(Arrays.asList(requestPermissions));
+            checkPermissionResult(requestPermissions);
             return;
         }
 
@@ -278,7 +360,7 @@ public class PermissionHelper {
                                             dialog = null;
                                         }
                                         if (subscription.isEmpty()) {
-                                            checkPermissionResult(Arrays.asList(requestPermissions));
+                                            checkPermissionResult(requestPermissions);
                                         } else {
                                             subscription.request(1);
                                         }
@@ -292,7 +374,7 @@ public class PermissionHelper {
                                             dialog = null;
                                         }
                                         if (subscription.isEmpty()) {
-                                            checkPermissionResult(Arrays.asList(requestPermissions));
+                                            checkPermissionResult(requestPermissions);
                                         } else {
                                             subscription.request(1);
                                         }

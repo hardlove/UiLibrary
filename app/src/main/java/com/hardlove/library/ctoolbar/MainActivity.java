@@ -1,7 +1,6 @@
 package com.hardlove.library.ctoolbar;
 
 import android.Manifest;
-import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -11,15 +10,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.ashokvarma.bottomnavigation.imageloader.ImageLoader;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.carlos.permissionhelper.PermissionHelper;
@@ -32,6 +28,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -66,28 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-//        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},1)
-//        ;
-
-
-        PermissionHelper.permission(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .ignoreRequestedIn48H(false)
-                .addReasons("1111111111111111", "222222222222","33333333333","4444444444444")
-                .callback(new PermissionHelper.SimpleCallback() {
-                    @Override
-                    public void onGranted() {
-                        LogUtils.d("onGranted~~~~~~~~~");
-                    }
-
-                    @Override
-                    public void onDenied() {
-                        LogUtils.d("onDenied~~~~~~~~~");
-                    }
-                })
-                .request();
 
 
         // 2. groupBy(Function(T,R)，Function(T,R))
@@ -245,8 +220,10 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        PermissionHelper.permission(Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                .addReasons("<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能", "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告", "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级")
+                        PermissionHelper
+                                .permission(Manifest.permission.RECORD_AUDIO, "<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能")
+                                .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告")
+                                .addPermission(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级")
                                 .callback(new PermissionHelper.SimpleCallback() {
                                     @Override
                                     public void onGranted() {
@@ -267,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     @Override
-                                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied,@NonNull List<String> granted) {
+                                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted) {
                                         LogUtils.dTag("XXX", "FullCallback onDenied~~~~~deniedForever：" + GsonUtils.toJson(deniedForever) + "   denied：" + GsonUtils.toJson(denied));
 
                                     }
