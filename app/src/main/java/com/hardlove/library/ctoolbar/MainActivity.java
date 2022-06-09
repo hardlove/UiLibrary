@@ -263,8 +263,13 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        PermissionHelper.permission(Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                .addReasons("<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能语言翻译需要使用录音功能语言翻译需要使用录音功能语言翻译需要使用录音功能", "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告", "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级")
+                        PermissionHelper
+                                .builder()
+                                .addPermission(Manifest.permission.RECORD_AUDIO, "<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能")
+                                .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告")
+                                .addPermission(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级")
+                                .addPermission(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.CALL_PHONE, Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE),
+                                        Arrays.asList("照相机权限使用说明<br>.............", "打电话机权限使用说明<br>.............", "发短信权限使用说明<br>.............", "设备信息权限使用说明<br>............."))
                                 .setSplit(true)
                                 .setCancelTextColor(Color.parseColor("#00000000"))
                                 .setConfirmTextColor(Color.parseColor("#FF0000"))

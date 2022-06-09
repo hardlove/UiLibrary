@@ -21,7 +21,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -66,6 +65,7 @@ public class PermissionHelper {
     private boolean goSetting;//跳转系统权限设置页面
     private CharSequence goSettingMsg;//跳转系统权限设置页面弹框描述内容
     private boolean isSplit;//权限说明和权限请求是否分离(即：申请权限前先弹框询问用户是否同意申请)
+
     /**
      * 权限申请记录
      */
@@ -88,9 +88,9 @@ public class PermissionHelper {
     }
 
     /**
-     * @see #builder()
      * @param permissions
      * @return
+     * @see #builder()
      */
     @Deprecated
     public static PermissionHelper permission(@NonNull final String... permissions) {
@@ -212,10 +212,21 @@ public class PermissionHelper {
         return this;
     }
 
-    public PermissionHelper setSplit(boolean isSplit) {
-        this.isSplit = isSplit;
+    public PermissionHelper setSplit(boolean split) {
+        this.isSplit = split;
         return this;
     }
+
+    public PermissionHelper setCancelTextColor(int cancelTextColor) {
+        this.cancelTextColor = cancelTextColor;
+        return this;
+    }
+
+    public PermissionHelper setConfirmTextColor(int confirmTextColor) {
+        this.confirmTextColor = confirmTextColor;
+        return this;
+    }
+
 
     /**
      * 获取权限申请记录
@@ -296,8 +307,8 @@ public class PermissionHelper {
                     if (useGroupRequest) {
                         // TODO: 2022/5/28 将权限分组
                         try {
-                            String[] split = permission.split("_");
-                            String key = split[split.length - 1];
+                            String[] spl = permission.split("_");
+                            String key = spl[spl.length - 1];
                             return key;
                         } catch (Exception e) {
                             return permission;
@@ -322,104 +333,99 @@ public class PermissionHelper {
                     }
 
                     @Override
-                    public void onNext(List<String> permission) {
-                        LogUtils.dTag("XXX", "onNext~~~~~~~" + permission);
+                    public void onNext(List<String> permissionList) {
+                        LogUtils.dTag("XXX", "onNext~~~~~~~" + permissionList);
 
-
-                        if (requestReasons != null) {
-                            String reason = requestReasons.get(permission.get(0));
-                            if (!TextUtils.isEmpty(reason)) {
-                                if (dialog == null) {
-                                    dialog = showReasonDialog(currentActivity, reason);
-                                } else {
-                                    dialog.updateReason(reason);
-                                }
-                                dialog.hide();
-                                dialog.tvReason.postDelayed(() -> {
-                                    if (dialog != null) {
-                                        dialog.show();
-                                    }
-                                }, 500);
-                            }
-                        }
-
-                        //还有其它需要申请的权限，添加权限请求记录
+                        //添加到权限申请记录到文件
                         if (ignore) {
-                            addRequestedPermission(permission);
+                            addRequestedPermission(permissionList.toArray(new String[0]));
+                        }
+                        //添加到权限申请记录到内存
+                        for (String s : permissionList) {
+                            permissionRecords.put(s, System.currentTimeMillis());
                         }
 
                         if (isSplit) {
                             //分离式请求
                             if (requestReasons != null) {
-                                String reason = requestReasons.get(permission);
+                                String reason = requestReasons.get(permissionList.get(0));
                                 if (!TextUtils.isEmpty(reason)) {
-                                    if (selectDialog == null) {
-                                        selectDialog = showReasonSelectDialog(currentActivity, reason, cancelTextColor, confirmTextColor);
-                                        selectDialog.setOnDialogClickListener(new ReasonSelectDialog.OnDialogClickListener() {
-                                            @Override
-                                            public void onCancel() {
-                                                //用户选择取消，视为拒绝申请申请
-                                                if (selectDialog.isShowing()) {
-                                                    selectDialog.dismiss();
-                                                }
-                                                selectDialog = null;
-
-                                                if (subscription.isEmpty()) {
-                                                    checkPermissionResult(Arrays.asList(requestPermissions));
-                                                } else {
-                                                    subscription.request(1);
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onConfirm() {
-                                                if (selectDialog.isShowing()) {
-                                                    selectDialog.dismiss();
-                                                }
-                                                selectDialog = null;
-                                                //用户选择同意请求权限
-                                                performRequestPermission(permission);
-
-                                            }
-                                        });
+                                    if (selectDialog != null && selectDialog.isShowing()) {
+                                        selectDialog.dismiss();
+                                        selectDialog = null;
                                     }
+                                    selectDialog = showReasonSelectDialog(currentActivity, reason, cancelTextColor, confirmTextColor);
+                                    selectDialog.setOnDialogClickListener(new ReasonSelectDialog.OnDialogClickListener() {
+                                        @Override
+                                        public void onCancel() {
+                                            if (selectDialog != null && selectDialog.isShowing()) {
+                                                selectDialog.dismiss();
+                                            }
+                                            selectDialog = null;
+
+                                            //下一个
+                                            if (subscription.isEmpty()) {
+                                                checkPermissionResult(requestPermissions);
+                                            } else {
+                                                subscription.request(1);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onConfirm() {
+                                            if (selectDialog != null && selectDialog.isShowing()) {
+                                                selectDialog.dismiss();
+                                            }
+                                            selectDialog = null;
+
+                                            performRequestPermission(permissionList);
+                                        }
+                                    });
+
 
                                 } else {
-                                    //没有请求权限说明，直接发起请求
-                                    performRequestPermission(permission);
+                                    performRequestPermission(permissionList);
                                 }
                             } else {
-                                //没有请求权限说明，直接发起请求
-                                performRequestPermission(permission);
+                                performRequestPermission(permissionList);
                             }
-
                         } else {
                             //非分离式请求
                             if (requestReasons != null) {
-                                String reason = requestReasons.get(permission);
+                                String reason = requestReasons.get(permissionList.get(0));
                                 if (!TextUtils.isEmpty(reason)) {
                                     if (simpleDialog == null) {
                                         simpleDialog = showReasonSimpleDialog(currentActivity, reason);
                                     } else {
                                         simpleDialog.updateReason(reason);
                                     }
+                                    simpleDialog.hide();
+                                    simpleDialog.tvReason.postDelayed(() -> {
+                                        if (simpleDialog != null) {
+                                            simpleDialog.show();
+                                        }
+                                    }, 500);
                                 }
                             }
-                            performRequestPermission(permission);
+
+
+                            performRequestPermission(permissionList);
                         }
+
+
                     }
 
-                    private void performRequestPermission(String permission) {
-                        PermissionUtils.permission(permission)
+                    private void performRequestPermission(List<String> permission) {
+                        PermissionUtils.permission(permission.toArray(new String[0]))
                                 .callback(new PermissionUtils.SimpleCallback() {
                                     @Override
                                     public void onGranted() {
+                                        if (simpleDialog != null) {
+                                            simpleDialog.dismiss();
+                                            simpleDialog = null;
+                                        }
                                         if (subscription.isEmpty()) {
-                                            if (simpleDialog != null) {
-                                                simpleDialog.dismiss();
-                                                simpleDialog = null;
-                                            }
-                                            checkPermissionResult(Arrays.asList(requestPermissions));
+                                            checkPermissionResult(requestPermissions);
                                         } else {
                                             subscription.request(1);
                                         }
@@ -428,12 +434,12 @@ public class PermissionHelper {
 
                                     @Override
                                     public void onDenied() {
+                                        if (simpleDialog != null) {
+                                            simpleDialog.dismiss();
+                                            simpleDialog = null;
+                                        }
                                         if (subscription.isEmpty()) {
-                                            if (simpleDialog != null) {
-                                                simpleDialog.dismiss();
-                                                simpleDialog = null;
-                                            }
-                                            checkPermissionResult(Arrays.asList(requestPermissions));
+                                            checkPermissionResult(requestPermissions);
                                         } else {
                                             subscription.request(1);
                                         }
@@ -538,16 +544,6 @@ public class PermissionHelper {
      */
     public PermissionHelper callback(final FullCallback callback) {
         mFullCallback = callback;
-        return this;
-    }
-
-    public PermissionHelper setCancelTextColor(int cancelTextColor) {
-        this.cancelTextColor = cancelTextColor;
-        return this;
-    }
-
-    public PermissionHelper setConfirmTextColor(int confirmTextColor) {
-        this.confirmTextColor = confirmTextColor;
         return this;
     }
 
@@ -727,6 +723,7 @@ public class PermissionHelper {
         dialog.show();
         return dialog;
     }
+
 
     /**
      * 判断是否具有某权限
