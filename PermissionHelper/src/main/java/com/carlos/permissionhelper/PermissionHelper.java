@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -29,6 +30,7 @@ import com.blankj.utilcode.util.SPStaticUtils;
 import com.blankj.utilcode.util.Utils;
 import com.google.gson.reflect.TypeToken;
 
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.security.InvalidParameterException;
@@ -43,10 +45,20 @@ import java.util.Set;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.flowables.GroupedFlowable;
+import io.reactivex.functions.Function;
 import io.reactivex.internal.fuseable.QueueSubscription;
 import io.reactivex.schedulers.Schedulers;
 
 public class PermissionHelper {
+    private static final String[] GROUP_CALENDAR = new String[]{"android.permission.READ_CALENDAR", "android.permission.WRITE_CALENDAR"};
+    private static final String[] GROUP_CONTACTS = new String[]{"android.permission.READ_CONTACTS", "android.permission.WRITE_CONTACTS", "android.permission.GET_ACCOUNTS"};
+    private static final String[] GROUP_LOCATION = new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"};
+    private static final String[] GROUP_PHONE = new String[]{"android.permission.READ_PHONE_STATE", "android.permission.READ_PHONE_NUMBERS", "android.permission.CALL_PHONE", "android.permission.READ_CALL_LOG", "android.permission.WRITE_CALL_LOG", "com.android.voicemail.permission.ADD_VOICEMAIL", "android.permission.USE_SIP", "android.permission.PROCESS_OUTGOING_CALLS", "android.permission.ANSWER_PHONE_CALLS"};
+    private static final String[] GROUP_SMS = new String[]{"android.permission.SEND_SMS", "android.permission.RECEIVE_SMS", "android.permission.READ_SMS", "android.permission.RECEIVE_WAP_PUSH", "android.permission.RECEIVE_MMS"};
+    private static final String[] GROUP_STORAGE = new String[]{"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
+
+
     private final static String PERMISSION_REQUEST_RECORD = "PERMISSION_REQUEST_RECORD";
     private SimpleCallback mSimpleCallback;
     private FullCallback mFullCallback;
@@ -61,34 +73,113 @@ public class PermissionHelper {
     /**
      * 要请求的权限
      */
-    private final String[] requestPermissions;
+    private final List<String> requestPermissions;
     private HashMap<String, String> requestReasons;
+    /**
+     * 分组申请
+     */
+    private boolean useGroupRequest = true;
     private int cancelTextColor;
     private int confirmTextColor;
 
 
-    public PermissionHelper(@NonNull final String... permissions) {
-        List<String> permissionList = new ArrayList<>();
-        for (String permission : permissions) {
-            permissionList.addAll(Arrays.asList(PermissionConstants.getPermissions(permission)));
-        }
-        requestPermissions = permissionList.toArray(new String[0]);
-        permissionRecords = getPermissionRequestRecords();
+    public static PermissionHelper builder() {
+        return new PermissionHelper();
     }
 
+    /**
+     * @see #builder()
+     * @param permissions
+     * @return
+     */
+    @Deprecated
     public static PermissionHelper permission(@NonNull final String... permissions) {
-        return new PermissionHelper(permissions);
+        return builder().addPermission(permissions);
     }
 
+    @Deprecated
     public PermissionHelper addReasons(@NonNull final String... reasons) {
-        if (requestPermissions.length != reasons.length) {
+        if (requestPermissions.size() != reasons.length) {
             throw new InvalidParameterException("requestPermissionReasons.size() != reasons.length");
         }
 
-        requestReasons = new HashMap<>();
-        for (int i = 0; i < reasons.length; i++) {
-            requestReasons.put(requestPermissions[i], reasons[i]);
+        if (requestReasons == null) {
+            requestReasons = new HashMap<>();
         }
+        for (int i = 0; i < reasons.length; i++) {
+            requestReasons.put(requestPermissions.get(i), reasons[i]);
+        }
+        return this;
+    }
+
+    private PermissionHelper() {
+        requestPermissions = new ArrayList<>();
+        requestReasons = new HashMap<>();
+        permissionRecords = getPermissionRequestRecords();
+    }
+
+
+    /**
+     * 新增Permission
+     *
+     * @param permissions 权限名
+     * @return
+     */
+    public PermissionHelper addPermission(@NonNull String... permissions) {
+        requestPermissions.addAll(Arrays.asList(permissions));
+        return this;
+    }
+
+    /**
+     * 新增Permission：一对一
+     *
+     * @param permission 权限名
+     * @param reason     请求权限对于说明
+     * @return
+     */
+    public PermissionHelper addPermission(@NonNull String permission, @Nullable String reason) {
+        requestPermissions.add(permission);
+        if (!TextUtils.isEmpty(reason)) {
+            requestReasons.put(permission, reason);
+        }
+        return this;
+    }
+
+    /**
+     * 新增Permission:多对一
+     *
+     * @param permissions 权限名
+     * @param reason      请求权限对于说明
+     * @return
+     */
+    public PermissionHelper addPermission(@NonNull List<String> permissions, @Nullable String reason) {
+        for (String permission : permissions) {
+            requestPermissions.add(permission);
+            if (!TextUtils.isEmpty(reason)) {
+                requestReasons.put(permission, reason);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * 新增Permission:多对一
+     *
+     * @param permissions 权限名
+     * @param reasons     请求权限对于说明
+     * @return
+     */
+    public PermissionHelper addPermission(@NonNull List<String> permissions, @NonNull List<String> reasons) {
+        if (permissions.size() != reasons.size()) {
+            throw new InvalidParameterException("权限与对应说明长度不等！");
+        }
+        requestPermissions.addAll(permissions);
+        for (int i = 0; i < permissions.size(); i++) {
+            if (!TextUtils.isEmpty(reasons.get(i))) {
+                requestReasons.put(permissions.get(i), reasons.get(i));
+            }
+        }
+
         return this;
     }
 
@@ -107,6 +198,17 @@ public class PermissionHelper {
      */
     public PermissionHelper goSettingMsg(CharSequence sequence) {
         this.goSettingMsg = sequence;
+        return this;
+    }
+
+    /**
+     * 禁止分组申请，即按单个权限申请
+     *
+     * @param disable
+     * @return
+     */
+    public PermissionHelper disableGroupRequest(boolean disable) {
+        this.useGroupRequest = !disable;
         return this;
     }
 
@@ -148,7 +250,7 @@ public class PermissionHelper {
     }
 
     public void request() {
-        if (requestPermissions == null || requestPermissions.length == 0) {
+        if (requestPermissions == null || requestPermissions.size() == 0) {
             if (mFullCallback != null) {
                 mFullCallback.onGranted();
             }
@@ -161,7 +263,7 @@ public class PermissionHelper {
         Set<Map.Entry<String, Long>> entrySet = permissionRecords.entrySet();
         Iterator<Map.Entry<String, Long>> iterator = entrySet.iterator();
         //总共需要申请的权限
-        List<String> o1 = new ArrayList<>(Arrays.asList(requestPermissions));
+        List<String> o1 = new ArrayList<>(requestPermissions);
         //48小时内已经申请过的权限
         List<String> o2 = new ArrayList<>();
         if (ignore) {
@@ -184,15 +286,30 @@ public class PermissionHelper {
 
 
         if (temp == null || temp.length == 0) {
-            checkPermissionResult(Arrays.asList(requestPermissions));
-
+            checkPermissionResult(requestPermissions);
             return;
         }
 
         Flowable.fromArray(temp)
+                // TODO: 2022/5/28 分组后再请求权限:同一group类的permission是否已有被拒绝的，如果有则不再申请该group类的权限
+                .groupBy(permission -> {
+                    if (useGroupRequest) {
+                        // TODO: 2022/5/28 将权限分组
+                        try {
+                            String[] split = permission.split("_");
+                            String key = split[split.length - 1];
+                            return key;
+                        } catch (Exception e) {
+                            return permission;
+                        }
+                    } else {
+                        return permission;
+                    }
+                })
+                .flatMap((Function<GroupedFlowable<String, String>, Publisher<List<String>>>) groupedFlowable -> groupedFlowable.toList().toFlowable())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FlowableSubscriber<String>() {
+                .subscribe(new FlowableSubscriber<List<String>>() {
                     QueueSubscription<String> subscription;
                     ReasonSimpleDialog simpleDialog;
                     ReasonSelectDialog selectDialog;
@@ -205,8 +322,26 @@ public class PermissionHelper {
                     }
 
                     @Override
-                    public void onNext(String permission) {
+                    public void onNext(List<String> permission) {
                         LogUtils.dTag("XXX", "onNext~~~~~~~" + permission);
+
+
+                        if (requestReasons != null) {
+                            String reason = requestReasons.get(permission.get(0));
+                            if (!TextUtils.isEmpty(reason)) {
+                                if (dialog == null) {
+                                    dialog = showReasonDialog(currentActivity, reason);
+                                } else {
+                                    dialog.updateReason(reason);
+                                }
+                                dialog.hide();
+                                dialog.tvReason.postDelayed(() -> {
+                                    if (dialog != null) {
+                                        dialog.show();
+                                    }
+                                }, 500);
+                            }
+                        }
 
                         //还有其它需要申请的权限，添加权限请求记录
                         if (ignore) {
