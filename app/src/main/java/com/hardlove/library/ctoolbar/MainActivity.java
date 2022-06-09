@@ -3,6 +3,7 @@ package com.hardlove.library.ctoolbar;
 import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -129,12 +130,52 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     @Override
-                                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied,@NonNull List<String> granted) {
+                                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted) {
                                         LogUtils.dTag("XXX", "FullCallback onDenied~~~~~deniedForever：" + GsonUtils.toJson(deniedForever) + "   denied：" + GsonUtils.toJson(denied));
 
                                     }
                                 })
                                 .request();
+
+                    }
+                });
+
+        findViewById(R.id.btn_permission_split)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PermissionHelper.permission(Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                .addReasons("<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能语言翻译需要使用录音功能语言翻译需要使用录音功能语言翻译需要使用录音功能", "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告", "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级")
+                                .setSplit(true)
+                                .setCancelTextColor(Color.parseColor("#00000000"))
+                                .setConfirmTextColor(Color.parseColor("#FF0000"))
+                                .callback(new PermissionHelper.SimpleCallback() {
+                                    @Override
+                                    public void onGranted() {
+                                        LogUtils.dTag("XXX", "SimpleCallback  onGranted~~~~~");
+                                        ToastUtils.showShort("已授予全部权限");
+                                    }
+
+                                    @Override
+                                    public void onDenied() {
+                                        LogUtils.dTag("XXX", "SimpleCallback onDenied~~~~~");
+                                        ToastUtils.showShort("部分或全部权限拒绝");
+                                    }
+                                })
+                                .callback(new PermissionHelper.FullCallback() {
+                                    @Override
+                                    public void onGranted() {
+                                        LogUtils.dTag("XXX", "FullCallback onGranted~~~~~");
+                                    }
+
+                                    @Override
+                                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted) {
+                                        LogUtils.dTag("XXX", "FullCallback onDenied~~~~~deniedForever：" + GsonUtils.toJson(deniedForever) + "   denied：" + GsonUtils.toJson(denied));
+
+                                    }
+                                })
+                                .request();
+
                     }
                 });
 

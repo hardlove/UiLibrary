@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,7 +34,6 @@ import org.reactivestreams.Subscription;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -53,6 +53,7 @@ public class PermissionHelper {
     private boolean ignore = true;//48小时内请求过的权限不再重复请求
     private boolean goSetting;//跳转系统权限设置页面
     private CharSequence goSettingMsg;//跳转系统权限设置页面弹框描述内容
+    private boolean isSplit;//权限说明和权限请求是否分离(即：申请权限前先弹框询问用户是否同意申请)
     /**
      * 权限申请记录
      */
@@ -62,6 +63,8 @@ public class PermissionHelper {
      */
     private final String[] requestPermissions;
     private HashMap<String, String> requestReasons;
+    private int cancelTextColor;
+    private int confirmTextColor;
 
 
     public PermissionHelper(@NonNull final String... permissions) {
@@ -104,6 +107,11 @@ public class PermissionHelper {
      */
     public PermissionHelper goSettingMsg(CharSequence sequence) {
         this.goSettingMsg = sequence;
+        return this;
+    }
+
+    public PermissionHelper setSplit(boolean isSplit) {
+        this.isSplit = isSplit;
         return this;
     }
 
@@ -186,7 +194,8 @@ public class PermissionHelper {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new FlowableSubscriber<String>() {
                     QueueSubscription<String> subscription;
-                    ReasonDialog dialog;
+                    ReasonSimpleDialog simpleDialog;
+                    ReasonSelectDialog selectDialog;
                     final FragmentActivity currentActivity = (FragmentActivity) ActivityUtils.getTopActivity();
 
                     @Override
@@ -198,30 +207,82 @@ public class PermissionHelper {
                     @Override
                     public void onNext(String permission) {
                         LogUtils.dTag("XXX", "onNext~~~~~~~" + permission);
-                        if (requestReasons != null) {
-                            String reason = requestReasons.get(permission);
-                            if (!TextUtils.isEmpty(reason)) {
-                                if (dialog == null) {
-                                    dialog = showReasonDialog(currentActivity, reason);
-                                } else {
-                                    dialog.updateReason(reason);
-                                }
-                            }
-                        }
-
 
                         //还有其它需要申请的权限，添加权限请求记录
                         if (ignore) {
                             addRequestedPermission(permission);
                         }
+
+                        if (isSplit) {
+                            //分离式请求
+                            if (requestReasons != null) {
+                                String reason = requestReasons.get(permission);
+                                if (!TextUtils.isEmpty(reason)) {
+                                    if (selectDialog == null) {
+                                        selectDialog = showReasonSelectDialog(currentActivity, reason, cancelTextColor, confirmTextColor);
+                                        selectDialog.setOnDialogClickListener(new ReasonSelectDialog.OnDialogClickListener() {
+                                            @Override
+                                            public void onCancel() {
+                                                //用户选择取消，视为拒绝申请申请
+                                                if (selectDialog.isShowing()) {
+                                                    selectDialog.dismiss();
+                                                }
+                                                selectDialog = null;
+
+                                                if (subscription.isEmpty()) {
+                                                    checkPermissionResult(Arrays.asList(requestPermissions));
+                                                } else {
+                                                    subscription.request(1);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onConfirm() {
+                                                if (selectDialog.isShowing()) {
+                                                    selectDialog.dismiss();
+                                                }
+                                                selectDialog = null;
+                                                //用户选择同意请求权限
+                                                performRequestPermission(permission);
+
+                                            }
+                                        });
+                                    }
+
+                                } else {
+                                    //没有请求权限说明，直接发起请求
+                                    performRequestPermission(permission);
+                                }
+                            } else {
+                                //没有请求权限说明，直接发起请求
+                                performRequestPermission(permission);
+                            }
+
+                        } else {
+                            //非分离式请求
+                            if (requestReasons != null) {
+                                String reason = requestReasons.get(permission);
+                                if (!TextUtils.isEmpty(reason)) {
+                                    if (simpleDialog == null) {
+                                        simpleDialog = showReasonSimpleDialog(currentActivity, reason);
+                                    } else {
+                                        simpleDialog.updateReason(reason);
+                                    }
+                                }
+                            }
+                            performRequestPermission(permission);
+                        }
+                    }
+
+                    private void performRequestPermission(String permission) {
                         PermissionUtils.permission(permission)
                                 .callback(new PermissionUtils.SimpleCallback() {
                                     @Override
                                     public void onGranted() {
                                         if (subscription.isEmpty()) {
-                                            if (dialog != null) {
-                                                dialog.dismiss();
-                                                dialog = null;
+                                            if (simpleDialog != null) {
+                                                simpleDialog.dismiss();
+                                                simpleDialog = null;
                                             }
                                             checkPermissionResult(Arrays.asList(requestPermissions));
                                         } else {
@@ -233,9 +294,9 @@ public class PermissionHelper {
                                     @Override
                                     public void onDenied() {
                                         if (subscription.isEmpty()) {
-                                            if (dialog != null) {
-                                                dialog.dismiss();
-                                                dialog = null;
+                                            if (simpleDialog != null) {
+                                                simpleDialog.dismiss();
+                                                simpleDialog = null;
                                             }
                                             checkPermissionResult(Arrays.asList(requestPermissions));
                                         } else {
@@ -345,6 +406,16 @@ public class PermissionHelper {
         return this;
     }
 
+    public PermissionHelper setCancelTextColor(int cancelTextColor) {
+        this.cancelTextColor = cancelTextColor;
+        return this;
+    }
+
+    public PermissionHelper setConfirmTextColor(int confirmTextColor) {
+        this.confirmTextColor = confirmTextColor;
+        return this;
+    }
+
 
     public interface FullCallback {
         /**
@@ -354,9 +425,10 @@ public class PermissionHelper {
 
         /**
          * 部分权限被拒绝
+         *
          * @param deniedForever 被永久拒绝
-         * @param denied 被拒绝
-         * @param granted 已经授予
+         * @param denied        被拒绝
+         * @param granted       已经授予
          */
         void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted);
     }
@@ -373,11 +445,11 @@ public class PermissionHelper {
         void onDenied();
     }
 
-    public static class ReasonDialog extends Dialog {
+    public static class ReasonSimpleDialog extends Dialog {
         private TextView tvReason;
         private String reason;
 
-        public ReasonDialog(@NonNull Context context, String reason) {
+        public ReasonSimpleDialog(@NonNull Context context, String reason) {
             super(context);
             this.reason = reason;
             setContentView(R.layout.dialog_permission_reason);
@@ -406,8 +478,8 @@ public class PermissionHelper {
             }
         }
 
-        public static ReasonDialog newInstance(Context context, String reason) {
-            return new ReasonDialog(context, reason);
+        public static ReasonSimpleDialog newInstance(Context context, String reason) {
+            return new ReasonSimpleDialog(context, reason);
         }
 
         public void updateReason(String reason) {
@@ -418,8 +490,103 @@ public class PermissionHelper {
 
     }
 
-    public static ReasonDialog showReasonDialog(FragmentActivity activity, String reason) {
-        ReasonDialog dialog = ReasonDialog.newInstance(activity, reason);
+    public static ReasonSimpleDialog showReasonSimpleDialog(FragmentActivity activity, String reason) {
+        ReasonSimpleDialog dialog = ReasonSimpleDialog.newInstance(activity, reason);
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        return dialog;
+    }
+
+    public static class ReasonSelectDialog extends Dialog {
+        private TextView tvReason;
+        private Button btnCancel;
+        private Button btnConfirm;
+        private String reason;
+        private int cancelTextColor;
+        private int confirmTextColor;
+
+        public ReasonSelectDialog(@NonNull Context context, String reason, int cancelTextColor, int confirmTextColor) {
+            super(context);
+            this.reason = reason;
+            this.cancelTextColor = cancelTextColor;
+            this.confirmTextColor = confirmTextColor;
+            setContentView(R.layout.dialog_permission_reason_select);
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            tvReason = findViewById(R.id.tv_reason);
+            btnCancel = findViewById(R.id.btn_cancel);
+            btnConfirm = findViewById(R.id.btn_confirm);
+
+            tvReason.setText(Html.fromHtml(reason));
+            if (cancelTextColor != 0) {
+                btnCancel.setTextColor(cancelTextColor);
+            }
+            if (confirmTextColor != 0) {
+                btnConfirm.setTextColor(confirmTextColor);
+            }
+
+            btnCancel.setOnClickListener(v -> {
+                dismiss();
+                if (listener != null) {
+                    listener.onCancel();
+                }
+            });
+            btnConfirm.setOnClickListener(v -> {
+                dismiss();
+                if (listener != null) {
+                    listener.onConfirm();
+                }
+            });
+
+
+        }
+
+        @Override
+        public void show() {
+            super.show();
+            Window window = getWindow();
+            if (window != null) {
+                DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+                WindowManager.LayoutParams params = window.getAttributes();
+                params.gravity = Gravity.CENTER;
+                params.width = (int) (displayMetrics.widthPixels * 1.0f);
+                window.setBackgroundDrawable(new ColorDrawable(0x00000000));
+                window.setAttributes(params);
+            }
+        }
+
+        public static ReasonSelectDialog newInstance(Context context, String reason, int cancelTextColor, int confirmTextColor) {
+            return new ReasonSelectDialog(context, reason, cancelTextColor, confirmTextColor);
+        }
+
+        public void updateReason(String reason) {
+            if (tvReason != null) {
+                tvReason.setText(Html.fromHtml(reason));
+            }
+        }
+
+        public void setOnDialogClickListener(OnDialogClickListener listener) {
+            this.listener = listener;
+        }
+
+        private OnDialogClickListener listener;
+
+        public interface OnDialogClickListener {
+            void onCancel();
+
+            void onConfirm();
+        }
+
+
+    }
+
+    public static ReasonSelectDialog showReasonSelectDialog(FragmentActivity activity, String reason, int cancelTextColor, int confirmTextColor) {
+        ReasonSelectDialog dialog = ReasonSelectDialog.newInstance(activity, reason, cancelTextColor, confirmTextColor);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
