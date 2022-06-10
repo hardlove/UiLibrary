@@ -212,16 +212,31 @@ public class PermissionHelper {
         return this;
     }
 
+    /**
+     * 设置是否是分离式请求
+     * @param split true:分离式（即：在请求之前先弹框询问用户是否同意请求权限申请）  false：非分离式（即：不询问用户是否请求权限，而是在请求权限的同时在顶部弹窗说明请求权限原因）
+     * @return
+     */
     public PermissionHelper setSplit(boolean split) {
         this.isSplit = split;
         return this;
     }
 
+    /**
+     * 设置取消按钮文字颜色
+     * @param cancelTextColor
+     * @return
+     */
     public PermissionHelper setCancelTextColor(int cancelTextColor) {
         this.cancelTextColor = cancelTextColor;
         return this;
     }
 
+    /**
+     * 设置确定按钮文字颜色
+     * @param confirmTextColor
+     * @return
+     */
     public PermissionHelper setConfirmTextColor(int confirmTextColor) {
         this.confirmTextColor = confirmTextColor;
         return this;
