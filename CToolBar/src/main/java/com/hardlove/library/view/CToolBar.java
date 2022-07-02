@@ -98,6 +98,9 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private int c_center_tv_text_color;
     private int c_center_tv_text_size;
     private float c_center_tv_text_alpha_press;
+    private int c_center_iv_icon;
+    private int c_center_iv_icon_color;
+    private float c_center_iv_icon_alpha_press;
     private int c_center_other_layout;
     private String c_right_tv1_text;
     private int c_right_tv1_text_color;
@@ -204,7 +207,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     public CToolBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr);
-        setBackgroundColor(c_bar_background);
+
     }
 
 
@@ -218,6 +221,8 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     @Override
     public void setBackgroundResource(int resid) {
         root.setBackgroundResource(resid);
+        statusBar.setBackgroundResource(resid);
+        custom_layer.setBackgroundResource(resid);
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -229,6 +234,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         addView(title, params);
         findViews(title);
         initViews();
+        adjustChildMargins();
 
         views = new View[]{tv_left_back, left_tv, left_iv, center_tv, center_iv, right_tv1, right_iv1, right_tv2, right_iv2, right_tv3, right_iv3};
         settings = new Object[]{tv_left_back_settings, left_tv_settings, left_iv_settings, center_tv_settings, center_iv_settings, right_tv1_settings, right_iv1_settings, right_tv2_settings, right_iv2_settings, right_tv3_settings, right_iv3_settings};
@@ -251,12 +257,28 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
     }
 
+    private void adjustChildMargins() {
+        int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            View child = getChildAt(i);
+            if (addStatusBar && statusBar.getVisibility() == VISIBLE) {
+                MarginLayoutParams params = (MarginLayoutParams) child.getLayoutParams();
+                params.topMargin += statusBar.getHeight();
+                Log.e("XXXXXXXX", "statusBar.getHeight():" + statusBar.getHeight());
+                child.setLayoutParams(params);
+            }
+        }
+    }
+
     private void initViews() {
         tv_left_back.setMinWidth(c_left_back_min_width);
         tv_left_back.setGravity(Gravity.CENTER);
         showBackView(c_show_back);
         bottom_line.setVisibility(c_show_bottom_line ? VISIBLE : GONE);
         bottom_line.setBackgroundColor(c_bottom_line_color);
+        statusBar.setBackgroundColor(status_bar_color);
+        custom_layer.setBackgroundColor(custom_layer_color);
+        root.setBackgroundColor(c_bar_background);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4及以上支持
             statusBar.setVisibility(addStatusBar ? VISIBLE : GONE);
         } else {
@@ -845,7 +867,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
     }
 
-    public void setupWithScrollView(NestedScrollView nestedScrollView,View headView, int reverseColor) {
+    public void setupWithScrollView(NestedScrollView nestedScrollView, View headView, int reverseColor) {
 
     }
 
@@ -1130,6 +1152,15 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         center_tv_settings.setMarging(0, 0, 0, 0);
         center_tv_settings.setIsShow(c_show_center_tv);
         c_center_other_layout = array.getResourceId(R.styleable.CToolBar_c_center_other_layout, -1);
+
+
+        c_center_iv_icon = array.getResourceId(R.styleable.CToolBar_c_center_iv_icon, -1);
+        c_center_iv_icon_color = array.getColor(R.styleable.CToolBar_c_center_iv_icon_color, DEFAULT_ICON_COLOR);
+        c_center_iv_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_center_iv_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
+        center_iv_settings = new ImageViewSettings(c_center_iv_icon, c_center_iv_icon_color, c_center_iv_icon_alpha_press);
+        center_iv_settings.setPadding(0, 0, 0, 0);
+        center_iv_settings.setMarging(0, 0, 0, 0);
+        center_iv_settings.setIsShow(c_show_center_iv);
 
         c_right_tv1_text = array.getString(R.styleable.CToolBar_c_right_tv1_text);
         c_right_tv1_text_color = array.getColor(R.styleable.CToolBar_c_right_tv1_text_color, DEFAULT_TEXT_COLOR);

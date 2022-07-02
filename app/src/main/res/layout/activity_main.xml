@@ -48,11 +48,24 @@
             <com.hardlove.library.view.CToolBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:c_add_status_bar="false"
+                app:c_add_status_bar="true"
+                app:c_status_bar_color="@color/colorAccent"
+                app:c_custom_layer_color="@color/color_00BFFF"
+                app:c_bar_background="@color/color_00BFFF"
                 app:c_center_tv_text="我是标题"
                 app:c_right_iv1_icon="@drawable/ic_header"
                 app:c_show_back="true"
-                app:c_show_right_iv1="true" />
+                app:c_show_right_iv1="true" >
+
+                <TextView
+                    android:background="@color/common_res_color_label_text_accent"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:gravity="center"
+                    android:text="我"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+            </com.hardlove.library.view.CToolBar>
 
 
             <com.hardlove.library.view.CToolBar

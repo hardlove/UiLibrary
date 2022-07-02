@@ -33,7 +33,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
 //    implementation project(path: ':QRCodeView')
-//    implementation project(path: ':CToolBar')
+    implementation project(path: ':CToolBar')
 //    implementation project(path: ':VerifyCodeView')
 //    implementation project(path: ':ResLibrary')
 //    implementation project(path: ':Wallpaper')
@@ -51,7 +51,7 @@ dependencies {
 
     //单独引用
     implementation 'com.github.hardlove.UiLibrary:QRCodeView:2.2.2'
-    implementation 'com.github.hardlove.UiLibrary:CToolBar:2.2.2'
+//    implementation 'com.github.hardlove.UiLibrary:CToolBar:2.2.2'
     implementation 'com.github.hardlove.UiLibrary:VerifyCodeView:2.2.2'
     implementation 'com.github.hardlove.UiLibrary:ResLibrary:2.2.2'
     implementation 'com.github.hardlove.UiLibrary:Wallpaper:2.2.2'

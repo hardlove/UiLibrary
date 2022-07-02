@@ -55,11 +55,14 @@
         <attr name="c_left_iv_icon_paddingLeft" format="dimension|reference" />
         <attr name="c_left_iv_icon_paddingRight" format="dimension|reference" />
 
-        <!--中间的文字-->
+        <!--中间的文字和icon-->
         <attr name="c_center_tv_text" format="string|reference" />
         <attr name="c_center_tv_text_color" format="color|reference" />
         <attr name="c_center_tv_text_size" format="dimension|reference" />
         <attr name="c_center_tv_text_alpha_press" format="float|reference" />
+        <attr name="c_center_iv_icon" format="reference" />
+        <attr name="c_center_iv_icon_color" format="color|reference" />
+        <attr name="c_center_iv_icon_alpha_press" format="float|reference" />
 
 
         <!--中间的自定义布局-->
