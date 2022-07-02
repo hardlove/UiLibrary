@@ -289,9 +289,15 @@
 
             <Button
                 android:id="@+id/btn_permission"
-                android:text="permission"
+                android:text="非分离式权限请求"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/btn_permission_split"
+                android:text="分离式权限请求"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
 
         </LinearLayout>
 
