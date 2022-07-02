@@ -1,8 +1,10 @@
 package com.hardlove.library.view;
 
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -24,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,8 +35,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.hardlove.library.view.ctoobar.R;
 
-import static android.content.ContentValues.TAG;
-
 
 /**
  * Created by CL on 2016/12/15.
@@ -43,6 +42,7 @@ import static android.content.ContentValues.TAG;
  */
 
 public class CToolBar extends FrameLayout implements View.OnTouchListener, View.OnClickListener, View.OnLongClickListener {
+    private static final String TAG = "CToolBar";
     private int DEFAULT_BOTTOM_LINE_COLOR = Color.parseColor("#F7F9FA");
     private final float defaultTextSize = 17;//sp
     int DEFAULT_TEXT_COLOR = Color.BLACK;
@@ -101,7 +101,6 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private int c_center_iv_icon;
     private int c_center_iv_icon_color;
     private float c_center_iv_icon_alpha_press;
-    private int c_center_other_layout;
     private String c_right_tv1_text;
     private int c_right_tv1_text_color;
     private int c_right_tv1_text_size;
@@ -234,8 +233,6 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         addView(title, params);
         findViews(title);
         initViews();
-        adjustChildMargins();
-
         views = new View[]{tv_left_back, left_tv, left_iv, center_tv, center_iv, right_tv1, right_iv1, right_tv2, right_iv2, right_tv3, right_iv3};
         settings = new Object[]{tv_left_back_settings, left_tv_settings, left_iv_settings, center_tv_settings, center_iv_settings, right_tv1_settings, right_iv1_settings, right_tv2_settings, right_iv2_settings, right_tv3_settings, right_iv3_settings};
 
@@ -257,14 +254,28 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
     }
 
+    @Override
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+
+        adjustChildMargins();
+
+    }
+
+    // adjust topMargin
     private void adjustChildMargins() {
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
+            if (child == root) {
+                //排除 toolbar_root
+                continue;
+            }
             if (addStatusBar && statusBar.getVisibility() == VISIBLE) {
-                MarginLayoutParams params = (MarginLayoutParams) child.getLayoutParams();
-                params.topMargin += statusBar.getHeight();
-                Log.e("XXXXXXXX", "statusBar.getHeight():" + statusBar.getHeight());
+                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) child.getLayoutParams();
+                params.topMargin += getStatusBarHeight(getContext());
+                params.height = MarginLayoutParams.MATCH_PARENT;
+                params.gravity += Gravity.BOTTOM;
                 child.setLayoutParams(params);
             }
         }
@@ -1151,8 +1162,6 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         center_tv_settings.setPadding(0, 0, 0, 0);
         center_tv_settings.setMarging(0, 0, 0, 0);
         center_tv_settings.setIsShow(c_show_center_tv);
-        c_center_other_layout = array.getResourceId(R.styleable.CToolBar_c_center_other_layout, -1);
-
 
         c_center_iv_icon = array.getResourceId(R.styleable.CToolBar_c_center_iv_icon, -1);
         c_center_iv_icon_color = array.getColor(R.styleable.CToolBar_c_center_iv_icon_color, DEFAULT_ICON_COLOR);
@@ -1286,4 +1295,50 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         }
 
     }
+
+
+    /**
+     * 状态栏高度标识位
+     */
+    public static final String STATUS_BAR_HEIGHT = "status_bar_height";
+    /**
+     * 导航栏竖屏高度标识位
+     */
+    public static final String NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
+    /**
+     * 导航栏横屏高度标识位
+     */
+    public static final String NAVIGATION_BAR_HEIGHT_LANDSCAPE = "navigation_bar_height_landscape";
+
+    /**
+     * 状态栏高度
+     */
+    public static int getStatusBarHeight(Context context) {
+        return getInternalDimensionSize(context, STATUS_BAR_HEIGHT);
+    }
+
+    private static int getInternalDimensionSize(Context context, String key) {
+        int result = 0;
+        try {
+            int resourceId = Resources.getSystem().getIdentifier(key, "dimen", "android");
+            if (resourceId > 0) {
+                int sizeOne = context.getResources().getDimensionPixelSize(resourceId);
+                int sizeTwo = Resources.getSystem().getDimensionPixelSize(resourceId);
+
+                if (sizeTwo >= sizeOne) {
+                    return sizeTwo;
+                } else {
+                    float densityOne = context.getResources().getDisplayMetrics().density;
+                    float densityTwo = Resources.getSystem().getDisplayMetrics().density;
+                    float f = sizeOne * densityTwo / densityOne;
+                    return (int) ((f >= 0) ? (f + 0.5f) : (f - 0.5f));
+                }
+            }
+        } catch (Exception ignored) {
+            return 0;
+        }
+        return result;
+    }
+
+
 }

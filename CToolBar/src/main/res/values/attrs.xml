@@ -65,9 +65,6 @@
         <attr name="c_center_iv_icon_alpha_press" format="float|reference" />
 
 
-        <!--中间的自定义布局-->
-        <attr name="c_center_other_layout" format="reference" />
-
         <!--右边的文字和icon  1 -->
         <attr name="c_right_tv1_text" format="string|reference" />
         <attr name="c_right_tv1_text_color" format="color|reference" />

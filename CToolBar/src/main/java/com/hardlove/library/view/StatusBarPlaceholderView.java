@@ -3,12 +3,14 @@ package com.hardlove.library.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
@@ -36,6 +38,17 @@ public class StatusBarPlaceholderView extends View {
         super(context);
         initView(context);
 
+    }
+
+    public StatusBarPlaceholderView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        initView(context);
+    }
+
+    private void initView(Context context) {
+        sharedPreferences = context.getSharedPreferences("system_status_bar_config", Context.MODE_PRIVATE);
+        statusBarHeight = getStatusBarHeight();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4及以上支持
             this.setVisibility(VISIBLE);
         } else {
@@ -43,57 +56,6 @@ public class StatusBarPlaceholderView extends View {
         }
 
     }
-
-    public StatusBarPlaceholderView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        initView(context);
-
-
-    }
-
-    private void initView(Context context) {
-        sharedPreferences = context.getSharedPreferences("system_status_bar_config", Context.MODE_PRIVATE);
-        statusBarHeight = getStatusBarHeight();
-    }
-
-
-//    @TargetApi(28)
-//    public void getNotchParams() {
-//        final View decorView = ((Activity) getContext()).getWindow().getDecorView();
-//
-//        decorView.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                DisplayCutout displayCutout = decorView.getRootWindowInsets().getDisplayCutout();
-//                Log.e("TAG", "安全区域距离屏幕左边的距离 SafeInsetLeft:" + displayCutout.getSafeInsetLeft());
-//                Log.e("TAG", "安全区域距离屏幕右部的距离 SafeInsetRight:" + displayCutout.getSafeInsetRight());
-//                Log.e("TAG", "安全区域距离屏幕顶部的距离 SafeInsetTop:" + displayCutout.getSafeInsetTop());
-//                Log.e("TAG", "安全区域距离屏幕底部的距离 SafeInsetBottom:" + displayCutout.getSafeInsetBottom());
-//
-//                List<Rect> rects = displayCutout.getBoundingRects();
-//                if (rects == null || rects.size() == 0) {
-//                    Log.e("TAG", "不是刘海屏");
-//                } else {
-//                    Log.e("TAG", "刘海屏数量:" + rects.size());
-//                    for (Rect rect : rects) {
-//                        Log.e("TAG", "刘海屏区域：" + rect);
-//                    }
-//                }
-//            }
-//        });
-//    }
-
-//    /**
-//     * 获取状态栏高度
-//     *
-//     * @param context context
-//     * @return 状态栏高度
-//     */
-//    private  int getStatusBarHeight(Context context) {
-//        // 获得状态栏高度
-//        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
-//        return context.getResources().getDimensionPixelSize(resourceId);
-//    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -111,7 +73,6 @@ public class StatusBarPlaceholderView extends View {
      * 测量系统状态栏高度
      */
     private void measureStatusBarHeight() {
-
         if (getContext() instanceof Activity) {
             Activity activity = (Activity) getContext();
             Rect frame = new Rect();
@@ -162,6 +123,8 @@ public class StatusBarPlaceholderView extends View {
         if (statusBarHeight > 0) {
             Log.d(TAG, "填充状态栏高度：" + statusBarHeight + " SDK VERSION: " + Build.VERSION.SDK_INT);
             setMeasuredDimension(widthMeasureSpec, statusBarHeight);
+        } else {
+            setMeasuredDimension(widthMeasureSpec, dip2px(getContext(), STATUS_BAR_HEIGHT));
         }
 
     }
@@ -182,5 +145,49 @@ public class StatusBarPlaceholderView extends View {
     private int getStatusBarHeight() {
         return sharedPreferences.getInt(STATUS_BAR_HEIGHT_KEY, 0);
 
+    }
+
+
+    /**
+     * 状态栏高度标识位
+     */
+    public static final String FLAG_STATUS_BAR_HEIGHT = "status_bar_height";
+    /**
+     * 导航栏竖屏高度标识位
+     */
+    public static final String FLAG_NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
+    /**
+     * 导航栏横屏高度标识位
+     */
+    public static final String FLAG_NAVIGATION_BAR_HEIGHT_LANDSCAPE = "navigation_bar_height_landscape";
+
+    /**
+     * 状态栏高度
+     */
+    public static int getStatusBarHeight(Context context) {
+        return getInternalDimensionSize(context, FLAG_STATUS_BAR_HEIGHT);
+    }
+
+    private static int getInternalDimensionSize(Context context, String key) {
+        int result = 0;
+        try {
+            int resourceId = Resources.getSystem().getIdentifier(key, "dimen", "android");
+            if (resourceId > 0) {
+                int sizeOne = context.getResources().getDimensionPixelSize(resourceId);
+                int sizeTwo = Resources.getSystem().getDimensionPixelSize(resourceId);
+
+                if (sizeTwo >= sizeOne) {
+                    return sizeTwo;
+                } else {
+                    float densityOne = context.getResources().getDisplayMetrics().density;
+                    float densityTwo = Resources.getSystem().getDisplayMetrics().density;
+                    float f = sizeOne * densityTwo / densityOne;
+                    return (int) ((f >= 0) ? (f + 0.5f) : (f - 0.5f));
+                }
+            }
+        } catch (Exception ignored) {
+            return 0;
+        }
+        return result;
     }
 }
