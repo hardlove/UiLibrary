@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:layout_gravity="top"
     android:layout_margin="0dp"
-    android:background="@color/colorAccent"
     android:elevation="0dp"
     android:orientation="vertical"
     android:padding="0dp">
@@ -15,7 +14,7 @@
     <com.hardlove.library.view.StatusBarPlaceholderView
         android:id="@+id/system_status_bar"
         android:layout_width="match_parent"
-        android:layout_height="24dp" />
+        android:layout_height="wrap_content" />
     <!--title内容部分-->
     <RelativeLayout
         android:id="@+id/custom_layer"
