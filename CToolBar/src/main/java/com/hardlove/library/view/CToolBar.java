@@ -251,15 +251,6 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         }
         typedArray.recycle();
 
-
-    }
-
-    @Override
-    protected void onWindowVisibilityChanged(int visibility) {
-        super.onWindowVisibilityChanged(visibility);
-
-        adjustChildMargins();
-
     }
 
     // adjust topMargin
@@ -272,10 +263,13 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
                 continue;
             }
             if (addStatusBar && statusBar.getVisibility() == VISIBLE) {
+                int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                custom_layer.measure(widthSpec, heightSpec);
+                int measuredHeight = custom_layer.getMeasuredHeight();//测量得到custom_layer的高
                 FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) child.getLayoutParams();
-                params.topMargin += getStatusBarHeight(getContext());
-                params.height = MarginLayoutParams.MATCH_PARENT;
-                params.gravity += Gravity.BOTTOM;
+                params.height = measuredHeight;
+                params.gravity |= Gravity.BOTTOM;
                 child.setLayoutParams(params);
             }
         }
@@ -886,6 +880,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
+        adjustChildMargins();
     }
 
     @Override
