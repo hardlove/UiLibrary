@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -194,7 +195,7 @@ abstract class BottomNavigationTab extends FrameLayout {
         if (badgeItem != null) {
             badgeItem.select();
         }
-        if (mCompactIcon == null) {
+        if (mCompactIcon == null && !TextUtils.isEmpty(mCompactIconUrl)) {
             checkImageLoader();
             imageLoader.load(iconView, mCompactIconUrl, errorRes);
         }
@@ -223,7 +224,7 @@ abstract class BottomNavigationTab extends FrameLayout {
             badgeItem.unSelect();
         }
 
-        if (mCompactInActiveIcon == null) {
+        if (mCompactInActiveIcon == null && !TextUtils.isEmpty(mCompactInActiveIconUrl)) {
             checkImageLoader();
             imageLoader.load(iconView, mCompactInActiveIconUrl, inActiveErrorIconRes);
         }
@@ -274,12 +275,12 @@ abstract class BottomNavigationTab extends FrameLayout {
             }
         } else {
             if (iconView.isSelected()) {
-                if (mCompactIcon == null) {
+                if (mCompactIcon == null && !TextUtils.isEmpty(mCompactIconUrl)) {
                     checkImageLoader();
                     imageLoader.load(iconView, mCompactIconUrl, errorRes);
                 }
             } else {
-                if (mCompactInActiveIcon == null) {
+                if (mCompactInActiveIcon == null && !TextUtils.isEmpty(mCompactInActiveIconUrl)) {
                     checkImageLoader();
                     imageLoader.load(iconView, mCompactInActiveIconUrl, inActiveErrorIconRes);
                 }
