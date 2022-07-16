@@ -4,9 +4,12 @@ import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +22,7 @@ import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
+import com.carlos.library.location.utils.CustomLocationManager;
 import com.carlos.permissionhelper.PermissionHelper;
 import com.hardlove.library.utils.ColorUtil;
 import com.hardlove.library.view.LuckDiskView;
@@ -50,6 +54,63 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        findViewById(R.id.btn_location)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        PermissionHelper.builder()
+                                .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "需要定位权限")
+                                .callback(new PermissionHelper.SimpleCallback() {
+                                    @Override
+                                    public void onGranted() {
+
+                                        CustomLocationManager.getInstance().registerLocationChangerListener(new CustomLocationManager.OnResultCallBack() {
+                                            @Override
+                                            public void onSucceed(Location location) {
+                                                TextView tv = findViewById(R.id.tv_message);
+                                                tv.setText("getLatitude:"+location.getLatitude()+"  getLongitude:"+location.getLongitude());
+                                            }
+
+                                            @Override
+                                            public void onFailed(int errorCode, String errorMsg) {
+                                                TextView tv = findViewById(R.id.tv_message);
+                                                tv.setText("code:" + errorCode + "  msg:" + errorMsg);
+
+                                            }
+                                        });
+
+
+                                    }
+
+                                    @Override
+                                    public void onDenied() {
+                                        ToastUtils.showShort("没有定位权限");
+
+                                        CustomLocationManager.getInstance().registerLocationChangerListener(new CustomLocationManager.OnResultCallBack() {
+                                            @Override
+                                            public void onSucceed(Location location) {
+                                                TextView tv = findViewById(R.id.tv_message);
+                                                tv.setText("getLatitude:"+location.getLatitude()+"  getLongitude:"+location.getLongitude());
+                                            }
+
+                                            @Override
+                                            public void onFailed(int errorCode, String errorMsg) {
+                                                TextView tv = findViewById(R.id.tv_message);
+                                                tv.setText("code:" + errorCode + "  msg:" + errorMsg);
+
+                                            }
+                                        });
+                                    }
+                                }).request();
+
+
+                    }
+                });
+
 
         sendVerifyCodeView = findViewById(R.id.sendVerifyCodeView);
 

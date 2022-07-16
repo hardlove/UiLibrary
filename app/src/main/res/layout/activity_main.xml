@@ -45,6 +45,19 @@
             </FrameLayout>
 
 
+            <TextView
+                android:text="定位结果"
+                android:id="@+id/tv_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="定位"
+                android:id="@+id/btn_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
             <com.hardlove.library.view.StatusBarPlaceholderView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
