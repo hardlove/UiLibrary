@@ -41,21 +41,21 @@ import java.util.List;
  * <p>
  * （4）FUSED_PROVIDER：这个本来已经被废弃了，但是目前在Android12（即android api 31）上又重新使用了起来，但是它依赖GMS，所以国内暂时无法使用。
  */
-public class LocationManagerHelper {
-    private static LocationManagerHelper instance;
+public class XLocationManager {
+    private static XLocationManager instance;
     private final Context context;
     private LocationManager locationManager;
 
-    private LocationManagerHelper() {
+    private XLocationManager() {
         context = InitProvider.getAppContext();
         init();
     }
 
-    public static LocationManagerHelper getInstance() {
+    public static XLocationManager getInstance() {
         if (instance == null) {
-            synchronized (LocationManagerHelper.class) {
+            synchronized (XLocationManager.class) {
                 if (instance == null) {
-                    instance = new LocationManagerHelper();
+                    instance = new XLocationManager();
                 }
             }
         }
@@ -244,7 +244,7 @@ public class LocationManagerHelper {
     }
 
 
-    private static final String TAG = "LocationManagerHelper";
+    private static final String TAG = "XLocationManager";
 
     List<OnResultCallBack> singleQueryCallBacks = new ArrayList<>();
     List<LifecycleWrap> lifecycleWraps = new ArrayList<>();
