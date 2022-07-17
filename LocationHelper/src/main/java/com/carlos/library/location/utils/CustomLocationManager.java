@@ -13,13 +13,19 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.location.LocationManagerCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import com.carlos.library.location.InitProvider;
 import com.carlos.library.location.XLocation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -93,7 +99,7 @@ public class CustomLocationManager {
             }
 
             // 如果没有观察者注册了持久性监听位置变化监听，就不需要停止定位服务
-            if (listeners == null || listeners.size() == 0) {
+            if (alwaysQueryCallBacks == null || alwaysQueryCallBacks.size() == 0) {
                 //停止定位
                 stopLocation();
             }
@@ -187,9 +193,18 @@ public class CustomLocationManager {
             singleQueryCallBacks.clear();
         }
 
+        //1. 通知查询当前位置成功
+        if (lifecycleWraps != null && lifecycleWraps.size() > 0) {
+            for (LifecycleWrap wrap : lifecycleWraps) {
+                wrap.onResultCallBack.onSucceed(xLocation);
+            }
+            //清空所有LifecycleWrap，避免多次回调
+            lifecycleWraps.clear();
+        }
+
         //2.通知持久监听器位置变更
-        if (listeners != null && listeners.size() > 0) {
-            for (OnResultCallBack callBack : listeners) {
+        if (alwaysQueryCallBacks != null && alwaysQueryCallBacks.size() > 0) {
+            for (OnResultCallBack callBack : alwaysQueryCallBacks) {
                 callBack.onSucceed(xLocation);
             }
         }
@@ -204,8 +219,8 @@ public class CustomLocationManager {
             singleQueryCallBacks.clear();
         }
         //持久监听
-        if (listeners != null && listeners.size() > 0) {
-            for (OnResultCallBack queryCallBack : listeners) {
+        if (alwaysQueryCallBacks != null && alwaysQueryCallBacks.size() > 0) {
+            for (OnResultCallBack queryCallBack : alwaysQueryCallBacks) {
                 queryCallBack.onFailed(code, msg);
             }
         }
@@ -225,26 +240,47 @@ public class CustomLocationManager {
     private static final String TAG = "CustomLocationManager";
 
     List<OnResultCallBack> singleQueryCallBacks = new ArrayList<>();
-    List<OnResultCallBack> listeners = new ArrayList<>();
+    List<LifecycleWrap> lifecycleWraps = new ArrayList<>();
+    List<OnResultCallBack> alwaysQueryCallBacks = new ArrayList<>();
 
 
-    /*请求定位当前最新的地理位置(只定位一次)*/
+    /**请求定位当前最新的地理位置(只定位一次)
+    * 未绑定生命周期，与public void removeOnResultCallBack(OnResultCallBack onLocationCallBack)配对使用
+    * */
     public void queryCurrentLocation(OnResultCallBack onLocationCallBack) {
         singleQueryCallBacks.add(onLocationCallBack);
         startLocation();
     }
 
+    /**与public void queryCurrentLocation(OnResultCallBack onLocationCallBack)配对使用*/
+    public void removeOnResultCallBack(OnResultCallBack onLocationCallBack) {
+        if (singleQueryCallBacks.contains(onLocationCallBack)) {
+            singleQueryCallBacks.remove(onLocationCallBack);
+        }
+    }
+
+    /*请求定位当前最新的地理位置(只定位一次)，内部自动处理生命周期，调用者无需关心*/
+    public void queryCurrentLocation(@NonNull LifecycleOwner lifecycleOwner, @NonNull OnResultCallBack onLocationCallBack) {
+        addLifeCycle(lifecycleOwner, onLocationCallBack);
+        startLocation();
+    }
+
+    private void addLifeCycle(@NonNull LifecycleOwner lifecycleOwner, @NonNull OnResultCallBack onResultCallBack) {
+        LifecycleWrap wrap = new LifecycleWrap(lifecycleWraps, lifecycleOwner, onResultCallBack);
+        lifecycleWraps.add(wrap);
+    }
+
 
     /*注册地理位置变化监听器*/
     public void registerLocationChangerListener(OnResultCallBack onResultCallBack) {
-        listeners.add(onResultCallBack);
+        alwaysQueryCallBacks.add(onResultCallBack);
         startLocation();
     }
 
     /*移除地理位置变化监听器*/
     public void unRegisterListener(OnResultCallBack onResultCallBack) {
-        if (listeners != null && onResultCallBack != null) {
-            listeners.remove(onResultCallBack);
+        if (alwaysQueryCallBacks != null && onResultCallBack != null) {
+            alwaysQueryCallBacks.remove(onResultCallBack);
         }
     }
 
@@ -256,4 +292,31 @@ public class CustomLocationManager {
         void onFailed(int errorCode, String errorMsg);
     }
 
+    public static class LifecycleWrap implements LifecycleObserver {
+        private LifecycleOwner lifecycleOwner;
+        private OnResultCallBack onResultCallBack;
+        private List<LifecycleWrap> lifecycleWraps;
+
+        public LifecycleWrap(List<LifecycleWrap> lifecycleWraps, LifecycleOwner lifecycleOwner, OnResultCallBack onResultCallBack) {
+            this.lifecycleWraps = lifecycleWraps;
+            this.lifecycleOwner = lifecycleOwner;
+            this.onResultCallBack = onResultCallBack;
+            //监听生命周期
+            lifecycleOwner.getLifecycle().addObserver(this);
+        }
+
+        @OnLifecycleEvent(value = Lifecycle.Event.ON_DESTROY)
+        public void onDestroy(LifecycleOwner owner) {
+            owner.getLifecycle().removeObserver(this);
+
+            Iterator<LifecycleWrap> iterator = lifecycleWraps.iterator();
+            while (iterator.hasNext()) {
+                LifecycleWrap next = iterator.next();
+                if (next.lifecycleOwner == owner) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
+    }
 }

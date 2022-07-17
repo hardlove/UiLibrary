@@ -87,11 +87,15 @@ public class XLocation {
     public XLocation(Location location) {
         mLatitude = location.getLatitude();
         mLongitude = location.getLongitude();
+        this.mErrorCode = -1;
+        this.mErrorMsg = "未进行地理位置解析";
     }
 
     public XLocation(double latitude, double longitude) {
         mLatitude = latitude;
         mLongitude = longitude;
+        this.mErrorCode = -1;
+        this.mErrorMsg = "未进行地理位置解析";
     }
 
 
@@ -312,7 +316,8 @@ public class XLocation {
                 this.setAoiName(address.getFeatureName());
                 //详细地址
                 this.setAddress(sb.toString());
-
+                this.mErrorCode = 0;
+                this.mErrorMsg = "地理位置解析成功";
             } else {
                 this.mErrorCode = 1;
                 this.mErrorMsg = MessageFormat.format("地理位置解析失败：无可用的地址信息，坐标 mLatitude：{0},+mLongitude:{1}", mLatitude, mLongitude);
@@ -326,4 +331,9 @@ public class XLocation {
         }
 
     }
+
+    public boolean isSucceed() {
+        return this.mErrorCode == 0;
+    }
+
 }
