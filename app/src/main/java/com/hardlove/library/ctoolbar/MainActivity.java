@@ -21,7 +21,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.carlos.library.location.XLocation;
-import com.carlos.library.location.utils.CustomLocationManager;
+import com.carlos.library.location.utils.LocationManagerHelper;
 import com.carlos.permissionhelper.PermissionHelper;
 import com.hardlove.library.utils.ColorUtil;
 import com.hardlove.library.view.LuckDiskView;
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onGranted() {
 
-                                        CustomLocationManager.getInstance().queryCurrentLocation(MainActivity.this,new CustomLocationManager.OnResultCallBack() {
+                                        LocationManagerHelper.getInstance().queryCurrentLocation(MainActivity.this,new LocationManagerHelper.OnResultCallBack() {
                                             @Override
                                             public void onSucceed(XLocation location) {
                                                 TextView tv = findViewById(R.id.tv_message);
@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
                                             }
                                         });
+
 
 
                                     }

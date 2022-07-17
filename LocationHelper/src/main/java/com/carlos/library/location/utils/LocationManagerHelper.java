@@ -41,21 +41,21 @@ import java.util.List;
  * <p>
  * （4）FUSED_PROVIDER：这个本来已经被废弃了，但是目前在Android12（即android api 31）上又重新使用了起来，但是它依赖GMS，所以国内暂时无法使用。
  */
-public class CustomLocationManager {
-    private static CustomLocationManager instance;
+public class LocationManagerHelper {
+    private static LocationManagerHelper instance;
     private final Context context;
     private LocationManager locationManager;
 
-    private CustomLocationManager() {
+    private LocationManagerHelper() {
         context = InitProvider.getAppContext();
         init();
     }
 
-    public static CustomLocationManager getInstance() {
+    public static LocationManagerHelper getInstance() {
         if (instance == null) {
-            synchronized (CustomLocationManager.class) {
+            synchronized (LocationManagerHelper.class) {
                 if (instance == null) {
-                    instance = new CustomLocationManager();
+                    instance = new LocationManagerHelper();
                 }
             }
         }
@@ -67,7 +67,7 @@ public class CustomLocationManager {
     /*初始化服务*/
     private void init() {
         try {
-            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            locationManager = (android.location.LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG, "获取定位服务失败！" + e.getLocalizedMessage());
@@ -159,13 +159,13 @@ public class CustomLocationManager {
          * gps定位：java.lang.SecurityException: "gps" location provider requires ACCESS_FINE_LOCATION permission. 需要两个权限
          * network定位：只需要ACCESS_COARSE_LOCATION即可
          */
-        if (LocationManager.GPS_PROVIDER.equals(bestProvider)) {
+        if (android.location.LocationManager.GPS_PROVIDER.equals(bestProvider)) {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 //需要权限才能调用
                 notifyFailed(2, "未开启定位权限");
                 return;
             }
-        } else if (LocationManager.NETWORK_PROVIDER.equals(bestProvider)) {
+        } else if (android.location.LocationManager.NETWORK_PROVIDER.equals(bestProvider)) {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 //需要权限才能调用
                 notifyFailed(2, "未开启定位权限");
@@ -244,22 +244,25 @@ public class CustomLocationManager {
     }
 
 
-    private static final String TAG = "CustomLocationManager";
+    private static final String TAG = "LocationManagerHelper";
 
     List<OnResultCallBack> singleQueryCallBacks = new ArrayList<>();
     List<LifecycleWrap> lifecycleWraps = new ArrayList<>();
     List<OnResultCallBack> alwaysQueryCallBacks = new ArrayList<>();
 
 
-    /**请求定位当前最新的地理位置(只定位一次)
-    * 未绑定生命周期，与public void removeOnResultCallBack(OnResultCallBack onLocationCallBack)配对使用
-    * */
+    /**
+     * 请求定位当前最新的地理位置(只定位一次)
+     * 未绑定生命周期，与public void removeOnResultCallBack(OnResultCallBack onLocationCallBack)配对使用
+     */
     public void queryCurrentLocation(OnResultCallBack onLocationCallBack) {
         singleQueryCallBacks.add(onLocationCallBack);
         startLocation();
     }
 
-    /**与public void queryCurrentLocation(OnResultCallBack onLocationCallBack)配对使用*/
+    /**
+     * 与public void queryCurrentLocation(OnResultCallBack onLocationCallBack)配对使用
+     */
     public void removeOnResultCallBack(OnResultCallBack onLocationCallBack) {
         if (singleQueryCallBacks.contains(onLocationCallBack)) {
             singleQueryCallBacks.remove(onLocationCallBack);
