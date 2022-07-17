@@ -218,6 +218,13 @@ public class CustomLocationManager {
             //清空所有callback，避免多次回调
             singleQueryCallBacks.clear();
         }
+        if (lifecycleWraps != null && lifecycleWraps.size() > 0) {
+            for (LifecycleWrap wrap : lifecycleWraps) {
+                wrap.onResultCallBack.onFailed(code, msg);
+            }
+            //清空所有LifecycleWrap，避免多次回调
+            lifecycleWraps.clear();
+        }
         //持久监听
         if (alwaysQueryCallBacks != null && alwaysQueryCallBacks.size() > 0) {
             for (OnResultCallBack queryCallBack : alwaysQueryCallBacks) {
