@@ -8,12 +8,16 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.location.LocationManagerCompat;
 
 import com.carlos.library.location.InitProvider;
+import com.carlos.library.location.XLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +56,8 @@ public class CustomLocationManager {
         return instance;
     }
 
+    HandlerThread mHandlerThread = new HandlerThread(this.getClass().getSimpleName());
+
     /*初始化服务*/
     private void init() {
         try {
@@ -60,40 +66,37 @@ public class CustomLocationManager {
             e.printStackTrace();
             Log.d(TAG, "获取定位服务失败！" + e.getLocalizedMessage());
         }
+        mHandlerThread.start();
 
     }
 
+    private Handler mHandler = new Handler(Looper.getMainLooper());
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
             if (location != null) {
-                //1. 通知查询当前位置成功
-                if (singleQueryCallBacks != null && singleQueryCallBacks.size() > 0) {
-                    for (OnResultCallBack callBack : singleQueryCallBacks) {
-                        callBack.onSucceed(location);
-                    }
-                    //清空所有callback，避免多次回调
-                    singleQueryCallBacks.clear();
-                }
+                XLocation xLocation = new XLocation(location);
+                //该方法地理编码是耗时任务，需在非UI线程中执行，避免阻塞UI线程
+                xLocation.doGeocoder();
 
-                //2.通知持久监听器位置变更
-                if (listeners != null && listeners.size() > 0) {
-                    for (OnResultCallBack callBack : listeners) {
-                        callBack.onSucceed(location);
-                    }
-                }
+                mHandler.post(() -> {
+                    //在主线程中去回调
+                    notifySucceed(xLocation);
+                });
 
-                // 如果没有观察者注册了持久性监听位置变化监听，就不需要停止定位服务
-                if (listeners == null || listeners.size() == 0) {
-                    //停止定位
-                    stopLocation();
-                    //销毁服务
-                    destroy();
-                }
+
             } else {
-                notifyFailed(-1, "定位信息返回空");
+                mHandler.post(() -> {
+                    //在主线程中去回调
+                    notifyFailed(-1, "定位信息返回空");
+                });
             }
 
+            // 如果没有观察者注册了持久性监听位置变化监听，就不需要停止定位服务
+            if (listeners == null || listeners.size() == 0) {
+                //停止定位
+                stopLocation();
+            }
 
         }
 
@@ -112,6 +115,7 @@ public class CustomLocationManager {
             Log.d(TAG, "onProviderDisabled~~~~~~provider:" + provider);
         }
     };
+
 
     /*开始定位服务*/
     private void startLocation() {
@@ -167,7 +171,28 @@ public class CustomLocationManager {
             return;
         }
 
-        locationManager.requestLocationUpdates(bestProvider, 1000 * 10, 0, locationListener);
+//        locationManager.requestLocationUpdates(bestProvider, 1000 * 10, 0, locationListener);
+        //在异步线程mHandlerThread中回调
+        locationManager.requestLocationUpdates(bestProvider, 1000 * 10, 0, locationListener, mHandlerThread.getLooper());
+    }
+
+
+    private void notifySucceed(XLocation xLocation) {
+        //1. 通知查询当前位置成功
+        if (singleQueryCallBacks != null && singleQueryCallBacks.size() > 0) {
+            for (OnResultCallBack callBack : singleQueryCallBacks) {
+                callBack.onSucceed(xLocation);
+            }
+            //清空所有callback，避免多次回调
+            singleQueryCallBacks.clear();
+        }
+
+        //2.通知持久监听器位置变更
+        if (listeners != null && listeners.size() > 0) {
+            for (OnResultCallBack callBack : listeners) {
+                callBack.onSucceed(xLocation);
+            }
+        }
     }
 
     private void notifyFailed(int code, String msg) {
@@ -190,21 +215,12 @@ public class CustomLocationManager {
     private void stopLocation() {
         if (locationManager != null) {
             locationManager.removeUpdates(locationListener);
+            mHandler.removeCallbacks(null);
             Log.d(TAG, "停止定位服务。。。。");
         }
 
     }
 
-    /*销毁服务*/
-    public void destroy() {
-        if (locationManager != null) {
-            locationManager.removeUpdates(locationListener);
-            locationListener = null;
-            locationManager = null;
-            Log.d(TAG, "销毁定位服务。。。。");
-        }
-        instance = null;
-    }
 
     private static final String TAG = "CustomLocationManager";
 
@@ -235,7 +251,7 @@ public class CustomLocationManager {
 
     /*请求查询当前地理位置回调*/
     public interface OnResultCallBack {
-        void onSucceed(Location location);
+        void onSucceed(XLocation location);
 
         void onFailed(int errorCode, String errorMsg);
     }

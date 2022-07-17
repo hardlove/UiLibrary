@@ -4,9 +4,7 @@ import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +20,7 @@ import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
+import com.carlos.library.location.XLocation;
 import com.carlos.library.location.utils.CustomLocationManager;
 import com.carlos.permissionhelper.PermissionHelper;
 import com.hardlove.library.utils.ColorUtil;
@@ -68,11 +67,11 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onGranted() {
 
-                                        CustomLocationManager.getInstance().registerLocationChangerListener(new CustomLocationManager.OnResultCallBack() {
+                                        CustomLocationManager.getInstance().queryCurrentLocation(new CustomLocationManager.OnResultCallBack() {
                                             @Override
-                                            public void onSucceed(Location location) {
+                                            public void onSucceed(XLocation location) {
                                                 TextView tv = findViewById(R.id.tv_message);
-                                                tv.setText("getLatitude:"+location.getLatitude()+"  getLongitude:"+location.getLongitude());
+                                                tv.setText("getLatitude:"+location.getLatitude()+"  getLongitude:"+location.getLongitude()+"\n address: "+location.getAddress());
                                             }
 
                                             @Override
@@ -89,21 +88,6 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onDenied() {
                                         ToastUtils.showShort("没有定位权限");
-
-                                        CustomLocationManager.getInstance().registerLocationChangerListener(new CustomLocationManager.OnResultCallBack() {
-                                            @Override
-                                            public void onSucceed(Location location) {
-                                                TextView tv = findViewById(R.id.tv_message);
-                                                tv.setText("getLatitude:"+location.getLatitude()+"  getLongitude:"+location.getLongitude());
-                                            }
-
-                                            @Override
-                                            public void onFailed(int errorCode, String errorMsg) {
-                                                TextView tv = findViewById(R.id.tv_message);
-                                                tv.setText("code:" + errorCode + "  msg:" + errorMsg);
-
-                                            }
-                                        });
                                     }
                                 }).request();
 
