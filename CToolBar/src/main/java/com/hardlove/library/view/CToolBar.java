@@ -382,7 +382,9 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         v.setVisibility(settings.isShow ? VISIBLE : GONE);
         if (settings.leftDrawable != null) {
             //图片shangse
-            setDrawableColor(settings.leftDrawable, settings.drawableColor);
+            if (settings.drawableColor != Color.TRANSPARENT) {
+                setDrawableColor(settings.leftDrawable, settings.drawableColor);
+            }
 
             v.setCompoundDrawablePadding(settings.drawablePadding);
             v.setCompoundDrawablesRelativeWithIntrinsicBounds(settings.leftDrawable, null, null, null);
