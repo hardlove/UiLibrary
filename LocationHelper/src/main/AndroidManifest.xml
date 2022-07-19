@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.carlos.library.location">
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application>
+        <provider
+            android:name="com.carlos.library.location.InitProvider"
+            android:authorities="${applicationId}.location.InitProvider"
+            android:exported="false"
+            android:multiprocess="true" />
+    </application>
+</manifest>

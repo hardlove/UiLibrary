@@ -42,6 +42,7 @@ dependencies {
     implementation project(path: ':RecordButton')
     implementation project(path: ':bottom-navigation-bar')
     implementation project(path: ':PermissionHelper')
+    implementation project(path: ':LocationHelper')
 
     implementation 'com.blankj:utilcodex:1.30.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.18'
@@ -64,7 +65,6 @@ dependencies {
     //全部引用
 //    implementation 'com.github.hardlove:UiLibrary:2.2.11'
 
-    api 'com.pangle.cn:ads-sdk-pro:4.4.0.9'
     implementation 'com.blankj:utilcodex:1.30.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
