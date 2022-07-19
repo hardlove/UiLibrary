@@ -6,7 +6,7 @@ apply from: "../jitpack.gradle"
 android {
     compileSdkVersion 32
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 32
 
         consumerProguardFiles "consumer-rules.pro"
