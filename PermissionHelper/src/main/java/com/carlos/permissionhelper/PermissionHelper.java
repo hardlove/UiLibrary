@@ -1,5 +1,6 @@
 package com.carlos.permissionhelper;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -214,6 +215,7 @@ public class PermissionHelper {
 
     /**
      * 设置是否是分离式请求
+     *
      * @param split true:分离式（即：在请求之前先弹框询问用户是否同意请求权限申请）  false：非分离式（即：不询问用户是否请求权限，而是在请求权限的同时在顶部弹窗说明请求权限原因）
      * @return
      */
@@ -224,6 +226,7 @@ public class PermissionHelper {
 
     /**
      * 设置取消按钮文字颜色
+     *
      * @param cancelTextColor
      * @return
      */
@@ -234,6 +237,7 @@ public class PermissionHelper {
 
     /**
      * 设置确定按钮文字颜色
+     *
      * @param confirmTextColor
      * @return
      */
@@ -339,7 +343,7 @@ public class PermissionHelper {
                     QueueSubscription<String> subscription;
                     ReasonSimpleDialog simpleDialog;
                     ReasonSelectDialog selectDialog;
-                    final FragmentActivity currentActivity = (FragmentActivity) ActivityUtils.getTopActivity();
+                    final Activity currentActivity = ActivityUtils.getTopActivity();
 
                     @Override
                     public void onSubscribe(@NonNull Subscription s) {
@@ -636,7 +640,7 @@ public class PermissionHelper {
 
     }
 
-    public static ReasonSimpleDialog showReasonSimpleDialog(FragmentActivity activity, String reason) {
+    public static ReasonSimpleDialog showReasonSimpleDialog(Activity activity, String reason) {
         ReasonSimpleDialog dialog = ReasonSimpleDialog.newInstance(activity, reason);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
@@ -731,7 +735,7 @@ public class PermissionHelper {
 
     }
 
-    public static ReasonSelectDialog showReasonSelectDialog(FragmentActivity activity, String reason, int cancelTextColor, int confirmTextColor) {
+    public static ReasonSelectDialog showReasonSelectDialog(Activity activity, String reason, int cancelTextColor, int confirmTextColor) {
         ReasonSelectDialog dialog = ReasonSelectDialog.newInstance(activity, reason, cancelTextColor, confirmTextColor);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
