@@ -30,6 +30,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="15dp"
+                    android:contentDescription="转盘"
                     app:flash_active_color="#00ff00"
                     app:flash_inactive_color="#FFFFFF"
                     app:outCircleColor="@color/colorAccent"
@@ -284,18 +285,19 @@
                 app:c_show_search_layout="true" />
 
 
-            <com.hardlove.library.view.QRCodeView
-                android:layout_width="214dp"
-                android:layout_height="0dp"
-                app:innerBackgroundColor="@color/colorPrimary"
-                app:padding="20dp"
-                app:radius="10dp" />
+<!--            <com.hardlove.library.view.QRCodeView-->
+<!--                android:layout_width="214dp"-->
+<!--                android:layout_height="0dp"-->
+<!--                app:innerBackgroundColor="@color/colorPrimary"-->
+<!--                app:padding="20dp"-->
+<!--                app:radius="10dp" />-->
 
             <com.hardlove.library.view.SendVerifyCodeView
                 android:id="@+id/sendVerifyCodeView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
+                android:minHeight="48dp"
                 android:padding="5dp"
                 android:textColor="@color/colorPrimary"
                 app:normalTextColor="@color/colorAccent"
