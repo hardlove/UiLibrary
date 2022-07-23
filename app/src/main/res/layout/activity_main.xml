@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
 
     <ScrollView
+        android:fillViewport="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,7 +42,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:src="@mipmap/node"
-                    android:tag="startView" />
+                    android:tag="startView"
+                    android:contentDescription="TODO" />
             </FrameLayout>
 
 
@@ -107,7 +108,8 @@
                     android:layout_gravity="center"
                     android:background="@color/color_6A5ACD"
                     android:gravity="center"
-                    android:text="自定义" />
+                    android:text="自定义"
+                    android:textColor="#E3F2FD" />
 
             </com.hardlove.library.view.CToolBar>
 
