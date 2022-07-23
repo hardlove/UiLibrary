@@ -285,12 +285,12 @@
                 app:c_show_search_layout="true" />
 
 
-<!--            <com.hardlove.library.view.QRCodeView-->
-<!--                android:layout_width="214dp"-->
-<!--                android:layout_height="0dp"-->
-<!--                app:innerBackgroundColor="@color/colorPrimary"-->
-<!--                app:padding="20dp"-->
-<!--                app:radius="10dp" />-->
+            <com.hardlove.library.view.QRCodeView
+                android:layout_width="214dp"
+                android:layout_height="0dp"
+                app:innerBackgroundColor="@color/colorPrimary"
+                app:padding="20dp"
+                app:radius="10dp" />
 
             <com.hardlove.library.view.SendVerifyCodeView
                 android:id="@+id/sendVerifyCodeView"
