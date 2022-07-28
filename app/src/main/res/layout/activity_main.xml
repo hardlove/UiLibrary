@@ -92,22 +92,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:c_add_status_bar="false"
-                app:c_bar_background="@color/color_00BFFF"
+                app:c_bar_background="@color/color_6B8E23"
                 app:c_center_tv_text=""
-                app:c_custom_layer_color="@color/color_00BFFF"
+                app:c_custom_layer_color="@color/color_6B8E23"
                 app:c_right_iv1_icon="@drawable/ic_header"
                 app:c_show_back="true"
                 app:c_show_right_iv1="true"
-                app:c_status_bar_color="@color/colorAccent">
+                app:c_status_bar_color="@color/color_00FFFF">
 
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:background="@color/color_6A5ACD"-->
-<!--                    android:gravity="center"-->
-<!--                    android:text="自定义2 - no bar"-->
-<!--                    android:textColor="#E3F2FD" />-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/color_6A5ACD"
+                    android:gravity="center"
+                    android:text="自定义2 - no bar"
+                    android:textColor="#E3F2FD" />
 
             </com.hardlove.library.view.CToolBar>
 
