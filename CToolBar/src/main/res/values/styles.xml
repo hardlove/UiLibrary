@@ -1,6 +1,6 @@
 <resources>
     <color name="c_tool_bar_text_color">#000000</color>
-    <color name="c_tool_bar_icon_color">#000000</color>
+    <color name="c_tool_bar_icon_color">#00000000</color>
     <dimen name="c_tool_bar_text_size">17sp</dimen>
     <dimen name="c_tool_bar_padding">20dp</dimen>
     <dimen name="c_tool_bar_back_view_min_width">40dp</dimen>
@@ -11,7 +11,9 @@
         <!--bar的基本属性-->
         <item name="c_bar_alpha_press">0.6</item><!--注意：小数不能写成0.6f-->
         <!--是否显示Back键-->
-        <item name="c_show_back">false</item>
+        <item name="c_show_back">true</item>
+        <!--点击返回按钮是否自动关闭当前页面-->
+        <item name="c_back_finish_enable">true</item>
         <item name="c_bar_text_color" >@color/c_tool_bar_text_color</item>
         <item name="c_bar_icon_color" >@color/c_tool_bar_icon_color</item>
 
