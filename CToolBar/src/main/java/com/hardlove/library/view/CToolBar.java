@@ -80,85 +80,15 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private float c_bar_alpha_press;
 
     private int c_left_back_min_width;
-    private Drawable c_left_back_icon;
-    private int c_left_back_icon_color;
-    private float c_left_back_alpha_press;
-    private String c_left_back_text;
-    private int c_left_back_text_color;
-    private int c_left_back_text_size;
-    private String c_left_tv_text;
-    private int c_left_tv_text_color;
-    private int c_left_tv_text_size;
-    private float c_left_tv_text_alpha_press;
-    private int c_left_iv_icon;
-    private int c_left_iv_icon_color;
-    private float c_right_iv2_icon_alpha_press;
-    private float c_left_iv_icon_alpha_press;
-    private String c_center_tv_text;
-    private int c_center_tv_text_color;
-    private int c_center_tv_text_size;
-    private float c_center_tv_text_alpha_press;
-    private int c_center_iv_icon;
-    private int c_center_iv_icon_color;
-    private float c_center_iv_icon_alpha_press;
-    private String c_right_tv1_text;
-    private int c_right_tv1_text_color;
-    private int c_right_tv1_text_size;
-    private float c_right_tv1_text_alpha_press;
-    private int c_right_iv1_icon;
-    private int c_right_iv1_icon_color;
-    private float c_right_iv1_icon_alpha_press;
-    private String c_right_tv2_text;
-    private int c_right_tv2_text_color;
-    private int c_right_tv2_text_size;
-    private float c_right_tv2_text_alpha_press;
-    private int c_right_iv2_icon;
-    private int c_right_iv2_icon_color;
-    private String c_right_tv3_text;
-    private int c_right_tv3_text_color;
-    private int c_right_tv3_text_size;
-    private float c_right_tv3_text_alpha_press;
-    private int c_right_iv3_icon;
-    private int c_right_iv3_icon_color;
-    private float c_right_iv3_icon_alpha_press;
 
     //控制对应view的显示隐藏
     private boolean c_show_back;
     private boolean c_back_finish;
-    private boolean c_show_left_tv;
-    private boolean c_show_left_iv;
-    private boolean c_show_center_tv;
-    private boolean c_show_center_iv;
-    private boolean c_show_right_tv1;
-    private boolean c_show_right_tv2;
-    private boolean c_show_right_tv3;
-    private boolean c_show_right_iv1;
-    private boolean c_show_right_iv2;
-    private boolean c_show_right_iv3;
     private boolean c_show_bottom_line;
 
 
     private TextViewSettings tv_left_back_settings, left_tv_settings, center_tv_settings, right_tv1_settings, right_tv2_settings, right_tv3_settings;
     private ImageViewSettings left_iv_settings, center_iv_settings, right_iv1_settings, right_iv2_settings, right_iv3_settings;
-    private int c_left_back_paddingLeft;
-    private int c_left_back_paddingRight;
-    private int c_left_back_drawable_padding;
-    private int c_left_tv_paddingLeft;
-    private int c_left_tv_paddingRight;
-    private int c_left_iv_icon_paddingLeft;
-    private int c_left_iv_icon_paddingRight;
-    private int c_right_tv1_text_paddingLeft;
-    private int c_right_tv1_text_paddingRight;
-    private int c_right_iv1_icon_paddingLeft;
-    private int c_right_iv1_icon_paddingRight;
-    private int c_right_tv2_text_paddingLeft;
-    private int c_right_tv2_text_paddingRight;
-    private int c_right_iv2_icon_paddingLeft;
-    private int c_right_iv2_icon_paddingRight;
-    private int c_right_tv3_text_paddingLeft;
-    private int c_right_tv3_text_paddingRight;
-    private int c_right_iv3_icon_paddingLeft;
-    private int c_right_iv3_icon_paddingRight;
     private RecyclerView.OnScrollListener onRlScrollListener;
     private int c_bar_background;
     private View[] views;
@@ -225,12 +155,11 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CToolBar, 0, defStyleAttr);
         getAttrs(typedArray);
 
-        ViewGroup title = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.love_c_toolbar, null);
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        addView(title, params);
+        ViewGroup title = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.love_c_toolbar, this);
         findViews(title);
         initViews();
         views = new View[]{tv_left_back, left_tv, left_iv, center_tv, center_iv, right_tv1, right_iv1, right_tv2, right_iv2, right_tv3, right_iv3};
@@ -251,6 +180,13 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         }
         typedArray.recycle();
 
+        adjustChildMargins();
+
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
     }
 
     // adjust topMargin
@@ -262,16 +198,53 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
                 //排除 toolbar_root
                 continue;
             }
+
+
             if (addStatusBar && statusBar.getVisibility() == VISIBLE) {
                 int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                 int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
                 custom_layer.measure(widthSpec, heightSpec);
                 int measuredHeight = custom_layer.getMeasuredHeight();//测量得到custom_layer的高
                 FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) child.getLayoutParams();
-                params.height = measuredHeight;
-                params.gravity |= Gravity.BOTTOM;
+                if (params.height == LayoutParams.MATCH_PARENT) {
+                    //需要去掉statusBar占用高度
+                    params.height = measuredHeight;
+                }
+                int gravity = params.gravity | Gravity.CENTER_VERTICAL;
+                if (gravity == -1) {
+                    gravity = Gravity.CENTER;
+                }
+                int statusBarHeight = getStatusBarHeight(getContext());
+                if (gravity ==
+                        Gravity.TOP ||
+                        gravity == (Gravity.TOP | Gravity.START) ||
+                        gravity == (Gravity.TOP | Gravity.END) ||
+                        gravity == (Gravity.TOP | Gravity.LEFT) ||
+                        gravity == (Gravity.TOP | Gravity.RIGHT) ||
+                        gravity == (Gravity.TOP | Gravity.CENTER)
+                ) {
+                    //Top
+                    params.topMargin = statusBarHeight;
+                } else if (
+                        gravity ==
+                                Gravity.BOTTOM ||
+                                gravity == (Gravity.BOTTOM | Gravity.START) ||
+                                gravity == (Gravity.BOTTOM | Gravity.END) ||
+                                gravity == (Gravity.BOTTOM | Gravity.LEFT) ||
+                                gravity == (Gravity.BOTTOM | Gravity.RIGHT) ||
+                                gravity == (Gravity.BOTTOM | Gravity.CENTER)
+                ) {
+                    //Bottom
+                    params.topMargin = statusBarHeight;
+                } else {
+                    //Center
+                    params.topMargin = statusBarHeight / 2;
+                }
                 child.setLayoutParams(params);
+                Log.d(TAG, "statusBar.getHeight():" + statusBar.getHeight() + " getStatusBarHeight(getContext()): " + statusBarHeight);
             }
+
+
         }
     }
 
@@ -299,6 +272,10 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
             search_layout.setVisibility(VISIBLE);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) search_layout.getLayoutParams();
             params.topMargin = searchLayoutMarginTop;
+            if (addStatusBar && statusBar.getVisibility() == VISIBLE) {
+                //加上状态栏高度
+                params.topMargin += getStatusBarHeight(getContext());
+            }
             params.bottomMargin = searchLayoutMarginBottom;
             params.leftMargin = searchLayoutMarginLeft;
             params.rightMargin = searchLayoutMarginRight;
@@ -381,7 +358,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         v.setAlpha(settings.alpha);
         v.setVisibility(settings.isShow ? VISIBLE : GONE);
         if (settings.leftDrawable != null) {
-            //图片shangse
+            //图片着色
             if (settings.drawableColor != Color.TRANSPARENT) {
                 setDrawableColor(settings.leftDrawable, settings.drawableColor);
             }
@@ -514,7 +491,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     /**
      * 需要有初始值
      */
-    class TextViewSettings {
+    static class TextViewSettings {
         public TextViewSettings(String text, int textSize, int textColor, float alpha) {
             this.text = text;
             this.textSize = textSize;
@@ -578,7 +555,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
     }
 
-    class ImageViewSettings {
+    static class ImageViewSettings {
 
 
         int iconResId;
@@ -1081,12 +1058,12 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
         c_bar_alpha_press = array.getFloat(R.styleable.CToolBar_c_bar_alpha_press, DEFAULT_ALPHA_PRESS);
         c_bar_background = array.getColor(R.styleable.CToolBar_c_bar_background, Color.TRANSPARENT);
-
+        status_bar_color = array.getColor(R.styleable.CToolBar_c_status_bar_color, Color.TRANSPARENT);
+        custom_layer_color = array.getColor(R.styleable.CToolBar_c_custom_layer_color, Color.TRANSPARENT);
 
         DEFAULT_TEXT_COLOR = array.getColor(R.styleable.CToolBar_c_bar_text_color, DEFAULT_TEXT_COLOR);
         DEFAULT_ICON_COLOR = array.getColor(R.styleable.CToolBar_c_bar_icon_color, DEFAULT_ICON_COLOR);
-        status_bar_color = array.getColor(R.styleable.CToolBar_c_status_bar_color, Color.TRANSPARENT);
-        custom_layer_color = array.getColor(R.styleable.CToolBar_c_custom_layer_color, Color.TRANSPARENT);
+
 
         c_show_back = array.getBoolean(R.styleable.CToolBar_c_show_back, true);
         c_back_finish = array.getBoolean(R.styleable.CToolBar_c_back_finish_enable, true);
@@ -1095,33 +1072,33 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         c_show_bottom_line = array.getBoolean(R.styleable.CToolBar_c_show_bottom_line, false);
         c_bottom_line_color = array.getColor(R.styleable.CToolBar_c_bottom_line_color, DEFAULT_BOTTOM_LINE_COLOR);
 
-        c_show_left_tv = array.getBoolean(R.styleable.CToolBar_c_show_left_tv, false);
-        c_show_left_iv = array.getBoolean(R.styleable.CToolBar_c_show_left_iv, false);
+        boolean c_show_left_tv = array.getBoolean(R.styleable.CToolBar_c_show_left_tv, false);
+        boolean c_show_left_iv = array.getBoolean(R.styleable.CToolBar_c_show_left_iv, false);
 
-        c_show_center_tv = array.getBoolean(R.styleable.CToolBar_c_show_center_tv, true);
-        c_show_center_iv = array.getBoolean(R.styleable.CToolBar_c_show_center_iv, false);
+        boolean c_show_center_tv = array.getBoolean(R.styleable.CToolBar_c_show_center_tv, true);
+        boolean c_show_center_iv = array.getBoolean(R.styleable.CToolBar_c_show_center_iv, false);
 
-        c_show_right_tv1 = array.getBoolean(R.styleable.CToolBar_c_show_right_tv1, false);
-        c_show_right_tv2 = array.getBoolean(R.styleable.CToolBar_c_show_right_tv2, false);
-        c_show_right_tv3 = array.getBoolean(R.styleable.CToolBar_c_show_right_tv3, false);
+        boolean c_show_right_tv1 = array.getBoolean(R.styleable.CToolBar_c_show_right_tv1, false);
+        boolean c_show_right_tv2 = array.getBoolean(R.styleable.CToolBar_c_show_right_tv2, false);
+        boolean c_show_right_tv3 = array.getBoolean(R.styleable.CToolBar_c_show_right_tv3, false);
 
-        c_show_right_iv1 = array.getBoolean(R.styleable.CToolBar_c_show_right_iv1, false);
-        c_show_right_iv2 = array.getBoolean(R.styleable.CToolBar_c_show_right_iv2, false);
-        c_show_right_iv3 = array.getBoolean(R.styleable.CToolBar_c_show_right_iv3, false);
+        boolean c_show_right_iv1 = array.getBoolean(R.styleable.CToolBar_c_show_right_iv1, false);
+        boolean c_show_right_iv2 = array.getBoolean(R.styleable.CToolBar_c_show_right_iv2, false);
+        boolean c_show_right_iv3 = array.getBoolean(R.styleable.CToolBar_c_show_right_iv3, false);
 
         c_left_back_min_width = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_back_min_width, DEFAULT_LEFT_BACK_MIN_WIDTH);
-        c_left_back_icon = array.getDrawable(R.styleable.CToolBar_c_left_back_icon);
+        Drawable c_left_back_icon = array.getDrawable(R.styleable.CToolBar_c_left_back_icon);
         if (c_left_back_icon == null) {
             c_left_back_icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_back_arrow);
         }
-        c_left_back_icon_color = array.getColor(R.styleable.CToolBar_c_left_back_icon_color, DEFAULT_ICON_COLOR);
-        c_left_back_alpha_press = array.getFloat(R.styleable.CToolBar_c_left_back_alpha_press, DEFAULT_ALPHA_NORMAL);
-        c_left_back_text = array.getString(R.styleable.CToolBar_c_left_back_text);
-        c_left_back_text_color = array.getColor(R.styleable.CToolBar_c_left_back_text_color, DEFAULT_TEXT_COLOR);
-        c_left_back_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_back_text_size, DEFAULT_TEXT_SIZE);
-        c_left_back_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_back_paddingLeft, DEFAULT_PADDING_LEFT);
-        c_left_back_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_back_paddingRight, DEFAULT_PADDING_RIGHT);
-        c_left_back_drawable_padding = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_back_drawable_padding, DEFAULT_PADDING_DRAWABLE);
+        int c_left_back_icon_color = array.getColor(R.styleable.CToolBar_c_left_back_icon_color, DEFAULT_ICON_COLOR);
+        float c_left_back_alpha_press = array.getFloat(R.styleable.CToolBar_c_left_back_alpha_press, DEFAULT_ALPHA_NORMAL);
+        String c_left_back_text = array.getString(R.styleable.CToolBar_c_left_back_text);
+        int c_left_back_text_color = array.getColor(R.styleable.CToolBar_c_left_back_text_color, DEFAULT_TEXT_COLOR);
+        int c_left_back_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_back_text_size, DEFAULT_TEXT_SIZE);
+        int c_left_back_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_back_paddingLeft, DEFAULT_PADDING_LEFT);
+        int c_left_back_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_back_paddingRight, DEFAULT_PADDING_RIGHT);
+        int c_left_back_drawable_padding = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_back_drawable_padding, DEFAULT_PADDING_DRAWABLE);
         tv_left_back_settings = new TextViewSettings(c_left_back_text, c_left_back_text_size, c_left_back_text_color, c_left_back_alpha_press);
         tv_left_back_settings.setLeftDrawable(c_left_back_icon);
         tv_left_back_settings.setDrawableColor(c_left_back_icon_color);
@@ -1131,54 +1108,54 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         tv_left_back_settings.setIsShow(c_show_back);
 
 
-        c_left_tv_text = array.getString(R.styleable.CToolBar_c_left_tv_text);
-        c_left_tv_text_color = array.getColor(R.styleable.CToolBar_c_left_tv_text_color, DEFAULT_TEXT_COLOR);
-        c_left_tv_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_tv_text_size, DEFAULT_TEXT_SIZE);
-        c_left_tv_text_alpha_press = array.getFloat(R.styleable.CToolBar_c_left_tv_text_alpha_press, DEFAULT_ALPHA_NORMAL);
-        c_left_tv_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_tv_text_paddingLeft, DEFAULT_PADDING_LEFT);
-        c_left_tv_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_tv_text_paddingRight, DEFAULT_PADDING_RIGHT);
+        String c_left_tv_text = array.getString(R.styleable.CToolBar_c_left_tv_text);
+        int c_left_tv_text_color = array.getColor(R.styleable.CToolBar_c_left_tv_text_color, DEFAULT_TEXT_COLOR);
+        int c_left_tv_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_tv_text_size, DEFAULT_TEXT_SIZE);
+        float c_left_tv_text_alpha_press = array.getFloat(R.styleable.CToolBar_c_left_tv_text_alpha_press, DEFAULT_ALPHA_NORMAL);
+        int c_left_tv_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_tv_text_paddingLeft, DEFAULT_PADDING_LEFT);
+        int c_left_tv_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_tv_text_paddingRight, DEFAULT_PADDING_RIGHT);
         left_tv_settings = new TextViewSettings(c_left_tv_text, c_left_tv_text_size, c_left_tv_text_color, c_left_tv_text_alpha_press);
         left_tv_settings.setPadding(c_left_tv_paddingLeft, c_left_tv_paddingRight, 0, 0);
         left_tv_settings.setMarging(0, 0, 0, 0);
         left_tv_settings.setIsShow(c_show_left_tv);
-        c_left_iv_icon = array.getResourceId(R.styleable.CToolBar_c_left_iv_icon, -1);
-        c_left_iv_icon_color = array.getColor(R.styleable.CToolBar_c_left_iv_icon_color, DEFAULT_ICON_COLOR);
-        c_left_iv_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_left_iv_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
-        c_left_iv_icon_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_iv_icon_paddingLeft, DEFAULT_PADDING_LEFT);
-        c_left_iv_icon_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_iv_icon_paddingRight, DEFAULT_PADDING_RIGHT);
+        int c_left_iv_icon = array.getResourceId(R.styleable.CToolBar_c_left_iv_icon, -1);
+        int c_left_iv_icon_color = array.getColor(R.styleable.CToolBar_c_left_iv_icon_color, DEFAULT_ICON_COLOR);
+        float c_left_iv_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_left_iv_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
+        int c_left_iv_icon_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_iv_icon_paddingLeft, DEFAULT_PADDING_LEFT);
+        int c_left_iv_icon_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_iv_icon_paddingRight, DEFAULT_PADDING_RIGHT);
         left_iv_settings = new ImageViewSettings(c_left_iv_icon, c_left_iv_icon_color, c_left_iv_icon_alpha_press);
         left_iv_settings.setPadding(c_left_iv_icon_paddingLeft, c_left_iv_icon_paddingRight, 0, 0);
         left_iv_settings.setMarging(0, 0, 0, 0);
         left_iv_settings.setIsShow(c_show_left_iv);
 
-        c_center_tv_text = array.getString(R.styleable.CToolBar_c_center_tv_text);
-        c_center_tv_text_color = array.getColor(R.styleable.CToolBar_c_center_tv_text_color, DEFAULT_TEXT_COLOR);
-        c_center_tv_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_center_tv_text_size, DEFAULT_TEXT_SIZE);
-        c_center_tv_text_alpha_press = array.getFloat(R.styleable.CToolBar_c_center_tv_text_alpha_press, DEFAULT_ALPHA_NORMAL);
+        String c_center_tv_text = array.getString(R.styleable.CToolBar_c_center_tv_text);
+        int c_center_tv_text_color = array.getColor(R.styleable.CToolBar_c_center_tv_text_color, DEFAULT_TEXT_COLOR);
+        int c_center_tv_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_center_tv_text_size, DEFAULT_TEXT_SIZE);
+        float c_center_tv_text_alpha_press = array.getFloat(R.styleable.CToolBar_c_center_tv_text_alpha_press, DEFAULT_ALPHA_NORMAL);
         center_tv_settings = new TextViewSettings(c_center_tv_text, c_center_tv_text_size, c_center_tv_text_color, c_center_tv_text_alpha_press);
         center_tv_settings.setPadding(0, 0, 0, 0);
         center_tv_settings.setMarging(0, 0, 0, 0);
         center_tv_settings.setIsShow(c_show_center_tv);
 
-        c_center_iv_icon = array.getResourceId(R.styleable.CToolBar_c_center_iv_icon, -1);
-        c_center_iv_icon_color = array.getColor(R.styleable.CToolBar_c_center_iv_icon_color, DEFAULT_ICON_COLOR);
-        c_center_iv_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_center_iv_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
+        int c_center_iv_icon = array.getResourceId(R.styleable.CToolBar_c_center_iv_icon, -1);
+        int c_center_iv_icon_color = array.getColor(R.styleable.CToolBar_c_center_iv_icon_color, DEFAULT_ICON_COLOR);
+        float c_center_iv_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_center_iv_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
         center_iv_settings = new ImageViewSettings(c_center_iv_icon, c_center_iv_icon_color, c_center_iv_icon_alpha_press);
         center_iv_settings.setPadding(0, 0, 0, 0);
         center_iv_settings.setMarging(0, 0, 0, 0);
         center_iv_settings.setIsShow(c_show_center_iv);
 
-        c_right_tv1_text = array.getString(R.styleable.CToolBar_c_right_tv1_text);
-        c_right_tv1_text_color = array.getColor(R.styleable.CToolBar_c_right_tv1_text_color, DEFAULT_TEXT_COLOR);
-        c_right_tv1_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv1_text_size, DEFAULT_TEXT_SIZE);
-        c_right_tv1_text_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_tv1_text_alpha_press, DEFAULT_ALPHA_NORMAL);
-        c_right_iv1_icon = array.getResourceId(R.styleable.CToolBar_c_right_iv1_icon, -1);
-        c_right_iv1_icon_color = array.getColor(R.styleable.CToolBar_c_right_iv1_icon_color, DEFAULT_ICON_COLOR);
-        c_right_iv1_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_iv1_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
-        c_right_tv1_text_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv1_text_paddingLeft, DEFAULT_PADDING_LEFT);
-        c_right_tv1_text_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv1_text_paddingRight, DEFAULT_PADDING_RIGHT);
-        c_right_iv1_icon_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv1_icon_paddingLeft, DEFAULT_PADDING_LEFT);
-        c_right_iv1_icon_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv1_icon_paddingRight, DEFAULT_PADDING_RIGHT);
+        String c_right_tv1_text = array.getString(R.styleable.CToolBar_c_right_tv1_text);
+        int c_right_tv1_text_color = array.getColor(R.styleable.CToolBar_c_right_tv1_text_color, DEFAULT_TEXT_COLOR);
+        int c_right_tv1_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv1_text_size, DEFAULT_TEXT_SIZE);
+        float c_right_tv1_text_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_tv1_text_alpha_press, DEFAULT_ALPHA_NORMAL);
+        int c_right_iv1_icon = array.getResourceId(R.styleable.CToolBar_c_right_iv1_icon, -1);
+        int c_right_iv1_icon_color = array.getColor(R.styleable.CToolBar_c_right_iv1_icon_color, DEFAULT_ICON_COLOR);
+        float c_right_iv1_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_iv1_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
+        int c_right_tv1_text_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv1_text_paddingLeft, DEFAULT_PADDING_LEFT);
+        int c_right_tv1_text_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv1_text_paddingRight, DEFAULT_PADDING_RIGHT);
+        int c_right_iv1_icon_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv1_icon_paddingLeft, DEFAULT_PADDING_LEFT);
+        int c_right_iv1_icon_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv1_icon_paddingRight, DEFAULT_PADDING_RIGHT);
 
         right_tv1_settings = new TextViewSettings(c_right_tv1_text, c_right_tv1_text_size, c_right_tv1_text_color, c_right_tv1_text_alpha_press);
         right_tv1_settings.setPadding(c_right_tv1_text_paddingLeft, c_right_tv1_text_paddingRight, 0, 0);
@@ -1189,17 +1166,17 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         right_iv1_settings.setMarging(0, 0, 0, 0);
         right_iv1_settings.setIsShow(c_show_right_iv1);
 
-        c_right_tv2_text = array.getString(R.styleable.CToolBar_c_right_tv2_text);
-        c_right_tv2_text_color = array.getColor(R.styleable.CToolBar_c_right_tv2_text_color, DEFAULT_TEXT_COLOR);
-        c_right_tv2_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv2_text_size, DEFAULT_TEXT_SIZE);
-        c_right_tv2_text_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_tv2_text_alpha_press, DEFAULT_ALPHA_NORMAL);
-        c_right_iv2_icon = array.getResourceId(R.styleable.CToolBar_c_right_iv2_icon, -1);
-        c_right_iv2_icon_color = array.getColor(R.styleable.CToolBar_c_right_iv2_icon_color, DEFAULT_ICON_COLOR);
-        c_right_iv2_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_iv2_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
-        c_right_tv2_text_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv2_text_paddingLeft, DEFAULT_PADDING_LEFT);
-        c_right_tv2_text_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv2_text_paddingRight, DEFAULT_PADDING_RIGHT);
-        c_right_iv2_icon_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv2_icon_paddingLeft, DEFAULT_PADDING_LEFT);
-        c_right_iv2_icon_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv2_icon_paddingRight, DEFAULT_PADDING_RIGHT);
+        String c_right_tv2_text = array.getString(R.styleable.CToolBar_c_right_tv2_text);
+        int c_right_tv2_text_color = array.getColor(R.styleable.CToolBar_c_right_tv2_text_color, DEFAULT_TEXT_COLOR);
+        int c_right_tv2_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv2_text_size, DEFAULT_TEXT_SIZE);
+        float c_right_tv2_text_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_tv2_text_alpha_press, DEFAULT_ALPHA_NORMAL);
+        int c_right_iv2_icon = array.getResourceId(R.styleable.CToolBar_c_right_iv2_icon, -1);
+        int c_right_iv2_icon_color = array.getColor(R.styleable.CToolBar_c_right_iv2_icon_color, DEFAULT_ICON_COLOR);
+        float c_right_iv2_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_iv2_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
+        int c_right_tv2_text_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv2_text_paddingLeft, DEFAULT_PADDING_LEFT);
+        int c_right_tv2_text_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv2_text_paddingRight, DEFAULT_PADDING_RIGHT);
+        int c_right_iv2_icon_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv2_icon_paddingLeft, DEFAULT_PADDING_LEFT);
+        int c_right_iv2_icon_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv2_icon_paddingRight, DEFAULT_PADDING_RIGHT);
 
         right_tv2_settings = new TextViewSettings(c_right_tv2_text, c_right_tv2_text_size, c_right_tv2_text_color, c_right_tv2_text_alpha_press);
         right_tv2_settings.setPadding(c_right_tv2_text_paddingLeft, c_right_tv2_text_paddingRight, 0, 0);
@@ -1210,17 +1187,17 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         right_iv2_settings.setMarging(0, 0, 0, 0);
         right_iv2_settings.setIsShow(c_show_right_iv2);
 
-        c_right_tv3_text = array.getString(R.styleable.CToolBar_c_right_tv3_text);
-        c_right_tv3_text_color = array.getColor(R.styleable.CToolBar_c_right_tv3_text_color, DEFAULT_TEXT_COLOR);
-        c_right_tv3_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv3_text_size, DEFAULT_TEXT_SIZE);
-        c_right_tv3_text_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_tv3_text_alpha_press, DEFAULT_ALPHA_NORMAL);
-        c_right_iv3_icon = array.getResourceId(R.styleable.CToolBar_c_right_iv3_icon, -1);
-        c_right_iv3_icon_color = array.getColor(R.styleable.CToolBar_c_right_iv3_icon_color, DEFAULT_ICON_COLOR);
-        c_right_iv3_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_iv3_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
-        c_right_tv3_text_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv3_text_paddingLeft, DEFAULT_PADDING_LEFT);
-        c_right_tv3_text_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv3_text_paddingRight, DEFAULT_PADDING_RIGHT);
-        c_right_iv3_icon_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv3_icon_paddingLeft, DEFAULT_PADDING_LEFT);
-        c_right_iv3_icon_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv3_icon_paddingRight, DEFAULT_PADDING_RIGHT);
+        String c_right_tv3_text = array.getString(R.styleable.CToolBar_c_right_tv3_text);
+        int c_right_tv3_text_color = array.getColor(R.styleable.CToolBar_c_right_tv3_text_color, DEFAULT_TEXT_COLOR);
+        int c_right_tv3_text_size = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv3_text_size, DEFAULT_TEXT_SIZE);
+        float c_right_tv3_text_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_tv3_text_alpha_press, DEFAULT_ALPHA_NORMAL);
+        int c_right_iv3_icon = array.getResourceId(R.styleable.CToolBar_c_right_iv3_icon, -1);
+        int c_right_iv3_icon_color = array.getColor(R.styleable.CToolBar_c_right_iv3_icon_color, DEFAULT_ICON_COLOR);
+        float c_right_iv3_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_right_iv3_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
+        int c_right_tv3_text_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv3_text_paddingLeft, DEFAULT_PADDING_LEFT);
+        int c_right_tv3_text_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_tv3_text_paddingRight, DEFAULT_PADDING_RIGHT);
+        int c_right_iv3_icon_paddingLeft = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv3_icon_paddingLeft, DEFAULT_PADDING_LEFT);
+        int c_right_iv3_icon_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_right_iv3_icon_paddingRight, DEFAULT_PADDING_RIGHT);
 
         right_tv3_settings = new TextViewSettings(c_right_tv3_text, c_right_tv3_text_size, c_right_tv3_text_color, c_right_tv3_text_alpha_press);
         right_tv3_settings.setPadding(c_right_tv3_text_paddingLeft, c_right_tv3_text_paddingRight, 0, 0);
