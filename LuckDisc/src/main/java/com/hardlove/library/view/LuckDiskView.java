@@ -316,6 +316,7 @@ public class LuckDiskView extends View {
         verCellRadius = 360 * 1.0f / sellSize;
         diffRadius = verCellRadius / 2;
 
+        invalidate();
     }
 
     /**

@@ -43,7 +43,7 @@ import com.hardlove.library.view.ctoobar.R;
 
 public class CToolBar extends FrameLayout implements View.OnTouchListener, View.OnClickListener, View.OnLongClickListener {
     private static final String TAG = "CToolBar";
-    private int DEFAULT_BOTTOM_LINE_COLOR = Color.parseColor("#F7F9FA");
+    private final int DEFAULT_BOTTOM_LINE_COLOR = Color.parseColor("#F7F9FA");
     private final float defaultTextSize = 17;//sp
     int DEFAULT_TEXT_COLOR = Color.BLACK;
     int DEFAULT_ICON_COLOR = Color.BLACK;
