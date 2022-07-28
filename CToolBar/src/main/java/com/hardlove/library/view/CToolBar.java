@@ -128,17 +128,18 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private boolean showSearchIcon;
     private boolean showDeleteIcon;
 
+    public CToolBar(@NonNull Context context) {
+        this(context, null);
+    }
 
     public CToolBar(Context context, AttributeSet attrs) {
-        this(context, attrs, R.style.CToolBar);
+        this(context, attrs, 0);
     }
 
     public CToolBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr);
-
     }
-
 
     @Override
     public void setBackgroundColor(int color) {
@@ -156,7 +157,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
 
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CToolBar, 0, defStyleAttr);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CToolBar, defStyleAttr, R.style.CToolBar);
         getAttrs(typedArray);
 
         ViewGroup title = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.love_c_toolbar, this);
