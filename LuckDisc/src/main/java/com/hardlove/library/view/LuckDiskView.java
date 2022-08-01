@@ -79,6 +79,8 @@ public class LuckDiskView extends View {
     private boolean enableRotate;
     private boolean splitLine;//是否添加分割线
     private float splitLineSize;//分割线宽度
+    @ColorInt
+    private int splitLineColor;//分割线颜色
 
 
     public LuckDiskView(Context context) {
@@ -121,6 +123,8 @@ public class LuckDiskView extends View {
         flashInActiveColor = array.getColor(R.styleable.LuckDiskView_flash_inactive_color, flashInActiveColor);
         splitLine = array.getBoolean(R.styleable.LuckDiskView_add_split_line, false);
         splitLineSize = array.getDimensionPixelSize(R.styleable.LuckDiskView_split_line_size, 5);
+        splitLineColor = array.getColor(R.styleable.LuckDiskView_split_color, Color.WHITE);
+
 
         addFlash = array.getBoolean(R.styleable.LuckDiskView_addFlash, true);
         enableRotate = array.getBoolean(R.styleable.LuckDiskView_enable_rotate, true);
@@ -170,7 +174,7 @@ public class LuckDiskView extends View {
         if (splitLine) {
             startAngle = initAngle;
             for (int i = 0; i < sellSize; i++) {
-                dPaint.setColor(Color.WHITE);
+                dPaint.setColor(splitLineColor);
                 dPaint.setStrokeWidth(splitLineSize);
                 //确定图片在圆弧中 中心点的位置
                 float dx = (float) (Math.cos(Math.toRadians(startAngle)) * innerCircleRadius);
