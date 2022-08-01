@@ -30,6 +30,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -346,7 +347,8 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
      */
     public void setDrawableColor(Drawable drawable, int color) {
         if (drawable != null) {
-            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+//            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            DrawableCompat.setTint(drawable,color);
         }
     }
 

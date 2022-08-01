@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.hardlove.library.view.CToolBar
+        android:id="@+id/cToolBar"
+        app:c_left_back_icon_color="#FF0000"
+        android:layout_width="match_parent"
+        app:c_center_tv_text_color="#FF0000"
+        android:layout_height="wrap_content"
+        app:c_center_tv_text="A" />
+
+    <Button
+        android:text="跳转"
+        android:id="@+id/btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
