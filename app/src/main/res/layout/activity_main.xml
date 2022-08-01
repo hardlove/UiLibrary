@@ -30,6 +30,8 @@
                     android:layout_height="match_parent"
                     android:layout_margin="15dp"
                     android:contentDescription="转盘"
+                    app:add_split_line="true"
+                    app:split_line_size="5px."
                     app:flash_active_color="#00ff00"
                     app:flash_inactive_color="#FFFFFF"
                     app:outCircleColor="@color/colorAccent"

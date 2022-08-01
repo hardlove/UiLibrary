@@ -77,6 +77,8 @@ public class LuckDiskView extends View {
     private boolean addFlash;
     private boolean firstActive;
     private boolean enableRotate;
+    private boolean splitLine;//是否添加分割线
+    private float splitLineSize;//分割线宽度
 
 
     public LuckDiskView(Context context) {
@@ -117,6 +119,8 @@ public class LuckDiskView extends View {
         textSize = array.getDimensionPixelSize(R.styleable.LuckDiskView_textSize, sp2px(context, textSize));
         flashActiveColor = array.getColor(R.styleable.LuckDiskView_flash_active_color, flashActiveColor);
         flashInActiveColor = array.getColor(R.styleable.LuckDiskView_flash_inactive_color, flashInActiveColor);
+        splitLine = array.getBoolean(R.styleable.LuckDiskView_add_split_line, false);
+        splitLineSize = array.getDimensionPixelSize(R.styleable.LuckDiskView_split_line_size, 5);
 
         addFlash = array.getBoolean(R.styleable.LuckDiskView_addFlash, true);
         enableRotate = array.getBoolean(R.styleable.LuckDiskView_enable_rotate, true);
@@ -154,12 +158,28 @@ public class LuckDiskView extends View {
         float startAngle = initAngle;
         Log.d(TAG, "onDraw~~~~~~~startAngle:" + startAngle + "  rectF:" + rectF.toString());
 
+        dPaint.setAntiAlias(true);
         //绘制扇形
         for (int i = 0; i < sellSize; i++) {
             dPaint.setColor(list.get(i).getBgColor());
             canvas.drawArc(rectF, startAngle, verCellRadius, true, dPaint);
             startAngle += verCellRadius;
         }
+
+        //绘制分割线条
+        if (splitLine) {
+            startAngle = initAngle;
+            for (int i = 0; i < sellSize; i++) {
+                dPaint.setColor(Color.WHITE);
+                dPaint.setStrokeWidth(splitLineSize);
+                //确定图片在圆弧中 中心点的位置
+                float dx = (float) (Math.cos(Math.toRadians(startAngle)) * innerCircleRadius);
+                float dy = (float) (Math.sin(Math.toRadians(startAngle)) * innerCircleRadius);
+                canvas.drawLine(0, 0, dx, dy, dPaint);
+                startAngle += verCellRadius;
+            }
+        }
+
 
         startAngle = initAngle + diffRadius;
         //绘制图标
