@@ -30,7 +30,7 @@
 
         <!--左边的文字和icon-->
         <item name="c_left_tv_text"></item>
-        <item name="c_left_tv_text_color">@color/c_tool_bar_text_color</item>
+<!--        <item name="c_left_tv_text_color">@color/c_tool_bar_text_color</item>-->
         <item name="c_left_tv_text_size">@dimen/c_tool_bar_text_size</item>
         <!--<item name="c_left_iv_icon">@mipmap/ic_launcher</item>-->
         <!--<item name="c_left_iv_icon_color">@color/c_tool_bar_icon_color</item>-->
