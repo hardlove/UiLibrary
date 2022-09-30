@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="MissingDefaultResource">
+
+    <com.carlos.camera.CustomCameraView
+        android:id="@+id/customCameraView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:onClick="takePicture"
+            android:text="拍照" />
+
+
+        <Button
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:onClick="changeAspectRatio"
+            android:text="比例" />
+
+        <Button
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:onClick="changeRational"
+            android:text="方向" />
+
+
+        <Button
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:onClick="flash"
+            android:text="闪光灯" />
+    </LinearLayout>
+
+
+</RelativeLayout>
