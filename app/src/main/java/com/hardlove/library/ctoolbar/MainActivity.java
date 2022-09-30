@@ -354,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
     private List<LuckDiskView.Sector> getLuckDisKData() {
         List<LuckDiskView.Sector> list = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            LuckDiskView.Sector sector = new LuckDiskView.Sector("Item" + i, ColorUtil.getRandomColor(), ColorUtil.getRandomColor(), BitmapFactory.decodeResource(getResources(), R.mipmap.action));
+            LuckDiskView.Sector sector = new LuckDiskView.Sector("号打法法第四十发撒的接口发快递啊" + i, ColorUtil.getRandomColor(), ColorUtil.getRandomColor(), BitmapFactory.decodeResource(getResources(), R.mipmap.action));
             list.add(sector);
         }
         return list;
