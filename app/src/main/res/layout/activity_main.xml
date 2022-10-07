@@ -61,6 +61,12 @@
                 android:text="定位" />
 
 
+            <Button
+                android:text="自定义相机"
+                android:id="@+id/btn_carmera"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <com.hardlove.library.view.StatusBarPlaceholderView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

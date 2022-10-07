@@ -30,6 +30,10 @@
         <activity android:name=".SecondActivity">
         </activity>
         <activity android:name=".FinishedRecordActivity"></activity>
+
+        <activity android:name="com.hardlove.library.ctoolbar.TestActivtiy"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>

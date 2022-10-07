@@ -26,6 +26,8 @@ import androidx.lifecycle.LifecycleOwner;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class CustomCameraView extends FrameLayout implements LifecycleObserver {
@@ -196,10 +198,18 @@ public class CustomCameraView extends FrameLayout implements LifecycleObserver {
         }
     }
 
+    private static final SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+
     public void takePicture(ImageCapture.OnImageSavedCallback onImageSavedCallback) {
         File parent = new File(getImageSavePath());
-        File file = new File(parent, System.currentTimeMillis() + ".png");
+        String fileName = "IMG_" + format.format(System.currentTimeMillis()) + ".png";
+        File file = new File(parent, fileName);
         ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
+
+//        ContentValues contentValue = new ContentValues();
+//        contentValue.put(MediaStore.Images.Media.DISPLAY_NAME,fileName);
+//        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//        new ImageCapture.OutputFileOptions.Builder(getContext().getContentResolver(),uri,contentValue);
 
         ImageCapture.OnImageSavedCallback imageSavedCallback = new ImageCapture.OnImageSavedCallback() {
             @Override
@@ -235,7 +245,7 @@ public class CustomCameraView extends FrameLayout implements LifecycleObserver {
 
 
     /**
-     * 取消拍照
+     * 取消重拍拍照
      */
     public void cancel() {
         if (imageView != null) {

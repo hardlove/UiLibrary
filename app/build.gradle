@@ -9,7 +9,7 @@ android {
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.hardlove.library.ctoolbar"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -39,6 +39,7 @@ dependencies {
     implementation project(path: ':bottom-navigation-bar')
     implementation project(path: ':PermissionHelper')
     implementation project(path: ':LocationHelper')
+    implementation project(path: ':CameraX')
 
     implementation 'com.blankj:utilcodex:1.30.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.18'

@@ -1,10 +1,9 @@
-package com.carlos.camera;
+package com.hardlove.library.ctoolbar;
 
 import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Surface;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -13,10 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 
 import com.bumptech.glide.Glide;
+import com.carlos.camera.CustomCameraView;
+import com.carlos.camera.ImageLoader;
 import com.carlos.permissionhelper.PermissionHelper;
 
 public class TestActivtiy extends AppCompatActivity {
@@ -33,7 +33,7 @@ public class TestActivtiy extends AppCompatActivity {
 
 
         PermissionHelper.builder()
-                .addPermission(Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .addPermission(Manifest.permission.CAMERA)
                 .callback(new PermissionHelper.SimpleCallback() {
                     @Override
                     public void onGranted() {
@@ -60,21 +60,23 @@ public class TestActivtiy extends AppCompatActivity {
     }
 
     private boolean falsh = false;
+
     public void flash(View view) {
         falsh = !falsh;
         if (falsh) {
             customCameraView.setFlashMode(ImageCapture.FLASH_MODE_ON);
-        }else {
+        } else {
             customCameraView.setFlashMode(ImageCapture.FLASH_MODE_OFF);
         }
 
     }
 
     private boolean flag;
+
     public void changeAspectRatio(View view) {
         if (flag) {
             customCameraView.setAspectRatio(AspectRatio.RATIO_16_9);
-        }else {
+        } else {
             customCameraView.setAspectRatio(AspectRatio.RATIO_4_3);
         }
         flag = !flag;
@@ -100,7 +102,7 @@ public class TestActivtiy extends AppCompatActivity {
 
 
     public void startIntent(View view) {
-        startActivity(new Intent(this,SecondActivity.class));
+        startActivity(new Intent(this, SecondActivity.class));
     }
 
     public void cancel(View view) {
