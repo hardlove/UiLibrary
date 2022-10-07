@@ -1,6 +1,5 @@
-plugins {
-    id 'com.android.library'
-}
+apply plugin: 'com.android.library'
+apply from: "../jitpack.gradle"
 
 android {
     compileSdkVersion 32
@@ -46,7 +45,4 @@ dependencies {
 
     api 'com.github.hardlove.UiLibrary:PermissionHelper:2.2.18'
 
-
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 }
