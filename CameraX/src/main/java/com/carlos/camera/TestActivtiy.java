@@ -1,6 +1,7 @@
 package com.carlos.camera;
 
 import android.Manifest;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Surface;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.AspectRatio;
+import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 
@@ -26,12 +28,15 @@ public class TestActivtiy extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activtiy_test);
+
+        initCameraXView();
+
+
         PermissionHelper.builder()
                 .addPermission(Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .callback(new PermissionHelper.SimpleCallback() {
                     @Override
                     public void onGranted() {
-                        initCameraXView();
                     }
 
                     @Override
@@ -57,12 +62,24 @@ public class TestActivtiy extends AppCompatActivity {
     private boolean falsh = false;
     public void flash(View view) {
         falsh = !falsh;
-        customCameraView.flashEnable(falsh);
+        if (falsh) {
+            customCameraView.setFlashMode(ImageCapture.FLASH_MODE_ON);
+        }else {
+            customCameraView.setFlashMode(ImageCapture.FLASH_MODE_OFF);
+        }
 
     }
 
+    private boolean flag;
     public void changeAspectRatio(View view) {
-        customCameraView.setAspectRatio(AspectRatio.RATIO_16_9);
+        if (flag) {
+            customCameraView.setAspectRatio(AspectRatio.RATIO_16_9);
+        }else {
+            customCameraView.setAspectRatio(AspectRatio.RATIO_4_3);
+        }
+        flag = !flag;
+
+
     }
 
     public void takePicture(View view) {
@@ -81,9 +98,12 @@ public class TestActivtiy extends AppCompatActivity {
 
     }
 
-    private int rotatin = 0;
-    public void changeRational(View view) {
 
-        customCameraView.setRotation(rotatin++%3);
+    public void startIntent(View view) {
+        startActivity(new Intent(this,SecondActivity.class));
+    }
+
+    public void cancel(View view) {
+        customCameraView.cancel();
     }
 }
