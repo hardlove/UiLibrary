@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Surface;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +36,7 @@ public class CustomCameraView extends FrameLayout implements LifecycleObserver {
     private ImageCapture imageCapture;
     private Camera camera;
     private PreviewView previewView;
+    private ImageView imageView;
     private CameraSelector cameraSelector;
     private Preview preview;
     private ProcessCameraProvider processCameraProvider;
@@ -98,10 +100,11 @@ public class CustomCameraView extends FrameLayout implements LifecycleObserver {
                 processCameraProvider = cameraProviderListenableFuture.get();
 
                 bindPreview(processCameraProvider);
-
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }, ContextCompat.getMainExecutor(getContext()));
@@ -112,6 +115,7 @@ public class CustomCameraView extends FrameLayout implements LifecycleObserver {
         if (cameraProvider == null) return;
         if (previewView == null) {
             previewView = new PreviewView(getContext());
+            previewView.setScaleType(PreviewView.ScaleType.FIT_CENTER);
             addView(previewView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         }
         preview = new Preview.Builder()
@@ -122,11 +126,9 @@ public class CustomCameraView extends FrameLayout implements LifecycleObserver {
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                 .build();
 
-
-        preview.setSurfaceProvider(previewView.getSurfaceProvider());
-
         cameraProvider.unbindAll();
         camera = cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview);
+        preview.setSurfaceProvider(previewView.getSurfaceProvider());
     }
 
     private String getImageSavePath() {
@@ -134,7 +136,7 @@ public class CustomCameraView extends FrameLayout implements LifecycleObserver {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath();
     }
 
-    public void takePicture() {
+    public void takePicture(ImageCapture.OnImageSavedCallback onImageSavedCallback) {
         File parent = new File(getImageSavePath());
         File file = new File(parent, System.currentTimeMillis() + ".png");
         ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
@@ -142,12 +144,27 @@ public class CustomCameraView extends FrameLayout implements LifecycleObserver {
         ImageCapture.OnImageSavedCallback imageSavedCallback = new ImageCapture.OnImageSavedCallback() {
             @Override
             public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                if (imageView == null) {
+                    imageView = new ImageView(getContext());
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    addView(imageView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+
+                }
+                if (imageLoader != null) {
+                    imageLoader.load(imageView, outputFileResults.getSavedUri());
+                }
+                if (onImageSavedCallback != null) {
+                    onImageSavedCallback.onImageSaved(outputFileResults);
+                }
 
             }
 
             @Override
             public void onError(@NonNull ImageCaptureException exception) {
-
+                Log.e("Carlos", "拍照失败：" + exception.getLocalizedMessage());
+                if (onImageSavedCallback != null) {
+                    onImageSavedCallback.onError(exception);
+                }
             }
         };
         imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(getContext()), imageSavedCallback);
@@ -191,5 +208,11 @@ public class CustomCameraView extends FrameLayout implements LifecycleObserver {
         if (camera != null) {
             camera.getCameraControl().enableTorch(torch);
         }
+    }
+
+    private ImageLoader imageLoader;
+
+    public void setImageLoader(ImageLoader imageLoader) {
+        this.imageLoader = imageLoader;
     }
 }

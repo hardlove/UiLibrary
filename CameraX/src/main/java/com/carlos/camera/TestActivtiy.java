@@ -1,14 +1,20 @@
 package com.carlos.camera;
 
 import android.Manifest;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Surface;
 import android.view.View;
+import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.AspectRatio;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
 
+import com.bumptech.glide.Glide;
 import com.carlos.permissionhelper.PermissionHelper;
 
 public class TestActivtiy extends AppCompatActivity {
@@ -38,6 +44,14 @@ public class TestActivtiy extends AppCompatActivity {
 
     private void initCameraXView() {
         customCameraView = findViewById(R.id.customCameraView);
+        ImageLoader imageloader = new ImageLoader() {
+            @Override
+            public void load(ImageView iv, Uri uri) {
+                Glide.with(iv).load(uri).into(iv);
+
+            }
+        };
+        customCameraView.setImageLoader(imageloader);
     }
 
     private boolean falsh = false;
@@ -52,7 +66,19 @@ public class TestActivtiy extends AppCompatActivity {
     }
 
     public void takePicture(View view) {
-        customCameraView.takePicture();
+        customCameraView.takePicture(new ImageCapture.OnImageSavedCallback() {
+
+            @Override
+            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+
+            }
+
+            @Override
+            public void onError(@NonNull ImageCaptureException exception) {
+
+            }
+        });
+
     }
 
     private int rotatin = 0;
