@@ -1,4 +1,4 @@
-package com.carlos.camera;
+package com.carlos.camerax;
 
 import android.content.Context;
 import android.os.Environment;

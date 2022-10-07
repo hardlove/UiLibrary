@@ -15,8 +15,8 @@ import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 
 import com.bumptech.glide.Glide;
-import com.carlos.camera.CustomCameraView;
-import com.carlos.camera.ImageLoader;
+import com.carlos.camerax.CustomCameraView;
+import com.carlos.camerax.ImageLoader;
 import com.carlos.permissionhelper.PermissionHelper;
 
 public class TestActivtiy extends AppCompatActivity {

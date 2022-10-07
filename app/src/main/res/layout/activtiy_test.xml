@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:ignore="MissingDefaultResource">
 
-    <com.carlos.camera.CustomCameraView
+    <com.carlos.camerax.CustomCameraView
         android:id="@+id/customCameraView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
