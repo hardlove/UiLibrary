@@ -28,6 +28,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class CustomCameraView extends FrameLayout implements LifecycleObserver {
@@ -223,7 +224,7 @@ public class CustomCameraView extends FrameLayout implements LifecycleObserver {
                     imageView.setVisibility(VISIBLE);
                 }
                 if (imageLoader != null) {
-                    imageLoader.load(imageView, outputFileResults.getSavedUri());
+                    imageLoader.load(imageView, Objects.requireNonNull(outputFileResults.getSavedUri()));
                 }
                 if (onImageSavedCallback != null) {
                     onImageSavedCallback.onImageSaved(outputFileResults);

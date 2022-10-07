@@ -51,7 +51,7 @@ public class TestActivtiy extends AppCompatActivity {
         customCameraView = findViewById(R.id.customCameraView);
         ImageLoader imageloader = new ImageLoader() {
             @Override
-            public void load(ImageView iv, Uri uri) {
+            public void load(@NonNull ImageView iv, @NonNull Uri uri) {
                 Glide.with(iv).load(uri).into(iv);
 
             }
