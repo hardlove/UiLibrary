@@ -209,10 +209,12 @@ public class LuckDiskView extends View {
     private void drawText(float startAngle, String name, Paint textPaint, Canvas canvas) {
         char[] chars = name.toCharArray();
         int count = chars.length;
-        //最大绘制个字符
-        int max = 8;
+        //一行最大绘制个字符
+        int max = 5;
+        int lineNum = 1;
         if (count > max) {
             count = max;
+            lineNum = 2;
         }
         Path path = new Path();
 
@@ -221,12 +223,27 @@ public class LuckDiskView extends View {
         path.moveTo(dx, dy);
         path.lineTo(dx / 16, dy / 16);
 
+        //横向居中
         float hOffset = (innerCircleRadius - textPaint.measureText(name, 0, count)) / 2;
-
-        hOffset = dip2px(context, 6);
+        //往前便宜一点
+        hOffset -= dip2px(context, 10);
+        if (hOffset < dip2px(context, 10)) {
+            hOffset = dip2px(context, 10);
+        }
 
         float vOffset = (textPaint.getFontMetrics().bottom - textPaint.getFontMetrics().top) / 4;
-        canvas.drawTextOnPath(chars, 0, count, path, hOffset, vOffset, textPaint);
+
+        if (lineNum == 1) {
+            //绘制1行文字
+            canvas.drawTextOnPath(chars, 0, count, path, hOffset, vOffset, textPaint);
+        } else {
+            //绘制两行文字
+            float vOffset1 = (float) (-2.0 * vOffset);
+            float vOffset2 = (float) (2.0 * vOffset);
+            canvas.drawTextOnPath(chars, 0, max, path, hOffset, vOffset1, textPaint);
+            canvas.drawTextOnPath(chars, max, Math.min(max, chars.length - max), path, hOffset, vOffset2, textPaint);
+        }
+
 
         //参考线
 //        canvas.drawLine(0, 0, dx, dy, textPaint);
