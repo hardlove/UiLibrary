@@ -799,7 +799,7 @@ public class PermissionHelper {
                 }).show();
     }
 
-    interface OnGoSettingUIListener {
+    public interface OnGoSettingUIListener {
         void onConfirm();
 
         void onCancel();
