@@ -20,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.GsonUtils;
@@ -64,6 +63,7 @@ public class PermissionHelper {
     private FullCallback mFullCallback;
     private boolean ignore = true;//48小时内请求过的权限不再重复请求
     private boolean goSetting;//跳转系统权限设置页面
+    private OnGoSettingUIListener onGoSettingUIListener;//跳转系统权限设置页面监听
     private CharSequence goSettingMsg;//跳转系统权限设置页面弹框描述内容
     private boolean isSplit;//权限说明和权限请求是否分离(即：申请权限前先弹框询问用户是否同意申请)
 
@@ -190,6 +190,17 @@ public class PermissionHelper {
      */
     public PermissionHelper goSettingUI(boolean goSetting) {
         this.goSetting = goSetting;
+        return this;
+    }
+
+
+    /**
+     * @param goSetting 是否跳转系统权限设置页面
+     * @return
+     */
+    public PermissionHelper goSettingUI(boolean goSetting, OnGoSettingUIListener onGoSettingUIListener) {
+        this.goSetting = goSetting;
+        this.onGoSettingUIListener = onGoSettingUIListener;
         return this;
     }
 
@@ -510,7 +521,7 @@ public class PermissionHelper {
                 mFullCallback.onDenied(deniedForever, denied, granted);
                 if (goSetting) {
                     if (!isShowing) {
-                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg);
+                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg, onGoSettingUIListener);
                     }
                     isShowing = true;
                 }
@@ -523,7 +534,7 @@ public class PermissionHelper {
                 mSimpleCallback.onDenied();
                 if (goSetting) {
                     if (!isShowing) {
-                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg);
+                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg, onGoSettingUIListener);
                     }
                     isShowing = true;
                 }
@@ -767,7 +778,7 @@ public class PermissionHelper {
     }
 
 
-    public static void showOpenAppSettingDialog(Context context, String title, CharSequence content) {
+    public static void showOpenAppSettingDialog(Context context, String title, CharSequence content, OnGoSettingUIListener onGoSettingUIListener) {
         if (TextUtils.isEmpty(content)) {
             content = "您已限制授权我们申请的权限，请选择“允许”，否则该功能将无法正常使用！";
         }
@@ -776,8 +787,22 @@ public class PermissionHelper {
                 .setMessage(content)
                 .setCancelable(false)
                 .setNegativeButton("取消", (dialog, which) -> {
-
+                    if (onGoSettingUIListener != null) {
+                        onGoSettingUIListener.onCancel();
+                    }
                 })
-                .setPositiveButton("去设置", (dialog, which) -> PermissionUtils.launchAppDetailsSettings()).show();
+                .setPositiveButton("去设置", (dialog, which) -> {
+                    PermissionUtils.launchAppDetailsSettings();
+                    if (onGoSettingUIListener != null) {
+                        onGoSettingUIListener.onConfirm();
+                    }
+                }).show();
     }
+
+    interface OnGoSettingUIListener {
+        void onConfirm();
+
+        void onCancel();
+    }
+
 }
