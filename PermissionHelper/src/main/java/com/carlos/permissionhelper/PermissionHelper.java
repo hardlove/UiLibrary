@@ -94,7 +94,7 @@ public class PermissionHelper {
      * @see #builder()
      */
     @Deprecated
-    public static PermissionHelper permission(@NonNull final String... permissions) {
+    public static PermissionHelper permission(@NonNull final String[] permissions) {
         return builder().addPermission(permissions);
     }
 
@@ -126,7 +126,18 @@ public class PermissionHelper {
      * @param permissions 权限名
      * @return
      */
-    public PermissionHelper addPermission(@NonNull String... permissions) {
+    public PermissionHelper addPermission(@NonNull List<String> permissions) {
+        requestPermissions.addAll(permissions);
+        return this;
+    }
+
+    /**
+     * 新增Permission
+     *
+     * @param permissions 权限名
+     * @return
+     */
+    public PermissionHelper addPermission(@NonNull String[] permissions) {
         requestPermissions.addAll(Arrays.asList(permissions));
         return this;
     }
