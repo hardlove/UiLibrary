@@ -143,6 +143,7 @@
 
         <attr name="c_show_search_search_icon" />
         <attr name="c_show_search_delete_icon" />
+        <attr name="c_close_delete_icon_while_empty"/>
 
 
     </declare-styleable>

@@ -128,6 +128,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     private static final int GRAVITY_CENTER = 2;
     private boolean showSearchIcon;
     private boolean showDeleteIcon;
+    private boolean closeDeleteWhileEmpty;
 
     public CToolBar(@NonNull Context context) {
         this(context, null);
@@ -1230,6 +1231,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
         showSearchIcon = array.getBoolean(R.styleable.CToolBar_c_show_search_search_icon, true);
         showDeleteIcon = array.getBoolean(R.styleable.CToolBar_c_show_search_delete_icon, false);
+        closeDeleteWhileEmpty = array.getBoolean(R.styleable.CToolBar_c_close_delete_icon_while_empty, true);
 
         search_searchIconSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_icon_size, dip2px(getContext(), 16));
         search_deleteIconSize = array.getDimensionPixelSize(R.styleable.CToolBar_c_search_delete_icon_size, dip2px(getContext(), 16));
