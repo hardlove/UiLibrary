@@ -181,15 +181,25 @@ public class SearchLayout extends LinearLayout {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (closeDeleteWhileEmpty && s.length() == 0) {
-                    deleteIconView.setVisibility(showDeleteIcon ? VISIBLE : GONE);
+                if (closeDeleteWhileEmpty && showDeleteIcon) {
+                    deleteIconView.setVisibility(s.length() == 0 ? GONE : VISIBLE);
                 }
 
             }
         });
 
         searchIconView.setVisibility(showSearchIcon ? VISIBLE : GONE);
-        deleteIconView.setVisibility(showDeleteIcon ? VISIBLE : GONE);
+
+        if (showDeleteIcon) {
+            if (closeDeleteWhileEmpty) {
+                deleteIconView.setVisibility(editText.getEditableText().length() == 0 ? GONE : VISIBLE);
+            } else {
+                deleteIconView.setVisibility(VISIBLE);
+            }
+        } else {
+            deleteIconView.setVisibility(GONE);
+        }
+
 
     }
 
@@ -384,6 +394,7 @@ public class SearchLayout extends LinearLayout {
         this.showDeleteIcon = showDeleteIcon;
         deleteIconView.setVisibility(this.showDeleteIcon ? VISIBLE : GONE);
     }
+
     public void setCloseDeleteWhileEmpty(boolean close) {
         this.closeDeleteWhileEmpty = close;
     }
