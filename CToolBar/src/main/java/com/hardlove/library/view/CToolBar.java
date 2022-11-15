@@ -307,7 +307,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         }
         search_layout.setShowSearchIcon(showSearchIcon);
         search_layout.setShowDeleteIcon(showDeleteIcon);
-
+        search_layout.setCloseDeleteWhileEmpty(closeDeleteWhileEmpty);
 
     }
 
@@ -345,7 +345,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
     public void setDrawableColor(Drawable drawable, int color) {
         if (drawable != null) {
 //            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-            DrawableCompat.setTint(drawable,color);
+            DrawableCompat.setTint(drawable, color);
         }
     }
 

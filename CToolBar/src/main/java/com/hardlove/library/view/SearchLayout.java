@@ -384,4 +384,7 @@ public class SearchLayout extends LinearLayout {
         this.showDeleteIcon = showDeleteIcon;
         deleteIconView.setVisibility(this.showDeleteIcon ? VISIBLE : GONE);
     }
+    public void setCloseDeleteWhileEmpty(boolean close) {
+        this.closeDeleteWhileEmpty = close;
+    }
 }
