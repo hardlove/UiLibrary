@@ -139,7 +139,7 @@
         <attr name="c_search_enable_edit" />
         <attr name="c_search_text_padding_left_right" />
 
-        <attr name="c_search_gravity"/>
+        <attr name="c_search_gravity" />
 
         <attr name="c_show_search_search_icon" />
         <attr name="c_show_search_delete_icon" />
@@ -178,6 +178,7 @@
 
         <attr name="c_show_search_search_icon" format="boolean|reference" />
         <attr name="c_show_search_delete_icon" format="boolean|reference" />
+        <attr name="c_close_delete_icon_while_empty" format="boolean|reference" />
 
 
     </declare-styleable>

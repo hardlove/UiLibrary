@@ -8,7 +8,9 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -53,6 +55,7 @@ public class SearchLayout extends LinearLayout {
     private ImageView deleteIconView;
     private boolean showSearchIcon;
     private boolean showDeleteIcon;
+    private boolean closeDeleteWhileEmpty;
 
 
     public SearchLayout(Context context) {
@@ -90,6 +93,7 @@ public class SearchLayout extends LinearLayout {
         deleteIcon = array.getDrawable(R.styleable.SearchLayout_c_search_delete_icon);
         showSearchIcon = array.getBoolean(R.styleable.SearchLayout_c_show_search_search_icon, true);
         showDeleteIcon = array.getBoolean(R.styleable.SearchLayout_c_show_search_delete_icon, false);
+        closeDeleteWhileEmpty = array.getBoolean(R.styleable.SearchLayout_c_close_delete_icon_while_empty, true);
 
         if (searchIcon == null) {
             searchIcon = ContextCompat.getDrawable(getContext(), R.mipmap.icon_search);
@@ -164,6 +168,25 @@ public class SearchLayout extends LinearLayout {
         editText.setEllipsize(TextUtils.TruncateAt.END);
         setEnableEdit(enableEdit);
         setTextPaddingLR(textPaddingLR);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (closeDeleteWhileEmpty && s.length() == 0) {
+                    deleteIconView.setVisibility(showDeleteIcon ? VISIBLE : GONE);
+                }
+
+            }
+        });
 
         searchIconView.setVisibility(showSearchIcon ? VISIBLE : GONE);
         deleteIconView.setVisibility(showDeleteIcon ? VISIBLE : GONE);

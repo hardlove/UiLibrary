@@ -274,10 +274,6 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
             search_layout.setVisibility(VISIBLE);
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) search_layout.getLayoutParams();
             params.topMargin = searchLayoutMarginTop;
-            if (addStatusBar && statusBar.getVisibility() == VISIBLE) {
-                //加上状态栏高度
-                params.topMargin += getStatusBarHeight(getContext());
-            }
             params.bottomMargin = searchLayoutMarginBottom;
             params.leftMargin = searchLayoutMarginLeft;
             params.rightMargin = searchLayoutMarginRight;
