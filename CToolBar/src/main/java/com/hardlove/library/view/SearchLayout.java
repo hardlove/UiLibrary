@@ -15,6 +15,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -199,6 +200,7 @@ public class SearchLayout extends LinearLayout {
         } else {
             deleteIconView.setVisibility(GONE);
         }
+        deleteIconView.setOnClickListener(v -> editText.getEditableText().clear());
 
 
     }
@@ -392,7 +394,15 @@ public class SearchLayout extends LinearLayout {
 
     public void setShowDeleteIcon(boolean showDeleteIcon) {
         this.showDeleteIcon = showDeleteIcon;
-        deleteIconView.setVisibility(this.showDeleteIcon ? VISIBLE : GONE);
+        if (showDeleteIcon) {
+            if (closeDeleteWhileEmpty) {
+                deleteIconView.setVisibility(editText.getEditableText().length() == 0 ? GONE : VISIBLE);
+            } else {
+                deleteIconView.setVisibility(VISIBLE);
+            }
+        } else {
+            deleteIconView.setVisibility(GONE);
+        }
     }
 
     public void setCloseDeleteWhileEmpty(boolean close) {

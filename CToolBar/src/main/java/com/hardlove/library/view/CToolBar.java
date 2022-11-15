@@ -305,9 +305,9 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         if (search_deleteIconColor != Integer.MIN_VALUE) {
             search_layout.setDeleteIconColor(search_deleteIconColor);
         }
+        search_layout.setCloseDeleteWhileEmpty(closeDeleteWhileEmpty);
         search_layout.setShowSearchIcon(showSearchIcon);
         search_layout.setShowDeleteIcon(showDeleteIcon);
-        search_layout.setCloseDeleteWhileEmpty(closeDeleteWhileEmpty);
 
     }
 
