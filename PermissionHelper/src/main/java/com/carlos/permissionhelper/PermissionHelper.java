@@ -543,7 +543,7 @@ public class PermissionHelper {
                 mFullCallback.onDenied(deniedForever, denied, granted);
                 if (goSetting) {
                     if (!isShowing) {
-                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
+                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
                     isShowing = true;
                 }
@@ -556,7 +556,7 @@ public class PermissionHelper {
                 mSimpleCallback.onDenied();
                 if (goSetting) {
                     if (!isShowing) {
-                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
+                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
                     isShowing = true;
                 }
