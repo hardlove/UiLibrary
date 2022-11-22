@@ -19,9 +19,6 @@ import com.carlos.camerax.CustomCameraView;
 import com.carlos.camerax.ImageLoader;
 import com.carlos.permissionhelper.PermissionHelper;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 public class TestActivtiy extends AppCompatActivity {
 
     private CustomCameraView customCameraView;

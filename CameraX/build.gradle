@@ -43,6 +43,5 @@ dependencies {
     // If you want to additionally use the CameraX Extensions library
     api("androidx.camera:camera-extensions:${camerax_version}")
 
-    api 'com.github.hardlove.UiLibrary:PermissionHelper:2.2.18'
 
 }

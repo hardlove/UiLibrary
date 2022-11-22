@@ -4,11 +4,18 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.Window;
@@ -18,7 +25,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
 import com.blankj.utilcode.util.ActivityUtils;
@@ -61,10 +67,11 @@ public class PermissionHelper {
     private final static String PERMISSION_REQUEST_RECORD = "PERMISSION_REQUEST_RECORD";
     private SimpleCallback mSimpleCallback;
     private FullCallback mFullCallback;
-    private boolean ignore = true;//48小时内请求过的权限不再重复请求
-    private boolean goSetting;//跳转系统权限设置页面
+    private boolean ignore48H = true;//48小时内请求过的权限不再重复请求
+    private boolean onlyRequestOnce = true;//是否永久不重复请求，即只能申请一次
+    private boolean goSetting = true;//跳转系统权限设置页面
     private OnGoSettingUIListener onGoSettingUIListener;//跳转系统权限设置页面监听
-    private CharSequence goSettingMsg;//跳转系统权限设置页面弹框描述内容
+    private String goSettingMsg;//跳转系统权限设置页面弹框描述内容
     private boolean isSplit;//权限说明和权限请求是否分离(即：申请权限前先弹框询问用户是否同意申请)
 
     /**
@@ -219,7 +226,7 @@ public class PermissionHelper {
      * @param sequence 跳转系统权限设置页面弹框描述内容
      * @return
      */
-    public PermissionHelper goSettingMsg(CharSequence sequence) {
+    public PermissionHelper goSettingMsg(String sequence) {
         this.goSettingMsg = sequence;
         return this;
     }
@@ -318,15 +325,19 @@ public class PermissionHelper {
         List<String> o1 = new ArrayList<>(requestPermissions);
         //48小时内已经申请过的权限
         List<String> o2 = new ArrayList<>();
-        if (ignore) {
+        if (ignore48H || onlyRequestOnce) {
             while (iterator.hasNext()) {
                 Map.Entry<String, Long> next = iterator.next();
                 String key = next.getKey();
                 if (o1.contains(key)) {
-                    //该权限已经请求过，检查是否已超过48小时
-                    if (System.currentTimeMillis() - next.getValue() < 48 * 60 * 60 * 1000) {
+                    if (onlyRequestOnce) {
+                        //只能请求一次
+                        o2.add(key);
+                    } else if (System.currentTimeMillis() - next.getValue() < 48 * 60 * 60 * 1000) {
+                        //该权限已经请求过，检查是否已超过48小时
                         o2.add(key);
                     }
+
                 }
             }
 
@@ -378,7 +389,7 @@ public class PermissionHelper {
                         LogUtils.dTag("XXX", "onNext~~~~~~~" + permissionList);
 
                         //添加到权限申请记录到文件
-                        if (ignore) {
+                        if (ignore48H || onlyRequestOnce) {
                             addRequestedPermission(permissionList.toArray(new String[0]));
                         }
                         //添加到权限申请记录到内存
@@ -532,7 +543,7 @@ public class PermissionHelper {
                 mFullCallback.onDenied(deniedForever, denied, granted);
                 if (goSetting) {
                     if (!isShowing) {
-                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg, onGoSettingUIListener);
+                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
                     isShowing = true;
                 }
@@ -545,7 +556,7 @@ public class PermissionHelper {
                 mSimpleCallback.onDenied();
                 if (goSetting) {
                     if (!isShowing) {
-                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg, onGoSettingUIListener);
+                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "注意", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
                     isShowing = true;
                 }
@@ -557,14 +568,25 @@ public class PermissionHelper {
     /**
      * 48小时内请求过的权限不再请求
      *
-     * @param ignore true:48小时内请求过的权限不再请求
+     * @param ignore48H true:48小时内请求过的权限不再请求
      * @return
      */
-    public PermissionHelper ignoreRequestedIn48H(boolean ignore) {
-        this.ignore = ignore;
+    public PermissionHelper ignoreRequestedIn48H(boolean ignore48H) {
+        this.ignore48H = ignore48H;
         return this;
     }
 
+
+    /**
+     * 是否永久只能请求一次
+     *
+     * @param onlyRequestOnce true:永久只能请求一次  为 true时，优先级大于 ignore48H
+     * @return
+     */
+    public PermissionHelper canOnlyRequestOnce(boolean onlyRequestOnce) {
+        this.onlyRequestOnce = onlyRequestOnce;
+        return this;
+    }
 
     /**
      * Set the simple call back.
@@ -674,9 +696,11 @@ public class PermissionHelper {
         private TextView tvReason;
         private Button btnCancel;
         private Button btnConfirm;
-        private String reason;
+        private CharSequence reason;
         private int cancelTextColor;
         private int confirmTextColor;
+        private String cancel;
+        private String confirm;
 
         public ReasonSelectDialog(@NonNull Context context, String reason, int cancelTextColor, int confirmTextColor) {
             super(context);
@@ -686,6 +710,17 @@ public class PermissionHelper {
             setContentView(R.layout.dialog_permission_reason_select);
         }
 
+        public ReasonSelectDialog(@NonNull Context context, CharSequence reason, int cancelTextColor, int confirmTextColor, String cancel, String confirm) {
+            super(context);
+            this.reason = reason;
+            this.cancelTextColor = cancelTextColor;
+            this.confirmTextColor = confirmTextColor;
+            this.cancel = cancel;
+            this.confirm = confirm;
+            setContentView(R.layout.dialog_permission_reason_select);
+        }
+
+
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -693,8 +728,17 @@ public class PermissionHelper {
             tvReason = findViewById(R.id.tv_reason);
             btnCancel = findViewById(R.id.btn_cancel);
             btnConfirm = findViewById(R.id.btn_confirm);
-
-            tvReason.setText(Html.fromHtml(reason));
+            if (!TextUtils.isEmpty(cancel)) {
+                btnCancel.setText(cancel);
+            }
+            if (!TextUtils.isEmpty(confirm)) {
+                btnConfirm.setText(confirm);
+            }
+            if (reason.toString().startsWith("<font>") || reason.toString().contains("<b>") || reason.toString().contains("<br>") || reason.toString().contains("<") || reason.toString().contains(">")) {
+                tvReason.setText(Html.fromHtml(reason.toString()));
+            } else {
+                tvReason.setText(reason);
+            }
             if (cancelTextColor != 0) {
                 btnCancel.setTextColor(cancelTextColor);
             }
@@ -734,6 +778,10 @@ public class PermissionHelper {
 
         public static ReasonSelectDialog newInstance(Context context, String reason, int cancelTextColor, int confirmTextColor) {
             return new ReasonSelectDialog(context, reason, cancelTextColor, confirmTextColor);
+        }
+
+        public static ReasonSelectDialog newInstance(@NonNull Context context, CharSequence reason, int cancelTextColor, int confirmTextColor, String cancel, String confirm) {
+            return new ReasonSelectDialog(context, reason, cancelTextColor, confirmTextColor, cancel, confirm);
         }
 
         public void updateReason(String reason) {
@@ -789,25 +837,56 @@ public class PermissionHelper {
     }
 
 
-    public static void showOpenAppSettingDialog(Context context, String title, CharSequence content, OnGoSettingUIListener onGoSettingUIListener) {
-        if (TextUtils.isEmpty(content)) {
-            content = "您已限制授权我们申请的权限，请选择“允许”，否则该功能将无法正常使用！";
+    public static void showOpenAppSettingDialog(Context context, String title, String content,
+                                                int cancelTextColor, int confirmTextColor,
+                                                String cancel, String confirm,
+                                                OnGoSettingUIListener onGoSettingUIListener) {
+        if (TextUtils.isEmpty(title)) {
+            title = "温馨提示";
         }
-        new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(content)
-                .setCancelable(false)
-                .setNegativeButton("取消", (dialog, which) -> {
-                    if (onGoSettingUIListener != null) {
-                        onGoSettingUIListener.onCancel();
-                    }
-                })
-                .setPositiveButton("去设置", (dialog, which) -> {
-                    PermissionUtils.launchAppDetailsSettings();
-                    if (onGoSettingUIListener != null) {
-                        onGoSettingUIListener.onConfirm();
-                    }
-                }).show();
+        if (TextUtils.isEmpty(content)) {
+            content = "您已拒绝我们申请的权限，如需使用该功能，请手动授予权限！";
+        }
+        SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
+        stringBuilder.append(title).append("\n").append(content);
+        stringBuilder.setSpan(new ForegroundColorSpan(Color.RED), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        stringBuilder.setSpan(new AbsoluteSizeSpan(20, true), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        stringBuilder.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ReasonSelectDialog selectDialog = ReasonSelectDialog.newInstance(context, stringBuilder, cancelTextColor, confirmTextColor, cancel, confirm);
+        selectDialog.setOnDialogClickListener(new ReasonSelectDialog.OnDialogClickListener() {
+            @Override
+            public void onCancel() {
+                if (onGoSettingUIListener != null) {
+                    onGoSettingUIListener.onCancel();
+                }
+            }
+
+            @Override
+            public void onConfirm() {
+                PermissionUtils.launchAppDetailsSettings();
+                if (onGoSettingUIListener != null) {
+                    onGoSettingUIListener.onConfirm();
+                }
+            }
+        });
+        selectDialog.show();
+
+
+//        new AlertDialog.Builder(context)
+//                .setTitle(title)
+//                .setMessage(content)
+//                .setCancelable(false)
+//                .setNegativeButton("取消", (dialog, which) -> {
+//                    if (onGoSettingUIListener != null) {
+//                        onGoSettingUIListener.onCancel();
+//                    }
+//                })
+//                .setPositiveButton("去设置", (dialog, which) -> {
+//                    PermissionUtils.launchAppDetailsSettings();
+//                    if (onGoSettingUIListener != null) {
+//                        onGoSettingUIListener.onConfirm();
+//                    }
+//                }).show();
     }
 
     public interface OnGoSettingUIListener {

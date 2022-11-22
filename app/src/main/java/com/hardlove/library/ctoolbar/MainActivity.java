@@ -69,7 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
 
                         PermissionHelper.builder()
-                                .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "需要定位权限")
+                                .goSettingUI(true)
+                                .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION,
+                                        Manifest.permission.ACCESS_COARSE_LOCATION), "需要定位权限")
                                 .callback(new PermissionHelper.SimpleCallback() {
                                     @Override
                                     public void onGranted() {
@@ -276,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         PermissionHelper
                                 .builder()
+                                .goSettingUI(true)
                                 .addPermission(Manifest.permission.RECORD_AUDIO, "<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能")
                                 .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告")
                                 .addPermission(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级")
@@ -318,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         PermissionHelper
                                 .builder()
+                                .goSettingUI(true)
                                 .addPermission(Manifest.permission.RECORD_AUDIO, "<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能")
                                 .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告")
                                 .addPermission(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级")
