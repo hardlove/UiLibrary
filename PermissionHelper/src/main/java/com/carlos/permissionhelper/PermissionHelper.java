@@ -847,12 +847,12 @@ public class PermissionHelper {
         if (TextUtils.isEmpty(content)) {
             content = "您已拒绝我们申请的权限，如需使用该功能，请手动授予权限！";
         }
-        SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
-        stringBuilder.append(title).append("\n").append(content);
-        stringBuilder.setSpan(new ForegroundColorSpan(Color.RED), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        stringBuilder.setSpan(new AbsoluteSizeSpan(20, true), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        stringBuilder.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ReasonSelectDialog selectDialog = ReasonSelectDialog.newInstance(context, stringBuilder, cancelTextColor, confirmTextColor, cancel, confirm);
+        SpannableStringBuilder sb = new SpannableStringBuilder();
+        sb.append(title).append("\n").append(content);
+        sb.setSpan(new ForegroundColorSpan(Color.BLACK), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        sb.setSpan(new AbsoluteSizeSpan(18, true), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        sb.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ReasonSelectDialog selectDialog = ReasonSelectDialog.newInstance(context, sb, cancelTextColor, confirmTextColor, cancel, confirm);
         selectDialog.setOnDialogClickListener(new ReasonSelectDialog.OnDialogClickListener() {
             @Override
             public void onCancel() {
