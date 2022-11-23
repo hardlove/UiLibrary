@@ -4,7 +4,7 @@
     android:focusable="true"
     android:layout_width="match_parent"
     android:layout_height="@dimen/fixed_height"
-    android:background="?selectableItemBackgroundBorderless"
+    android:background="?android:attr/selectableItemBackgroundBorderless"
     android:paddingBottom="@dimen/fixed_height_bottom_padding"
     android:paddingLeft="@dimen/fixed_width_padding"
     android:paddingRight="@dimen/fixed_width_padding"
