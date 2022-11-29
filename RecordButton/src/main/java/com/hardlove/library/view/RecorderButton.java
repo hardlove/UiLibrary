@@ -7,15 +7,16 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.hardlove.library.view.recordbutton.R;
 
@@ -31,6 +32,7 @@ public class RecorderButton extends AppCompatButton {
 
     private AudioDialogManager mAudioDialogManager;
     private String mFileName = null;
+    private String mSaveDirPath = null;//录音文件保存的目录
     private OnFinishedRecordListener recordListener;
     /**
      * 最短录音时间
@@ -71,9 +73,37 @@ public class RecorderButton extends AppCompatButton {
         init();
     }
 
-    public void setSavePath(String path) {
-        mFileName = path;
+    /**
+     * 设置保存录音文件的目录
+     *
+     * @param saveDirPath
+     */
+    public void setSaveDirPath(String saveDirPath) {
+        mSaveDirPath = saveDirPath;
     }
+
+    /**
+     * 获取录音文件保持目录
+     *
+     * @return
+     */
+    public String getSaveDirPath() {
+        if (TextUtils.isEmpty(mSaveDirPath)) {
+            return getDefaultSavaDirPath().getAbsolutePath();
+        } else {
+            return mSaveDirPath;
+        }
+    }
+
+    /**
+     * 获取录音文件默认保持目录
+     *
+     * @return
+     */
+    public File getDefaultSavaDirPath() {
+        return new File(getContext().getExternalFilesDir(null), "voices");
+    }
+
 
     public void setOnFinishedRecordListener(OnFinishedRecordListener listener) {
         recordListener = listener;
@@ -86,6 +116,13 @@ public class RecorderButton extends AppCompatButton {
 
     private void prepareStartRecording() {
         initDialogAndStartRecord();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mAudioDialogManager.dismissDialog();
+        volumeHandler.removeCallbacksAndMessages(null);
     }
 
     private long exitTime = 0;
@@ -102,12 +139,18 @@ public class RecorderButton extends AppCompatButton {
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 //验证录音权限
-                if (checkPermission()) {
-                    // 判断两次点击时间少于2秒不执行操作
-                    doubleTime = System.currentTimeMillis() - exitTime;
-                    if (doubleTime > 2000) {
-                        prepareStartRecording();
-                        exitTime = System.currentTimeMillis();
+                if (checkRecordPermission()) {
+                    if (checkExternalStoragePermission()) {
+                        // 判断两次点击时间少于2秒不执行操作
+                        doubleTime = System.currentTimeMillis() - exitTime;
+                        if (doubleTime > 2000) {
+                            prepareStartRecording();
+                            exitTime = System.currentTimeMillis();
+                        }
+                    } else {
+                        if (checkRecordPermissionListener != null) {
+                            checkRecordPermissionListener.checkExternalStoragePermission();
+                        }
                     }
                 } else {
                     if (checkRecordPermissionListener != null) {
@@ -143,6 +186,22 @@ public class RecorderButton extends AppCompatButton {
         return true;
     }
 
+    private boolean checkExternalStoragePermission() {
+        String saveDirPath = getSaveDirPath();
+        String packageName = getContext().getPackageName();
+        String temp = getContext().getFilesDir().getAbsolutePath();
+        int end = temp.indexOf(packageName) + packageName.length();
+        String prefix1 = temp.substring(0, end);
+        temp = getContext().getExternalFilesDir(null).getAbsolutePath();
+        end = temp.indexOf(packageName) + packageName.length();
+        String prefix2 = temp.substring(0, end);
+        if (!saveDirPath.startsWith(prefix1) && !saveDirPath.startsWith(prefix2)) {
+            //需要存储权限
+            return ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        }
+        return true;
+    }
+
     private void initDialogAndStartRecord() {
         //防止没释放
         stopRecording();
@@ -154,9 +213,9 @@ public class RecorderButton extends AppCompatButton {
     }
 
 
-    private boolean checkPermission() {
+    private boolean checkRecordPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkPermission(Manifest.permission.RECORD_AUDIO)) {
+            if (checkRecordPermission(Manifest.permission.RECORD_AUDIO)) {
                 //录音
                 return true;
             } else {
@@ -169,7 +228,7 @@ public class RecorderButton extends AppCompatButton {
         }
     }
 
-    public boolean checkPermission(@NonNull String permission) {
+    public boolean checkRecordPermission(@NonNull String permission) {
         return ActivityCompat.checkSelfPermission(mContext, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -187,7 +246,7 @@ public class RecorderButton extends AppCompatButton {
             file.delete();
             return;
         }
-        mAudioDialogManager.dimissDialog();
+        mAudioDialogManager.dismissDialog();
         if (recordListener != null) {
             String longStr = mLong / 1000 + "";
             File file = new File(mFileName);
@@ -214,7 +273,7 @@ public class RecorderButton extends AppCompatButton {
 
     private void cancelRecord() {
         stopRecording();
-        mAudioDialogManager.dimissDialog();
+        mAudioDialogManager.dismissDialog();
         // 删除文件
         File file = new File(mFileName);
         file.delete();
@@ -222,8 +281,7 @@ public class RecorderButton extends AppCompatButton {
     }
 
     private void startRecording() {
-        mFileName = getRecordPathByCurrentTime();
-
+        mFileName = generateRecordPathByCurrentTime();
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
@@ -269,14 +327,12 @@ public class RecorderButton extends AppCompatButton {
      *
      * @return
      */
-    private String getRecordPathByCurrentTime() {
-        File sdcard = Environment.getExternalStorageDirectory();
-        File cacheDir = new File(sdcard, "recorder_temp");
-        checkAndMkdirs(cacheDir);
-        File filesDir = new File(cacheDir, "voices");
+    private String generateRecordPathByCurrentTime() {
+        File filesDir = new File(getSaveDirPath());
         checkAndMkdirs(filesDir);
         return new File(filesDir, "record_" + System.currentTimeMillis()).getAbsolutePath() + ".amr";
     }
+
 
     private File checkAndMkdirs(File file) {
         if (!file.exists()) {
@@ -320,7 +376,7 @@ public class RecorderButton extends AppCompatButton {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1000) {
-                mAudioDialogManager.dimissDialog();
+                mAudioDialogManager.dismissDialog();
             } else {
                 mAudioDialogManager.updateVoiceLevel(msg.what);
             }
@@ -355,7 +411,7 @@ public class RecorderButton extends AppCompatButton {
                         setBackgroundResource(R.drawable.button_recorder_normal);
                         setText(R.string.str_recorder_normal);
                     }
-                    mAudioDialogManager.dimissDialog();
+                    mAudioDialogManager.dismissDialog();
                     break;
                 case STATE_RECORDING:
                     if (usedInIm) {

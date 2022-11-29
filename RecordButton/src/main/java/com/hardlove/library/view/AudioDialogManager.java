@@ -74,7 +74,7 @@ public class AudioDialogManager {
         }
     }
 
-    public void dimissDialog() {
+    public void dismissDialog() {
         if (mDialog != null && mDialog.isShowing()) {
             mDialog.dismiss();
             mDialog = null;
