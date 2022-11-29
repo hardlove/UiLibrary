@@ -7,13 +7,13 @@ package com.hardlove.library.view;
 public interface OnRecordStateListener {
     void onPrepared();
 
-    void onStartRecoding();
+    void onStartRecording();
 
-    void onRecordCompleted();
+    void onRecordCompleted(String audioPath, int length);
 
     void onTooShort();
 
-    void onWantCancel();
+    void onWantToCancel();
 
     void onCancel();
 

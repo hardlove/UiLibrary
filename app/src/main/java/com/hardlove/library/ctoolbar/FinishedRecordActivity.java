@@ -52,15 +52,15 @@ public class FinishedRecordActivity extends AppCompatActivity implements Recorde
     }
 
     @Override
-    public void onCompleteRecord(String audioPath, String voiceLong) {
+    public void onCompleteRecord(String audioPath, int length) {
         finishAudioPath = audioPath;
-        finishTimeLong = voiceLong;
+        finishTimeLong = length+"";
         rlyVoice.setVisibility(View.VISIBLE);
-        tvVoiceLong.setText(voiceLong + "''");
+        tvVoiceLong.setText(length + "''");
 
         rlyVoice.setOnClickListener(new VoiceRecordPlayClickListener(FinishedRecordActivity.this, finishAudioPath, iconVoice, finishAudioPath));
 
-        Toast.makeText(this, "录音完成,路径:" + audioPath + "==录音时长:" + voiceLong, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "录音完成,路径:" + audioPath + "==录音时长:" + length, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -84,5 +84,11 @@ public class FinishedRecordActivity extends AppCompatActivity implements Recorde
     @Override
     public void checkRecordPermission() {
         checkPermission();
+    }
+
+    @Override
+    public void checkExternalStoragePermission() {
+        checkPermission();
+
     }
 }
