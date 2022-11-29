@@ -5,8 +5,6 @@ package com.hardlove.library.view;
  * Description：录音状态监听
  **/
 public interface OnRecordStateListener {
-    void onPrepared();
-
     void onStartRecording();
 
     void onRecordCompleted(String audioPath, int length);
