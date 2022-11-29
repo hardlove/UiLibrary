@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,8 @@ import androidx.core.content.ContextCompat;
 import com.hardlove.library.view.recordbutton.R;
 
 import java.io.File;
+import java.security.InvalidParameterException;
+import java.text.MessageFormat;
 
 /**
  * 仿微信录音
@@ -41,11 +44,11 @@ public class RecorderButton extends AppCompatButton {
     /**
      * 最短录音时间
      */
-    private static final int MIN_INTERVAL_TIME = 2000;
+    private  long minRecordTime = 2000;
     /**
      * 最大录音时长
      */
-    private static final int maxRecordTime = Integer.MAX_VALUE;
+    private long maxRecordTime = Integer.MAX_VALUE;
     private long startTime = 0;
     /**
      * 录音时长
@@ -87,6 +90,24 @@ public class RecorderButton extends AppCompatButton {
         init();
     }
 
+    /**
+     * 最大录音时长 （毫秒）
+     * @param maxMills
+     */
+    public void setMaxRecordTime(long maxMills) {
+        if (maxRecordTime < minRecordTime) {
+            throw new InvalidParameterException(MessageFormat.format("最大录音时长{0}秒，不能小于最小录音时长{1}秒",maxMills, minRecordTime));
+        }
+        this.maxRecordTime = maxMills;
+    }
+    /**
+     * 最小录音时长 （毫秒）
+     * @param minMills
+     */
+    public void setMinRecordTime(long minMills) {
+        this.minRecordTime = minMills;
+    }
+
     public void setDialogEnable(boolean dialogEnable) {
         this.dialogEnable = dialogEnable;
     }
@@ -97,7 +118,7 @@ public class RecorderButton extends AppCompatButton {
 
     /**
      * 设置保存录音文件的目录
-     *
+     * 注意：从Android 11 开始，无法在外部存储创建目录
      * @param saveDirPath
      */
     public void setSaveDirPath(String saveDirPath) {
@@ -165,9 +186,9 @@ public class RecorderButton extends AppCompatButton {
                 //验证录音权限
                 if (checkRecordPermission()) {
                     if (checkExternalStoragePermission()) {
-                        // 判断两次点击时间少于2秒不执行操作
+                        // 判断两次点击时间少于500毫秒不执行操作
                         doubleTime = System.currentTimeMillis() - exitTime;
-                        if (doubleTime > 2000) {
+                        if (doubleTime > 500) {
                             prepareStartRecording();
                             exitTime = System.currentTimeMillis();
                         }
@@ -269,7 +290,7 @@ public class RecorderButton extends AppCompatButton {
             return;
         }
         mLong = System.currentTimeMillis() - startTime;
-        if (mLong < MIN_INTERVAL_TIME) {
+        if (mLong < minRecordTime) {
             if (onRecordStateListener != null) {
                 onRecordStateListener.onTooShort();
             }
@@ -385,7 +406,10 @@ public class RecorderButton extends AppCompatButton {
 
     private File checkAndMkdirs(File file) {
         if (!file.exists()) {
-            file.mkdirs();
+            boolean flag = file.mkdirs();
+            if (!flag) {
+                Log.e("Record", "创建目录失败！");
+            }
         }
         return file;
     }
