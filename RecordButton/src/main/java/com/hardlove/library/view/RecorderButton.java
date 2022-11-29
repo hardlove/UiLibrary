@@ -73,6 +73,10 @@ public class RecorderButton extends AppCompatButton {
         init();
     }
 
+    public void setUsedInIm(boolean usedInIm) {
+        this.usedInIm = usedInIm;
+    }
+
     /**
      * 设置保存录音文件的目录
      *
@@ -206,8 +210,11 @@ public class RecorderButton extends AppCompatButton {
         //防止没释放
         stopRecording();
         startRecording();
-        mAudioDialogManager.showRecordingDialog();
         if (isRecording) {
+            if (onRecordStateListener != null) {
+                onRecordStateListener.onStartRecoding();
+            }
+            mAudioDialogManager.showRecordingDialog();
             changeState(STATE_RECORDING);
         }
     }
@@ -239,6 +246,9 @@ public class RecorderButton extends AppCompatButton {
         }
         mLong = System.currentTimeMillis() - startTime;
         if (mLong < MIN_INTERVAL_TIME) {
+            if (onRecordStateListener != null) {
+                onRecordStateListener.onTooShort();
+            }
             mAudioDialogManager.tooShort();
             // 1/2秒后关闭提示
             volumeHandler.sendEmptyMessageDelayed(1000, 500);
@@ -251,8 +261,14 @@ public class RecorderButton extends AppCompatButton {
             String longStr = mLong / 1000 + "";
             File file = new File(mFileName);
             if (file != null && file.length() == 0) {
-                showDefaultAlert(getContext(), "检测到录音失败，请确保录音权限开启");
+                if (onRecordStateListener != null) {
+                    onRecordStateListener.onError("录音失败，请确保录音和存储权限开启");
+                }
+                showDefaultAlert(getContext(), "录音失败，请确保录音和存储权限开启");
             } else {
+                if (onRecordStateListener != null) {
+                    onRecordStateListener.onRecordCompleted();
+                }
                 recordListener.onCompleteRecord(mFileName, longStr);
             }
         }
@@ -273,6 +289,9 @@ public class RecorderButton extends AppCompatButton {
 
     private void cancelRecord() {
         stopRecording();
+        if (onRecordStateListener != null) {
+            onRecordStateListener.onCancel();
+        }
         mAudioDialogManager.dismissDialog();
         // 删除文件
         File file = new File(mFileName);
@@ -379,6 +398,9 @@ public class RecorderButton extends AppCompatButton {
                 mAudioDialogManager.dismissDialog();
             } else {
                 mAudioDialogManager.updateVoiceLevel(msg.what);
+                if (onRecordStateListener != null) {
+                    onRecordStateListener.updateVoiceLevel(msg.what);
+                }
             }
         }
     }
@@ -402,6 +424,12 @@ public class RecorderButton extends AppCompatButton {
     private int mCurState = STATE_NORMAL;
     private boolean isRecording = false;
 
+    private OnRecordStateListener onRecordStateListener;
+
+    public void setOnRecordStateListener(OnRecordStateListener onRecordStateListener) {
+        this.onRecordStateListener = onRecordStateListener;
+    }
+
     private void changeState(int state) {
         if (mCurState != state) {
             mCurState = state;
@@ -411,6 +439,9 @@ public class RecorderButton extends AppCompatButton {
                         setBackgroundResource(R.drawable.button_recorder_normal);
                         setText(R.string.str_recorder_normal);
                     }
+                    if (onRecordStateListener != null) {
+                        onRecordStateListener.onInitState();
+                    }
                     mAudioDialogManager.dismissDialog();
                     break;
                 case STATE_RECORDING:
@@ -419,13 +450,18 @@ public class RecorderButton extends AppCompatButton {
                         setText(R.string.str_recorder_recording);
                     }
                     if (isRecording) {
+                        if (onRecordStateListener != null) {
+                            onRecordStateListener.onRecording();
+                        }
                         mAudioDialogManager.recording();
-
                     }
                     break;
                 case STATE_WANT_TO_CANCEL:
                     if (usedInIm) {
                         setBackgroundResource(R.drawable.button_recorder_recording);
+                    }
+                    if (onRecordStateListener != null) {
+                        onRecordStateListener.onWantCancel();
                     }
                     mAudioDialogManager.wantToCancel();
 
