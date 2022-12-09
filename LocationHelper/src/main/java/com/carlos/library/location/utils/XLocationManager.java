@@ -98,6 +98,7 @@ public class XLocationManager {
                 });
             }
 
+
             // 如果没有观察者注册了持久性监听位置变化监听，就不需要停止定位服务
             if (alwaysQueryCallBacks == null || alwaysQueryCallBacks.size() == 0) {
                 //停止定位
@@ -128,7 +129,7 @@ public class XLocationManager {
         boolean enabled = LocationManagerCompat.isLocationEnabled(locationManager);
         if (!enabled) {
             //1. 通知查询当前位置失败
-            notifyFailed(1, "未开启GPS定位");
+            notifyFailed(1, "位置信息开关未开启");
             return;
         }
 
@@ -172,6 +173,12 @@ public class XLocationManager {
                 return;
             }
         }
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            notifyFailed(2, "未开启定位权限");
+            return;
+        }
+
         if (bestProvider == null) {
             notifyFailed(3, "你的设备当前不支持定位，请检查网络或GPS定位是否开启");
             return;
