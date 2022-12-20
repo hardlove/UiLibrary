@@ -19,7 +19,7 @@ import com.ashokvarma.bottomnavigation.utils.Utils;
  * @version 1.0
  * @since 19 Mar 2016
  */
-class BottomNavigationHelper {
+public class BottomNavigationHelper {
 
     private BottomNavigationHelper() {
     }

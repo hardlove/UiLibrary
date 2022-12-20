@@ -140,6 +140,13 @@ public class BottomNavigationBar extends FrameLayout {
         init();
     }
 
+    public FrameLayout getContainer() {
+        return mContainer;
+    }
+    public LinearLayout getTabContainer() {
+        return mTabContainer;
+    }
+
     /**
      * This method initiates the bottomNavigationBar properties,
      * Tries to get them form XML if not preset sets them to their default values.

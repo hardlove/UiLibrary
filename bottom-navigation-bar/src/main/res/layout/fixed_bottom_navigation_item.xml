@@ -17,13 +17,14 @@
         android:layout_gravity="center_horizontal|top">
 
         <ImageView
+            android:adjustViewBounds="true"
             android:id="@+id/fixed_bottom_navigation_icon"
-            android:layout_width="@dimen/fixed_icon_grid"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/fixed_icon_grid"
             android:contentDescription="@string/icon"
             android:layout_gravity="center"
             android:gravity="center"
-            android:scaleType="fitXY" />
+            android:scaleType="fitCenter" />
 
         <com.ashokvarma.bottomnavigation.BadgeTextView
             android:id="@+id/fixed_bottom_navigation_badge"

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
 import androidx.appcompat.widget.AppCompatTextView;
 
 /**
@@ -15,7 +16,7 @@ import androidx.appcompat.widget.AppCompatTextView;
  * @since 23 Jun 2017
  */
 @SuppressLint("Instantiatable")
-class BadgeTextView extends AppCompatTextView {
+public class BadgeTextView extends AppCompatTextView {
 
     private ShapeBadgeItem mShapeBadgeItem;
 
@@ -58,7 +59,7 @@ class BadgeTextView extends AppCompatTextView {
     /**
      * if width and height of the view needs to be changed
      *
-     * @param width new width that needs to be set
+     * @param width  new width that needs to be set
      * @param height new height that needs to be set
      */
     void setDimens(int width, int height) {

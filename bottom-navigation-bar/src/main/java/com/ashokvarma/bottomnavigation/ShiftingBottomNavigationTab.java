@@ -18,7 +18,7 @@ import android.widget.FrameLayout;
  * @see BottomNavigationTab
  * @since 19 Mar 2016
  */
-class ShiftingBottomNavigationTab extends BottomNavigationTab {
+public class ShiftingBottomNavigationTab extends BottomNavigationTab {
 
     public ShiftingBottomNavigationTab(Context context) {
         super(context);

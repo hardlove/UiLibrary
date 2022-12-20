@@ -16,7 +16,7 @@ import android.widget.FrameLayout;
  * @see BottomNavigationTab
  * @since 19 Mar 2016
  */
-class FixedBottomNavigationTab extends BottomNavigationTab {
+public class FixedBottomNavigationTab extends BottomNavigationTab {
 
     float labelScale;
 
