@@ -1,0 +1,13 @@
+<resources>
+
+    <declare-styleable name="DashBoardProgressBar">
+        <attr name="ringSize" format="dimension|reference" />
+        <attr name="backgroundColor" format="color|reference" />
+        <attr name="progressColor" format="color|reference" />
+        <attr name="max" format="integer|reference" />
+        <attr name="progress" format="integer|reference" />
+    </declare-styleable>
+
+
+
+</resources>
