@@ -46,6 +46,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
@@ -70,6 +71,7 @@ public class PermissionHelper {
     private boolean ignore48H = true;//48小时内请求过的权限不再重复请求
     private boolean onlyRequestOnce = true;//是否永久不重复请求，即只能申请一次
     private boolean goSetting = true;//跳转系统权限设置页面
+    private boolean isAutoRequest = false;//是否自动请求,非用户手动触发
     private OnGoSettingUIListener onGoSettingUIListener;//跳转系统权限设置页面监听
     private String goSettingMsg;//跳转系统权限设置页面弹框描述内容
     private boolean isSplit;//权限说明和权限请求是否分离(即：申请权限前先弹框询问用户是否同意申请)
@@ -203,6 +205,17 @@ public class PermissionHelper {
     }
 
     /**
+     * 是否自动触发权限请求(非用户手动点击触发)
+     *
+     * @param isAutoRequest
+     * @return
+     */
+    public PermissionHelper isAutoRequest(boolean isAutoRequest) {
+        this.isAutoRequest = isAutoRequest;
+        return this;
+    }
+
+    /**
      * @param goSetting 是否跳转系统权限设置页面
      * @return
      */
@@ -291,6 +304,25 @@ public class PermissionHelper {
     }
 
     /**
+     * 该场景请求权限是否是第一次
+     *
+     * @param scenarioKey
+     * @return
+     */
+    private static boolean isFirstRequest(String scenarioKey) {
+        return SPStaticUtils.getLong(scenarioKey, 0) == 0;
+    }
+
+    /**
+     * 记录本次场景权限请求的时间
+     *
+     * @param scenarioKey
+     */
+    private static void setRequestTime(String scenarioKey) {
+        SPStaticUtils.put(scenarioKey, System.currentTimeMillis());
+    }
+
+    /**
      * 记录已经请求过的权限以及请求的时间
      *
      * @param permission
@@ -348,7 +380,7 @@ public class PermissionHelper {
         String[] temp = o1.toArray(new String[0]);
 
 
-        if (temp == null || temp.length == 0) {
+        if (temp.length == 0) {
             checkPermissionResult(requestPermissions);
             return;
         }
@@ -368,11 +400,7 @@ public class PermissionHelper {
                     } else {
                         return permission;
                     }
-                })
-                .flatMap((Function<GroupedFlowable<String, String>, Publisher<List<String>>>) groupedFlowable -> groupedFlowable.toList().toFlowable())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FlowableSubscriber<List<String>>() {
+                }).flatMap((Function<GroupedFlowable<String, String>, Publisher<List<String>>>) groupedFlowable -> groupedFlowable.toList().toFlowable()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new FlowableSubscriber<List<String>>() {
                     QueueSubscription<String> subscription;
                     ReasonSimpleDialog simpleDialog;
                     ReasonSelectDialog selectDialog;
@@ -468,36 +496,34 @@ public class PermissionHelper {
                     }
 
                     private void performRequestPermission(List<String> permission) {
-                        PermissionUtils.permission(permission.toArray(new String[0]))
-                                .callback(new PermissionUtils.SimpleCallback() {
-                                    @Override
-                                    public void onGranted() {
-                                        if (simpleDialog != null) {
-                                            simpleDialog.dismiss();
-                                            simpleDialog = null;
-                                        }
-                                        if (subscription.isEmpty()) {
-                                            checkPermissionResult(requestPermissions);
-                                        } else {
-                                            subscription.request(1);
-                                        }
+                        PermissionUtils.permission(permission.toArray(new String[0])).callback(new PermissionUtils.SimpleCallback() {
+                            @Override
+                            public void onGranted() {
+                                if (simpleDialog != null) {
+                                    simpleDialog.dismiss();
+                                    simpleDialog = null;
+                                }
+                                if (subscription.isEmpty()) {
+                                    checkPermissionResult(requestPermissions);
+                                } else {
+                                    subscription.request(1);
+                                }
 
-                                    }
+                            }
 
-                                    @Override
-                                    public void onDenied() {
-                                        if (simpleDialog != null) {
-                                            simpleDialog.dismiss();
-                                            simpleDialog = null;
-                                        }
-                                        if (subscription.isEmpty()) {
-                                            checkPermissionResult(requestPermissions);
-                                        } else {
-                                            subscription.request(1);
-                                        }
-                                    }
-                                })
-                                .request();
+                            @Override
+                            public void onDenied() {
+                                if (simpleDialog != null) {
+                                    simpleDialog.dismiss();
+                                    simpleDialog = null;
+                                }
+                                if (subscription.isEmpty()) {
+                                    checkPermissionResult(requestPermissions);
+                                } else {
+                                    subscription.request(1);
+                                }
+                            }
+                        }).request();
                     }
 
                     @Override
@@ -542,6 +568,13 @@ public class PermissionHelper {
             } else {
                 mFullCallback.onDenied(deniedForever, denied, granted);
                 if (goSetting) {
+                    String scenarioKey = getCurrentScenarioKey();
+                    if (isAutoRequest && !isFirstRequest(scenarioKey)) {
+                        //当前场景非用户手动触发请求,并且非第一次请求
+                        return;
+                    }
+
+                    setRequestTime(scenarioKey);
                     if (!isShowing) {
                         showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
@@ -555,6 +588,12 @@ public class PermissionHelper {
             } else {
                 mSimpleCallback.onDenied();
                 if (goSetting) {
+                    String scenarioKey = getCurrentScenarioKey();
+                    if (isAutoRequest && !isFirstRequest(scenarioKey)) {
+                        //当前场景非用户手动触发请求,并且非第一次请求
+                        return;
+                    }
+
                     if (!isShowing) {
                         showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
@@ -562,6 +601,15 @@ public class PermissionHelper {
                 }
             }
         }
+    }
+
+    /**
+     * 获取当前场景请求的标识符
+     *
+     * @return
+     */
+    private String getCurrentScenarioKey() {
+        return UUID.nameUUIDFromBytes(requestPermissions.toString().getBytes()).toString();
     }
 
 
@@ -837,10 +885,7 @@ public class PermissionHelper {
     }
 
 
-    public static void showOpenAppSettingDialog(Context context, String title, String content,
-                                                int cancelTextColor, int confirmTextColor,
-                                                String cancel, String confirm,
-                                                OnGoSettingUIListener onGoSettingUIListener) {
+    public static void showOpenAppSettingDialog(Context context, String title, String content, int cancelTextColor, int confirmTextColor, String cancel, String confirm, OnGoSettingUIListener onGoSettingUIListener) {
         if (TextUtils.isEmpty(title)) {
             title = "温馨提示";
         }
