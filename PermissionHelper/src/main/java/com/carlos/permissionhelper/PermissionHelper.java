@@ -594,6 +594,7 @@ public class PermissionHelper {
                         return;
                     }
 
+                    setRequestTime(scenarioKey);
                     if (!isShowing) {
                         showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }

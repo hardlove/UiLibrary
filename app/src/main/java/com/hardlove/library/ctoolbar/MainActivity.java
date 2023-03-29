@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
                         PermissionHelper.builder()
                                 .goSettingUI(true)
+                                //.isAutoRequest(true)
                                 .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION,
                                         Manifest.permission.ACCESS_COARSE_LOCATION), "需要定位权限")
                                 .callback(new PermissionHelper.SimpleCallback() {
