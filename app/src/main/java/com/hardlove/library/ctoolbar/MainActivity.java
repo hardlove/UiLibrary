@@ -58,53 +58,48 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_carmera).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,TestActivtiy.class));
+                startActivity(new Intent(MainActivity.this, TestActivtiy.class));
             }
         });
 
-        findViewById(R.id.btn_location)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        findViewById(R.id.btn_location).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
 
-                        PermissionHelper.builder()
-                                .goSettingUI(true)
-                                //.isAutoRequest(true)
-                                .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION,
-                                        Manifest.permission.ACCESS_COARSE_LOCATION), "需要定位权限")
-                                .callback(new PermissionHelper.SimpleCallback() {
+                PermissionHelper.builder().goSettingUI(true)
+                        //.isAutoRequest(true)
+                        .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "需要定位权限").callback(new PermissionHelper.SimpleCallback() {
+                            @Override
+                            public void onGranted() {
+
+                                XLocationManager.getInstance().queryCurrentLocation(MainActivity.this, new XLocationManager.OnResultCallBack() {
                                     @Override
-                                    public void onGranted() {
-
-                                        XLocationManager.getInstance().queryCurrentLocation(MainActivity.this,new XLocationManager.OnResultCallBack() {
-                                            @Override
-                                            public void onSucceed(XLocation location) {
-                                                TextView tv = findViewById(R.id.tv_message);
-                                                tv.setText("getLatitude:"+location.getLatitude()+"  getLongitude:"+location.getLongitude()+"\n address: "+location.getAddress());
-                                            }
-
-                                            @Override
-                                            public void onFailed(int errorCode, String errorMsg) {
-                                                TextView tv = findViewById(R.id.tv_message);
-                                                tv.setText("code:" + errorCode + "  msg:" + errorMsg);
-
-                                            }
-                                        });
-
-
-
+                                    public void onSucceed(XLocation location) {
+                                        TextView tv = findViewById(R.id.tv_message);
+                                        tv.setText("getLatitude:" + location.getLatitude() + "  getLongitude:" + location.getLongitude() + "\n address: " + location.getAddress());
                                     }
 
                                     @Override
-                                    public void onDenied() {
-                                        ToastUtils.showShort("没有定位权限");
+                                    public void onFailed(int errorCode, String errorMsg) {
+                                        TextView tv = findViewById(R.id.tv_message);
+                                        tv.setText("code:" + errorCode + "  msg:" + errorMsg);
+
                                     }
-                                }).request();
+                                });
 
 
-                    }
-                });
+                            }
+
+                            @Override
+                            public void onDenied() {
+                                ToastUtils.showShort("没有定位权限");
+                            }
+                        }).request();
+
+
+            }
+        });
 
 
         sendVerifyCodeView = findViewById(R.id.sendVerifyCodeView);
@@ -124,102 +119,96 @@ public class MainActivity extends AppCompatActivity {
 
         // 2. groupBy(Function(T,R)，Function(T,R))
         // 第一个func对原数据进行分组处理（仅仅分组添加key，不处理原始数据），第二个func对原始数据进行处理
-        Flowable.range(1, 10)
-                .groupBy(new Function<Integer, String>() {
+        Flowable.range(1, 10).groupBy(new Function<Integer, String>() {
 
-                    @Override
-                    public String apply(Integer t) throws Exception {
-                        // 对原始数据进行分组处理
-                        return t % 2 == 0 ? "even" : "odd";
-                    }
-                }, new Function<Integer, String>() {
+            @Override
+            public String apply(Integer t) throws Exception {
+                // 对原始数据进行分组处理
+                return t % 2 == 0 ? "even" : "odd";
+            }
+        }, new Function<Integer, String>() {
 
-                    @Override
-                    public String apply(Integer t) throws Exception {
-                        // 对原始数据进行数据转换处理
-                        return t + " is  == " + (t % 2 == 0 ? "even" : "odd");
-                    }
-                })
-                .flatMap(new Function<GroupedFlowable<String, String>, Publisher<List<String>>>() {
-                    @Override
-                    public Publisher<List<String>> apply(@NonNull GroupedFlowable<String, String> observable) throws Exception {
-                        return observable.toList().toFlowable();
+            @Override
+            public String apply(Integer t) throws Exception {
+                // 对原始数据进行数据转换处理
+                return t + " is  == " + (t % 2 == 0 ? "even" : "odd");
+            }
+        }).flatMap(new Function<GroupedFlowable<String, String>, Publisher<List<String>>>() {
+            @Override
+            public Publisher<List<String>> apply(@NonNull GroupedFlowable<String, String> observable) throws Exception {
+                return observable.toList().toFlowable();
 
-                    }
-                })
-                .subscribe(new FlowableSubscriber<List<String>>() {
-                    @Override
-                    public void onSubscribe(@NonNull Subscription subscription) {
-                        subscription.request(10);
-                    }
+            }
+        }).subscribe(new FlowableSubscriber<List<String>>() {
+            @Override
+            public void onSubscribe(@NonNull Subscription subscription) {
+                subscription.request(10);
+            }
 
-                    @Override
-                    public void onNext(@NonNull List<String> list) {
-                        LogUtils.dTag("Carlos", "=====>" + GsonUtils.toJson(list));
+            @Override
+            public void onNext(@NonNull List<String> list) {
+                LogUtils.dTag("Carlos", "=====>" + GsonUtils.toJson(list));
 
-                    }
+            }
 
-                    @Override
-                    public void onError(@NonNull Throwable throwable) {
-                        LogUtils.dTag("Carlos", "==========>" + throwable.getLocalizedMessage());
+            @Override
+            public void onError(@NonNull Throwable throwable) {
+                LogUtils.dTag("Carlos", "==========>" + throwable.getLocalizedMessage());
 
-                    }
+            }
 
-                    @Override
-                    public void onComplete() {
+            @Override
+            public void onComplete() {
 
-                    }
-                });
+            }
+        });
 
 
         // 2. groupBy(Function(T,R)，Function(T,R))
         // 第一个func对原数据进行分组处理（仅仅分组添加key，不处理原始数据），第二个func对原始数据进行处理
-        Observable.range(1, 10)
-                .groupBy(new Function<Integer, String>() {
+        Observable.range(1, 10).groupBy(new Function<Integer, String>() {
 
-                    @Override
-                    public String apply(Integer t) throws Exception {
-                        // 对原始数据进行分组处理
-                        return t % 2 == 0 ? "even" : "odd";
-                    }
-                }, new Function<Integer, String>() {
+            @Override
+            public String apply(Integer t) throws Exception {
+                // 对原始数据进行分组处理
+                return t % 2 == 0 ? "even" : "odd";
+            }
+        }, new Function<Integer, String>() {
 
-                    @Override
-                    public String apply(Integer t) throws Exception {
-                        // 对原始数据进行数据转换处理
-                        return t + " is " + (t % 2 == 0 ? "even" : "odd");
-                    }
-                })
-                .flatMap(new Function<GroupedObservable<String, String>, ObservableSource<List<String>>>() {
-                    @Override
-                    public ObservableSource<List<String>> apply(@NonNull GroupedObservable<String, String> observable) throws Exception {
-                        return observable.toList().toObservable();
+            @Override
+            public String apply(Integer t) throws Exception {
+                // 对原始数据进行数据转换处理
+                return t + " is " + (t % 2 == 0 ? "even" : "odd");
+            }
+        }).flatMap(new Function<GroupedObservable<String, String>, ObservableSource<List<String>>>() {
+            @Override
+            public ObservableSource<List<String>> apply(@NonNull GroupedObservable<String, String> observable) throws Exception {
+                return observable.toList().toObservable();
 
-                    }
-                })
-                .subscribe(new Observer<List<String>>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable disposable) {
+            }
+        }).subscribe(new Observer<List<String>>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable disposable) {
 
-                    }
+            }
 
-                    @Override
-                    public void onNext(@NonNull List<String> list) {
-                        LogUtils.dTag("Carlos", "=====>" + GsonUtils.toJson(list));
+            @Override
+            public void onNext(@NonNull List<String> list) {
+                LogUtils.dTag("Carlos", "=====>" + GsonUtils.toJson(list));
 
-                    }
+            }
 
-                    @Override
-                    public void onError(@NonNull Throwable throwable) {
-                        LogUtils.dTag("Carlos", "==========>" + throwable.getLocalizedMessage());
+            @Override
+            public void onError(@NonNull Throwable throwable) {
+                LogUtils.dTag("Carlos", "==========>" + throwable.getLocalizedMessage());
 
-                    }
+            }
 
-                    @Override
-                    public void onComplete() {
+            @Override
+            public void onComplete() {
 
-                    }
-                });
+            }
+        });
 
 
         final LuckDiskView luckDiskView = findViewById(R.id.luckDisk2);
@@ -273,93 +262,73 @@ public class MainActivity extends AppCompatActivity {
         });
         bottomNavigationBar.initialise();
 
-        findViewById(R.id.btn_permission)
-                .setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_permission).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PermissionHelper.builder().goSettingUI(true)
+                        .addPermission(Manifest.permission.RECORD_AUDIO, "<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能")
+                        .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告")
+                        .addPermission(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级")
+                        .addPermission(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.CALL_PHONE, Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE), Arrays.asList("照相机权限使用说明<br>.............", "打电话机权限使用说明<br>.............", "发短信权限使用说明<br>.............", "设备信息权限使用说明<br>............."))
+                        .disableGroupRequest(true)
+                        .callback(new PermissionHelper.SimpleCallback() {
                     @Override
-                    public void onClick(View v) {
-                        PermissionHelper
-                                .builder()
-                                .goSettingUI(true)
-                                .addPermission(Manifest.permission.RECORD_AUDIO, "<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能")
-                                .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告")
-                                .addPermission(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级")
-                                .addPermission(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.CALL_PHONE, Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE),
-                                        Arrays.asList("照相机权限使用说明<br>.............", "打电话机权限使用说明<br>.............", "发短信权限使用说明<br>.............", "设备信息权限使用说明<br>............."))
-                                .disableGroupRequest(true)
-                                .callback(new PermissionHelper.SimpleCallback() {
-                                    @Override
-                                    public void onGranted() {
-                                        LogUtils.dTag("XXX", "SimpleCallback  onGranted~~~~~");
-                                        ToastUtils.showShort("已授予全部权限");
-                                    }
+                    public void onGranted() {
+                        LogUtils.dTag("XXX", "SimpleCallback  onGranted~~~~~");
+                        ToastUtils.showShort("已授予全部权限");
+                    }
 
-                                    @Override
-                                    public void onDenied() {
-                                        LogUtils.dTag("XXX", "SimpleCallback onDenied~~~~~");
-                                        ToastUtils.showShort("部分或全部权限拒绝");
-                                    }
-                                })
-                                .callback(new PermissionHelper.FullCallback() {
-                                    @Override
-                                    public void onGranted() {
-                                        LogUtils.dTag("XXX", "FullCallback onGranted~~~~~");
-                                    }
+                    @Override
+                    public void onDenied() {
+                        LogUtils.dTag("XXX", "SimpleCallback onDenied~~~~~");
+                        ToastUtils.showShort("部分或全部权限拒绝");
+                    }
+                }).callback(new PermissionHelper.FullCallback() {
+                    @Override
+                    public void onGranted() {
+                        LogUtils.dTag("XXX", "FullCallback onGranted~~~~~");
+                    }
 
-                                    @Override
-                                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted) {
-                                        LogUtils.dTag("XXX", "FullCallback onDenied~~~~~deniedForever：" + GsonUtils.toJson(deniedForever) + "   denied：" + GsonUtils.toJson(denied));
-
-                                    }
-                                })
-                                .request();
+                    @Override
+                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted) {
+                        LogUtils.dTag("XXX", "FullCallback onDenied~~~~~deniedForever：" + GsonUtils.toJson(deniedForever) + "   denied：" + GsonUtils.toJson(denied));
 
                     }
-                });
+                }).request();
 
-        findViewById(R.id.btn_permission_split)
-                .setOnClickListener(new View.OnClickListener() {
+            }
+        });
+
+        findViewById(R.id.btn_permission_split).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PermissionHelper.builder().goSettingUI(true).addPermission(Manifest.permission.RECORD_AUDIO, "<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能").addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告").addPermission(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级").addPermission(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.CALL_PHONE, Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE), Arrays.asList("照相机权限使用说明<br>.............", "打电话机权限使用说明<br>.............", "发短信权限使用说明<br>.............", "设备信息权限使用说明<br>.............")).setSplit(true).setCancelTextColor(Color.parseColor("#00000000")).setConfirmTextColor(Color.parseColor("#FF0000")).callback(new PermissionHelper.SimpleCallback() {
                     @Override
-                    public void onClick(View v) {
-                        PermissionHelper
-                                .builder()
-                                .goSettingUI(true)
-                                .addPermission(Manifest.permission.RECORD_AUDIO, "<font color=\"#FF0000\"><b>录音权限使用说明</b></font><br>语言翻译需要使用录音功能")
-                                .addPermission(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), "<font><b>定位权限使用说明</b></font><br>用于数据统计及投放广告")
-                                .addPermission(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), "<font><b>存储权限使用说明</b></font><br>用于数据存储及应用升级")
-                                .addPermission(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.CALL_PHONE, Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE),
-                                        Arrays.asList("照相机权限使用说明<br>.............", "打电话机权限使用说明<br>.............", "发短信权限使用说明<br>.............", "设备信息权限使用说明<br>............."))
-                                .setSplit(true)
-                                .setCancelTextColor(Color.parseColor("#00000000"))
-                                .setConfirmTextColor(Color.parseColor("#FF0000"))
-                                .callback(new PermissionHelper.SimpleCallback() {
-                                    @Override
-                                    public void onGranted() {
-                                        LogUtils.dTag("XXX", "SimpleCallback  onGranted~~~~~");
-                                        ToastUtils.showShort("已授予全部权限");
-                                    }
+                    public void onGranted() {
+                        LogUtils.dTag("XXX", "SimpleCallback  onGranted~~~~~");
+                        ToastUtils.showShort("已授予全部权限");
+                    }
 
-                                    @Override
-                                    public void onDenied() {
-                                        LogUtils.dTag("XXX", "SimpleCallback onDenied~~~~~");
-                                        ToastUtils.showShort("部分或全部权限拒绝");
-                                    }
-                                })
-                                .callback(new PermissionHelper.FullCallback() {
-                                    @Override
-                                    public void onGranted() {
-                                        LogUtils.dTag("XXX", "FullCallback onGranted~~~~~");
-                                    }
+                    @Override
+                    public void onDenied() {
+                        LogUtils.dTag("XXX", "SimpleCallback onDenied~~~~~");
+                        ToastUtils.showShort("部分或全部权限拒绝");
+                    }
+                }).callback(new PermissionHelper.FullCallback() {
+                    @Override
+                    public void onGranted() {
+                        LogUtils.dTag("XXX", "FullCallback onGranted~~~~~");
+                    }
 
-                                    @Override
-                                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted) {
-                                        LogUtils.dTag("XXX", "FullCallback onDenied~~~~~deniedForever：" + GsonUtils.toJson(deniedForever) + "   denied：" + GsonUtils.toJson(denied));
-
-                                    }
-                                })
-                                .request();
+                    @Override
+                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted) {
+                        LogUtils.dTag("XXX", "FullCallback onDenied~~~~~deniedForever：" + GsonUtils.toJson(deniedForever) + "   denied：" + GsonUtils.toJson(denied));
 
                     }
-                });
+                }).request();
+
+            }
+        });
 
     }
 

@@ -1,5 +1,6 @@
 package com.carlos.permissionhelper;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -39,6 +40,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.security.InvalidParameterException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -576,7 +578,7 @@ public class PermissionHelper {
 
                     setRequestTime(scenarioKey);
                     if (!isShowing) {
-                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
+                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", generateGoSettingMsg(), cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
                     isShowing = true;
                 }
@@ -596,12 +598,96 @@ public class PermissionHelper {
 
                     setRequestTime(scenarioKey);
                     if (!isShowing) {
-                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", goSettingMsg, cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
+                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", generateGoSettingMsg(), cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
                     isShowing = true;
                 }
             }
         }
+    }
+
+    private String generateGoSettingMsg() {
+        if (!TextUtils.isEmpty(goSettingMsg)) {
+            return goSettingMsg;
+        }
+
+        ArrayList<String> list = new ArrayList<>();
+        for (String s : requestPermissions) {
+            boolean flag = !hasPermissions(Utils.getApp(), s);
+            if (flag) {
+                String name = getPermissionName(s);
+                if (!list.contains(name)) {
+                    list.add(name);
+                }
+            }
+
+        }
+        //return MessageFormat.format("您已拒绝我们申请的<font color=\"#FF0000\"><b>{0}</b></font>权限，如需使用该功能，请手动授予权限！", list.toString());
+        return MessageFormat.format("您已拒绝我们申请的<font><b>{0}</b></font>权限，如需使用该功能，请手动授予权限！", list.toString());
+    }
+
+    protected String getPermissionName(String permission) {
+
+        String msg = null;
+        switch (permission) {
+            case Manifest.permission.ACCESS_FINE_LOCATION:
+            case Manifest.permission.ACCESS_COARSE_LOCATION:
+            case Manifest.permission.ACCESS_BACKGROUND_LOCATION:
+                msg = "位置信息";
+                break;
+            case Manifest.permission.READ_EXTERNAL_STORAGE:
+            case Manifest.permission.WRITE_EXTERNAL_STORAGE:
+                msg = "媒体和文件";
+                break;
+            case Manifest.permission.CAMERA:
+                msg = "照相机";
+                break;
+            case Manifest.permission.RECORD_AUDIO:
+                msg = "麦克风";
+                break;
+            case Manifest.permission.READ_PHONE_STATE:
+            case Manifest.permission.ACCESS_NETWORK_STATE:
+            case Manifest.permission.ACCESS_WIFI_STATE:
+                msg = "设备信息";
+                break;
+            case Manifest.permission.READ_PHONE_NUMBERS:
+                msg = "电话号码";
+                break;
+            case Manifest.permission.CALL_PHONE:
+                msg = "拨打电话";
+                break;
+            case Manifest.permission.READ_SMS:
+            case Manifest.permission.SEND_SMS:
+                msg = "短信";
+                break;
+            case Manifest.permission.READ_CALL_LOG:
+            case Manifest.permission.WRITE_CALL_LOG:
+                msg = "通话记录";
+                break;
+            case Manifest.permission.READ_CALENDAR:
+            case Manifest.permission.WRITE_CALENDAR:
+                msg = "日历访";
+                break;
+            case Manifest.permission.ACTIVITY_RECOGNITION://android 10 新增
+                msg = "健身运动";
+                break;
+            case Manifest.permission.BODY_SENSORS:
+                msg = "身体传感器";
+                break;
+            case Manifest.permission.SET_WALLPAPER:
+                msg = "设置壁纸";
+                break;
+            case Manifest.permission.INSTALL_SHORTCUT:
+            case Manifest.permission.UNINSTALL_SHORTCUT:
+                msg = "创建桌面快捷方式";
+                break;
+            case Manifest.permission.SYSTEM_ALERT_WINDOW:
+            case "android.permission.SYSTEM_OVERLAY_WINDOW":
+                msg = "悬浮窗";
+                break;
+        }
+
+        return msg;
     }
 
     /**
