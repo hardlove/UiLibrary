@@ -145,6 +145,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
     @Override
     public void setBackgroundColor(int color) {
+        this.setBackgroundColor(color);
         root.setBackgroundColor(color);
         statusBar.setBackgroundColor(color);
         custom_layer.setBackgroundColor(color);
@@ -152,6 +153,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
 
     @Override
     public void setBackgroundResource(int resid) {
+        this.setBackgroundColor(resid);
         root.setBackgroundResource(resid);
         statusBar.setBackgroundResource(resid);
         custom_layer.setBackgroundResource(resid);
