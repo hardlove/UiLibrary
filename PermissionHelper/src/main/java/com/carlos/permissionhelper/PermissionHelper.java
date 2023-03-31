@@ -626,7 +626,8 @@ public class PermissionHelper {
 
         }
         //return MessageFormat.format("您已拒绝我们申请的<font color=\"#FF0000\"><b>{0}</b></font>权限，如需使用该功能，请手动授予权限！", list.toString());
-        return MessageFormat.format("您已拒绝我们申请的<font><b>{0}</b></font>权限，如需使用该功能，请手动授予权限！", list.toString());
+        //return MessageFormat.format("您已拒绝我们申请的<font><b>{0}</b></font>权限，如需使用该功能，请手动授予权限！", list.toString());
+        return MessageFormat.format("您已拒绝我们申请的{0}权限，如需使用该功能，请手动授予权限！", list.toString());
     }
 
     private String getDeniedPermissionName() {
