@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
     android:layout_marginStart="25dp"
     android:layout_marginEnd="25dp"
@@ -26,7 +27,7 @@
             android:paddingTop="30dp"
             android:paddingEnd="16dp"
             android:paddingBottom="25dp"
-            android:text="权限说明。。。\naflahfldsahflksadjfkda"
+            tools:text="权限说明。。。\naflahfldsahflksadjfkda"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
