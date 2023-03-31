@@ -33,6 +33,7 @@ import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.SPStaticUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
 import com.google.gson.reflect.TypeToken;
 
@@ -573,6 +574,7 @@ public class PermissionHelper {
                     String scenarioKey = getCurrentScenarioKey();
                     if (isAutoRequest && !isFirstRequest(scenarioKey)) {
                         //当前场景非用户手动触发请求,并且非第一次请求
+                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限", getDeniedPermissionName()));
                         return;
                     }
 
@@ -593,6 +595,7 @@ public class PermissionHelper {
                     String scenarioKey = getCurrentScenarioKey();
                     if (isAutoRequest && !isFirstRequest(scenarioKey)) {
                         //当前场景非用户手动触发请求,并且非第一次请求
+                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限", getDeniedPermissionName()));
                         return;
                     }
 
@@ -624,6 +627,21 @@ public class PermissionHelper {
         }
         //return MessageFormat.format("您已拒绝我们申请的<font color=\"#FF0000\"><b>{0}</b></font>权限，如需使用该功能，请手动授予权限！", list.toString());
         return MessageFormat.format("您已拒绝我们申请的<font><b>{0}</b></font>权限，如需使用该功能，请手动授予权限！", list.toString());
+    }
+
+    private String getDeniedPermissionName() {
+        ArrayList<String> list = new ArrayList<>();
+        for (String s : requestPermissions) {
+            boolean flag = !hasPermissions(Utils.getApp(), s);
+            if (flag) {
+                String name = getPermissionName(s);
+                if (!list.contains(name)) {
+                    list.add(name);
+                }
+            }
+
+        }
+        return list.toString();
     }
 
     protected String getPermissionName(String permission) {
