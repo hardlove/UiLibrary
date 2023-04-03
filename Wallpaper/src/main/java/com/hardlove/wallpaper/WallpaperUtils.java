@@ -56,6 +56,9 @@ public class WallpaperUtils {
 
     //=============================================================================================
 
+    public static void setWallpaper(Context context, String imgPath) {
+        setWallpaper(context, getImageContentUri(context, new File(imgPath)));
+    }
 
     public static void setWallpaper(Context context, Uri uri) {
         try {
