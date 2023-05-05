@@ -73,7 +73,8 @@ public class PermissionHelper {
     private FullCallback mFullCallback;
     private boolean ignore48H = true;//48小时内请求过的权限不再重复请求
     private boolean onlyRequestOnce = true;//是否永久不重复请求，即只能申请一次
-    private boolean goSetting = true;//跳转系统权限设置页面
+    private boolean goSetting = false;//跳转系统权限设置页面
+    private boolean showToast = false;//权限拒绝后是否显示Toast提示,goSetting 为false时生效
     private boolean isAutoRequest = false;//是否自动请求,非用户手动触发
     private OnGoSettingUIListener onGoSettingUIListener;//跳转系统权限设置页面监听
     private String goSettingMsg;//跳转系统权限设置页面弹框描述内容
@@ -224,6 +225,15 @@ public class PermissionHelper {
      */
     public PermissionHelper goSettingUI(boolean goSetting) {
         this.goSetting = goSetting;
+        return this;
+    }
+
+    /**
+     * @param showToast 权限拒绝后是否显示Toast提示,goSetting为false时生效
+     * @return
+     */
+    public PermissionHelper showToast(boolean showToast) {
+        this.showToast = showToast;
         return this;
     }
 
@@ -583,6 +593,10 @@ public class PermissionHelper {
                         showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", generateGoSettingMsg(), cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
                     isShowing = true;
+                } else {
+                    if (showToast) {
+                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限", getDeniedPermissionName()));
+                    }
                 }
             }
         }
@@ -604,6 +618,10 @@ public class PermissionHelper {
                         showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", generateGoSettingMsg(), cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
                     isShowing = true;
+                }else {
+                    if (showToast) {
+                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限", getDeniedPermissionName()));
+                    }
                 }
             }
         }
