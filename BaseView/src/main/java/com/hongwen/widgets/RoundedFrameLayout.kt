@@ -26,7 +26,7 @@ class RoundedFrameLayout(context: Context, attrs: AttributeSet?) : FrameLayout(c
 
     init {
         val a = context.obtainStyledAttributes(attrs, R.styleable.RoundedFrameLayout)
-        val radius = a.getDimension(R.styleable.RoundedFrameLayout_topLeftRadius, 0f)
+        val radius = a.getDimension(R.styleable.RoundedFrameLayout_radius, 0f)
         topLeftRadius = a.getDimension(R.styleable.RoundedFrameLayout_topLeftRadius, radius)
         topRightRadius = a.getDimension(R.styleable.RoundedFrameLayout_topRightRadius, radius)
         bottomLeftRadius = a.getDimension(R.styleable.RoundedFrameLayout_bottomLeftRadius, radius)
