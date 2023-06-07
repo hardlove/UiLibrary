@@ -1,5 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+    ext.kotlin_version = '1.5.31'
     repositories {
         //https://maven.aliyun.com/mvn/view(摘自阿里云镜像仓库服务)
         maven { url 'https://maven.aliyun.com/repository/public' }
@@ -14,7 +15,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.2'//Android Gradle Plugin
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
     }
 }
