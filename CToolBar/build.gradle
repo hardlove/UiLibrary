@@ -1,5 +1,12 @@
 apply plugin: 'com.android.library'
-apply from: "../jitpack.gradle"
+//apply from: "../jitpack.gradle"
+
+apply plugin:'maven-publish'
+
+
+group = 'om.github.hardlove'
+version = '2.2.39'
+
 android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -31,3 +38,20 @@ dependencies {
 }
 
 
+
+
+
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.hardlove'
+                artifactId = 'CToolBar'
+                version = '2.2.39'
+            }
+        }
+    }
+}
