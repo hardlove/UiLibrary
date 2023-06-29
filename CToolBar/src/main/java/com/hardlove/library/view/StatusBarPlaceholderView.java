@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 
 /**
@@ -21,8 +23,8 @@ import androidx.annotation.Nullable;
  * 作   者: CL
  * 版   本：1.0.0
  * 创建日期：2019-10-24 09:47
- * 修改日期：
- * 描   述：系统状态栏占位View(拥有沉浸式状态栏中布局中填充状态栏位置，4.4以上才支持，4.4以下直接隐藏)
+ * 修改日期：2023-6-29
+ * 描   述：系统状态栏占位View(拥有沉浸式状态栏中布局中填充状态栏位置，5.0以上才支持，5.0以下直接隐藏)
  * =====================================
  */
 public class StatusBarPlaceholderView extends View {
@@ -35,35 +37,67 @@ public class StatusBarPlaceholderView extends View {
 
 
     public StatusBarPlaceholderView(Context context) {
-        super(context);
-        initView(context);
+        this(context, null);
 
     }
 
     public StatusBarPlaceholderView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+
         initView(context);
     }
 
     private void initView(Context context) {
         sharedPreferences = context.getSharedPreferences("system_status_bar_config", Context.MODE_PRIVATE);
-        statusBarHeight = getStatusBarHeight();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4及以上支持
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//5.0及以上支持
             this.setVisibility(VISIBLE);
         } else {
-            this.setVisibility(GONE);//4.4以下不支持沉浸式直接隐藏
+            this.setVisibility(GONE);//5.0以下不支持沉浸式直接隐藏
         }
 
     }
 
+
+    /**
+     * 获取系统状态栏高度方式一：
+     * 使用WindowInsetsCompat获取
+     */
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        if (statusBarHeight == 0) {
+            statusBarHeight = getStatusBarHeight();
+        }
+        if (statusBarHeight == 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                WindowInsetsCompat windowInsets = ViewCompat.getRootWindowInsets(this);
+                if (windowInsets != null) {
+                    statusBarHeight = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+                    if (statusBarHeight > 0) {
+                        sharedPreferences.edit().putInt(STATUS_BAR_HEIGHT_KEY, statusBarHeight).apply();
+                        Log.e(TAG, "保存系统状态栏高度，statusBarHeight：" + statusBarHeight);
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 获取系统状态栏高度方式二：
+     * <p>
+     * Rect frame = new Rect();
+     * activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+     * statusBarHeight = frame.top;
+     */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
         if (statusBarHeight == 0) {
             measureStatusBarHeight();
-            Log.d(TAG, "requestLayout~~~~~~~");
             requestLayout();
         }
 
@@ -117,8 +151,6 @@ public class StatusBarPlaceholderView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        Log.d(TAG, "onMeasure~~~~~");
-
 
         if (statusBarHeight > 0) {
             Log.d(TAG, "填充状态栏高度：" + statusBarHeight + " SDK VERSION: " + Build.VERSION.SDK_INT);
@@ -127,19 +159,6 @@ public class StatusBarPlaceholderView extends View {
             setMeasuredDimension(widthMeasureSpec, dip2px(getContext(), STATUS_BAR_HEIGHT));
         }
 
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        Log.d(TAG, "onLayout~~~~~");
-
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        Log.d(TAG, "onDraw~~~~~");
     }
 
     private int getStatusBarHeight() {
