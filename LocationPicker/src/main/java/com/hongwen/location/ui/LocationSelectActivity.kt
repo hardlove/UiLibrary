@@ -8,6 +8,7 @@ import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.hongwen.location.databinding.ActivityLocationSelectBinding
 
 /**
@@ -20,7 +21,6 @@ class LocationSelectActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityLocationSelectBinding.inflate(layoutInflater)
-
         setContentView(bind.root)
 
         /**
@@ -40,7 +40,6 @@ class LocationSelectActivity : FragmentActivity() {
          * }
          */
 
-
         /**
          * 沉浸式状态栏方法二：
          */
@@ -50,6 +49,17 @@ class LocationSelectActivity : FragmentActivity() {
             setSystemUiVisibility()
 
         }
+
+
+        initWidgets()
+
+
+
+    }
+
+    private fun initWidgets() {
+        bind.recyclerView.layoutManager = LinearLayoutManager(this)
+        //bind.recyclerView.adapter =
 
 
     }
@@ -64,10 +74,6 @@ class LocationSelectActivity : FragmentActivity() {
     private fun setSystemUiVisibility() {
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
             val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            Log.d(
-                "Carlos",
-                "systemBarsInsets.bottom:" + systemBarsInsets.bottom + "  rect:" + systemBarsInsets
-            )
             WindowInsetsCompat.Builder(insets)
                 .setInsets(
                     WindowInsetsCompat.Type.systemBars(),
