@@ -1,22 +1,12 @@
 package com.hongwen.location.ui
 
-import android.content.Context
 import android.graphics.Color
-import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.AttributeSet
 import android.util.Log
-import android.view.View
-import android.view.Window
-import android.view.WindowInsets
-import android.view.WindowInsetsController
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
 import com.hongwen.location.databinding.ActivityLocationSelectBinding
 
@@ -58,9 +48,8 @@ class LocationSelectActivity : FragmentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setStatusBarColor()
             setSystemUiVisibility()
+
         }
-
-
 
 
     }
@@ -75,10 +64,15 @@ class LocationSelectActivity : FragmentActivity() {
     private fun setSystemUiVisibility() {
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
             val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            Log.d("Carlos","systemBarsInsets.bottom:"+systemBarsInsets.bottom+"  rect:"+systemBarsInsets)
+            Log.d(
+                "Carlos",
+                "systemBarsInsets.bottom:" + systemBarsInsets.bottom + "  rect:" + systemBarsInsets
+            )
             WindowInsetsCompat.Builder(insets)
-                .setInsets(WindowInsetsCompat.Type.systemBars(),
-                    Insets.of(0, 0, 0, systemBarsInsets.bottom))
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                    Insets.of(0, 0, 0, systemBarsInsets.bottom)
+                )
                 .build()
         }
     }
