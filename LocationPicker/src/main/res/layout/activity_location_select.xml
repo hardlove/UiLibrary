@@ -1,31 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <com.hardlove.library.view.CToolBar
-        app:c_bar_background="@color/colorPrimary"
-        android:background="@color/colorPrimary"
-        app:c_status_bar_color="@color/black"
-        android:id="@+id/cToolBar"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:c_center_tv_text="选择城市" />
+        android:background="@android:color/transparent">
 
-    <TextView
-        android:background="#FF0000"
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.hardlove.library.view.CToolBar
+                android:id="@+id/cToolBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                app:c_bar_icon_color="@color/white"
+                app:c_bar_text_color="@color/white"
+                app:c_center_tv_text="车站选择"
+                app:layout_collapseMode="pin" />
+
+
+            <com.hardlove.library.view.SearchLayout
+                android:id="@+id/search_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:paddingStart="15dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="12dp"
+                app:c_search_hint_text="请输入（如：北京市/北京站/beijing/bj）"
+                app:c_search_layout_radius="10dp"
+                app:c_search_layout_solid_color="#FFF1F1F1"
+                app:c_search_layout_stroke_color="@android:color/transparent"
+                app:c_search_text_padding_left_right="15dp"
+                app:c_search_text_size="12sp" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="30dp" />
-    <TextView
-        android:textSize="15sp"
-        android:textColor="@color/black"
-        android:text="1111111111"
-        android:gravity="bottom"
-        android:fitsSystemWindows="true"
-        android:background="#FFFF00"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
