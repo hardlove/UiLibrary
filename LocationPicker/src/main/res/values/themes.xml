@@ -13,7 +13,7 @@
 
         <!--状态栏半透明,实现沉浸式状态栏-->
         <item name="android:windowTranslucentStatus">true</item>
-        <!-- Status bar color. -->
+        <!-- Status bar color.-->
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 </resources>
