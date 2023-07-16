@@ -39,6 +39,7 @@ class LocationSelectDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)// 隐藏标题栏（如果有）
         binding = FragmentLocationSelectBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -55,29 +56,29 @@ class LocationSelectDialogFragment : DialogFragment() {
     }
 
     private fun setWindow(dialog: Dialog) {
-        val window = dialog.window!!
-        if (isFullScreenDialog()) {
+        val window = dialog.window
+        // 获取Dialog的Window对象并配置属性
+        window?.apply {
             val decorView = window.decorView
             //两个 flag 要结合使用，表示让应用的主体内容占用系统状态栏的空间
             val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             decorView.systemUiVisibility = option
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = Color.TRANSPARENT
-            //设置导航栏颜
-            window.navigationBarColor = Color.TRANSPARENT
-            //内容扩展到导航栏
-            window.setType(WindowManager.LayoutParams.TYPE_APPLICATION_PANEL)
+        }
+
+        window?.apply {
+            //设置Dialog的宽高充满屏幕
+            val lp = window.attributes
+            lp.width = WindowManager.LayoutParams.MATCH_PARENT
+            lp.height = WindowManager.LayoutParams.MATCH_PARENT
+            lp.gravity = Gravity.TOP
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+            // 设置透明背景
+            window.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+            window.attributes = lp
         }
 
 
-        //设置Dialog的宽高充满屏幕
-        val lp = window.attributes
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT
-        lp.gravity = Gravity.TOP
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
-        window.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        window.attributes = lp
     }
 
     override fun onAttach(context: Context) {
@@ -193,8 +194,4 @@ class LocationSelectDialogFragment : DialogFragment() {
         binding.emptyView.root.visibility = if (show) View.VISIBLE else View.GONE
     }
 
-
-    private fun isFullScreenDialog(): Boolean {
-        return true
-    }
 }

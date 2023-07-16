@@ -11,16 +11,15 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Customize your theme here. -->
 
-<!--        &lt;!&ndash;状态栏半透明,实现沉浸式状态栏&ndash;&gt;-->
-<!--        <item name="android:windowTranslucentStatus">true</item>-->
-<!--        &lt;!&ndash; Status bar color.&ndash;&gt;-->
-<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
-<!--        <item name="android:windowBackground">@android:color/white</item>-->
+        <!--状态栏半透明,实现沉浸式状态栏-->
+        <item name="android:windowTranslucentStatus">true</item>
+        <!-- Status bar color.-->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/white</item>
     </style>
 
 
     <style name="Theme.UiLibrary.LocationPicker.LocationSelectActivity" parent="Theme.UiLibrary.LocationPicker">
-
         <item name="cpCancelTextSize">@dimen/cp_cancel_text_size</item>
         <item name="cpCancelTextColor">@color/cp_color_gray</item>
 
