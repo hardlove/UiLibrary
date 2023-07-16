@@ -16,7 +16,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hongwen.location.adapter.LocationSelectAdapter
-import com.hongwen.location.databinding.ActivityLocationSelectBinding
 import com.hongwen.location.databinding.FragmentLocationSelectBinding
 import com.hongwen.location.db.DBManager
 import com.hongwen.location.decoration.DividerItemDecoration
@@ -33,15 +32,15 @@ import kotlinx.coroutines.withContext
  * Created by chenlu at 2023/7/16 16:47
  */
 class LocationSelectDialogFragment: DialogFragment() {
-    private lateinit var bind:FragmentLocationSelectBinding
+    private lateinit var binding:FragmentLocationSelectBinding
     private lateinit var adapter: LocationSelectAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        bind = FragmentLocationSelectBinding.inflate(inflater,container,false)
-        return bind.root
+        binding = FragmentLocationSelectBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -105,24 +104,24 @@ class LocationSelectDialogFragment: DialogFragment() {
             items[1] = HotLocation("热门城市", "未知", "未知")
 
             allItems = items
-            bind.recyclerView.setHasFixedSize(true)
-            bind.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-            bind.recyclerView.adapter = LocationSelectAdapter(allItems, hotItems).also {
+            binding.recyclerView.setHasFixedSize(true)
+            binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+            binding.recyclerView.adapter = LocationSelectAdapter(allItems, hotItems).also {
                 adapter = it
-                adapter.setLayoutManager(bind.recyclerView.layoutManager as LinearLayoutManager)
+                adapter.setLayoutManager(binding.recyclerView.layoutManager as LinearLayoutManager)
             }
-            bind.recyclerView.addItemDecoration(
+            binding.recyclerView.addItemDecoration(
                 SectionItemDecoration(
                     requireContext(),
                     allItems
                 )
             )
-            bind.recyclerView.addItemDecoration(DividerItemDecoration(requireContext()))
+            binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext()))
         }
     }
 
     private fun initListener() {
-        bind.searchLl.editText.addTextChangedListener(
+        binding.searchLl.editText.addTextChangedListener(
             afterTextChanged = {
                 val keyWord = it?.toString()?.trim()
                 if (keyWord.isNullOrEmpty()) {
@@ -134,9 +133,9 @@ class LocationSelectDialogFragment: DialogFragment() {
             }
         )
 
-        bind.cpSideIndexBar.setNavigationBarHeight(ScreenUtil.getNavigationBarHeight(requireContext()))
-        bind.cpSideIndexBar.setOverlayTextView(bind.cpOverlay)
-        bind.cpSideIndexBar.setOnIndexChangedListener { index, position ->
+        binding.cpSideIndexBar.setNavigationBarHeight(ScreenUtil.getNavigationBarHeight(requireContext()))
+        binding.cpSideIndexBar.setOverlayTextView(binding.cpOverlay)
+        binding.cpSideIndexBar.setOnIndexChangedListener { index, position ->
             //滚动RecyclerView到索引位置
             adapter.scrollToSection(index)
         }
@@ -160,7 +159,7 @@ class LocationSelectDialogFragment: DialogFragment() {
 
 
     private fun setEmptyViewVisibility(show: Boolean) {
-        bind.emptyView.root.visibility = if (show) View.VISIBLE else View.GONE
+        binding.emptyView.root.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     // 设置状态栏颜色为透明
