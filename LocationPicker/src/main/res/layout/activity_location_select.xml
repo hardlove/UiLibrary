@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -46,10 +45,11 @@
                 app:c_search_layout_stroke_color="@android:color/transparent"
                 app:c_search_text_padding_left_right="15dp"
                 app:c_search_text_size="12sp"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed|enterAlways|enterAlwaysCollapsed|snap" />
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|enterAlways" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:overScrollMode="never"
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

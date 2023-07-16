@@ -4,19 +4,28 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hongwen.location.adapter.LocationSelectAdapter
 import com.hongwen.location.databinding.ActivityLocationSelectBinding
+import com.hongwen.location.db.DBManager
+import com.hongwen.location.model.Location
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Created by chenlu at 2023/7/13 16:59
  */
-class LocationSelectActivity : FragmentActivity() {
+class LocationSelectActivity : AppCompatActivity() {
 
     private lateinit var bind: ActivityLocationSelectBinding
+    private lateinit var adapter: LocationSelectAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,14 +62,31 @@ class LocationSelectActivity : FragmentActivity() {
 
         initWidgets()
 
-
+        iniData()
 
     }
 
     private fun initWidgets() {
+        bind.recyclerView.setHasFixedSize(true)
         bind.recyclerView.layoutManager = LinearLayoutManager(this)
-        //bind.recyclerView.adapter =
 
+
+    }
+
+    private fun iniData() {
+        lifecycleScope.launch {
+
+            val items = withContext(Dispatchers.IO) {
+                val dbManager = DBManager(this@LocationSelectActivity)
+                val allCities = dbManager.allCities
+
+                allCities
+            }
+
+            val hotItems = ArrayList<Location>()
+            bind.recyclerView.adapter = LocationSelectAdapter(items, hotItems).also { adapter = it }
+
+        }
 
     }
 
