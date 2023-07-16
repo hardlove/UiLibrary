@@ -1,20 +1,17 @@
 package com.hongwen.location.ui
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
-import android.os.Build
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.core.graphics.Insets
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hongwen.location.R
 import com.hongwen.location.adapter.LocationSelectAdapter
 import com.hongwen.location.databinding.FragmentLocationSelectBinding
 import com.hongwen.location.db.DBManager
@@ -28,45 +25,76 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
 /**
  * Created by chenlu at 2023/7/16 16:47
  */
-class LocationSelectDialogFragment: DialogFragment() {
-    private lateinit var binding:FragmentLocationSelectBinding
+class LocationSelectDialogFragment : DialogFragment() {
+    private lateinit var binding: FragmentLocationSelectBinding
     private lateinit var adapter: LocationSelectAdapter
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentLocationSelectBinding.inflate(inflater,container,false)
+        binding = FragmentLocationSelectBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        Log.d("Carlos-DialogFragment","onViewCreated~~~~~")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setStatusBarColor()
-            setSystemUiVisibility()
-
-        }
+        Log.d("Carlos-DialogFragment", "onViewCreated~~~~~")
 
         iniRecyclerView()
         initListener()
+
+
+    }
+
+    private fun setWindow(dialog: Dialog) {
+        val window = dialog.window!!
+        if (isFullScreenDialog()) {
+            val decorView = window.decorView
+            //两个 flag 要结合使用，表示让应用的主体内容占用系统状态栏的空间
+            val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            decorView.systemUiVisibility = option
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = Color.TRANSPARENT
+            //设置导航栏颜
+            window.navigationBarColor = Color.TRANSPARENT
+            //内容扩展到导航栏
+            window.setType(WindowManager.LayoutParams.TYPE_APPLICATION_PANEL)
+        }
+
+
+        //设置Dialog的宽高充满屏幕
+        val lp = window.attributes
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT
+        lp.gravity = Gravity.TOP
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+        window.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        window.attributes = lp
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Log.d("Carlos-DialogFragment","onAttach~~~~~")
+        Log.d("Carlos-DialogFragment", "onAttach~~~~~")
+
+        setStyle(STYLE_NORMAL, R.style.CityPickerStyle)
 
     }
 
     override fun onStart() {
         super.onStart()
-        Log.d("Carlos-DialogFragment","onStart~~~~~")
+        Log.d("Carlos-DialogFragment", "onStart~~~~~")
 
+
+        //如果是Dialog模式
+        dialog?.let { setWindow(it) }
     }
 
     private fun resetData() {
@@ -86,7 +114,6 @@ class LocationSelectDialogFragment: DialogFragment() {
 
         }
     }
-
 
 
     private lateinit var allItems: MutableList<Location>
@@ -133,7 +160,11 @@ class LocationSelectDialogFragment: DialogFragment() {
             }
         )
 
-        binding.cpSideIndexBar.setNavigationBarHeight(ScreenUtil.getNavigationBarHeight(requireContext()))
+        binding.cpSideIndexBar.setNavigationBarHeight(
+            ScreenUtil.getNavigationBarHeight(
+                requireContext()
+            )
+        )
         binding.cpSideIndexBar.setOverlayTextView(binding.cpOverlay)
         binding.cpSideIndexBar.setOnIndexChangedListener { index, position ->
             //滚动RecyclerView到索引位置
@@ -162,22 +193,8 @@ class LocationSelectDialogFragment: DialogFragment() {
         binding.emptyView.root.visibility = if (show) View.VISIBLE else View.GONE
     }
 
-    // 设置状态栏颜色为透明
-    private fun setStatusBarColor() {
-        dialog?.window?.statusBarColor = Color.TRANSPARENT
-    }
 
-    // 设置系统UI可见性以实现沉浸式状态栏效果
-    private fun setSystemUiVisibility() {
-        val view = dialog?.window?.decorView ?: return
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            WindowInsetsCompat.Builder(insets)
-                .setInsets(
-                    WindowInsetsCompat.Type.systemBars(),
-                    Insets.of(0, 0, 0, systemBarsInsets.bottom)
-                )
-                .build()
-        }
+    private fun isFullScreenDialog(): Boolean {
+        return true
     }
 }

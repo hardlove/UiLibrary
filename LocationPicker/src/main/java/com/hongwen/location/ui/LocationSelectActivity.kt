@@ -48,6 +48,13 @@ class LocationSelectActivity : AppCompatActivity() {
         }
 
 
+        binding.btnConfirm.setOnClickListener {
+
+
+            val locationSelectDialogFragment = LocationSelectDialogFragment()
+            locationSelectDialogFragment.show(supportFragmentManager,"select")
+        }
+
     }
 
 
