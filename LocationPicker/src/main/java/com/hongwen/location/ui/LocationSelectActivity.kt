@@ -3,7 +3,7 @@ package com.hongwen.location.ui
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
@@ -14,9 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.hongwen.location.adapter.LocationSelectAdapter
 import com.hongwen.location.databinding.ActivityLocationSelectBinding
 import com.hongwen.location.db.DBManager
+import com.hongwen.location.decoration.DividerItemDecoration
+import com.hongwen.location.decoration.SectionItemDecoration
 import com.hongwen.location.model.HotLocation
 import com.hongwen.location.model.LocatedLocation
 import com.hongwen.location.model.Location
+import com.hongwen.location.utils.ScreenUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -61,9 +64,7 @@ class LocationSelectActivity : AppCompatActivity() {
 
         }
 
-
-        initWidgets()
-        iniData()
+        iniRecyclerView()
         initListener()
 
     }
@@ -72,7 +73,6 @@ class LocationSelectActivity : AppCompatActivity() {
         bind.searchLl.editText.addTextChangedListener(
             afterTextChanged = {
                 val keyWord = it?.toString()?.trim()
-                Log.d("Carlos", "搜索。。。。。。。。。。。。。。")
                 if (keyWord.isNullOrEmpty()) {
                     resetData()
                 } else {
@@ -81,10 +81,19 @@ class LocationSelectActivity : AppCompatActivity() {
 
             }
         )
+
+        bind.cpSideIndexBar.setNavigationBarHeight(ScreenUtil.getNavigationBarHeight(this))
+        bind.cpSideIndexBar.setOverlayTextView(bind.cpOverlay)
+        bind.cpSideIndexBar.setOnIndexChangedListener { index, position ->
+            //滚动RecyclerView到索引位置
+            adapter.scrollToSection(index)
+        }
     }
 
     private fun resetData() {
         adapter.updateData(allItems)
+
+        setEmptyViewVisibility(allItems.isEmpty())
     }
 
     private fun searchData(keyWord: String?) {
@@ -94,50 +103,64 @@ class LocationSelectActivity : AppCompatActivity() {
                 dbManager.searchLocation(keyWord)
             }
             adapter.updateData(items)
+            setEmptyViewVisibility(items.isEmpty())
 
         }
     }
 
-    private fun initWidgets() {
-        bind.recyclerView.setHasFixedSize(true)
-        bind.recyclerView.layoutManager = LinearLayoutManager(this)
 
-
-    }
 
     private lateinit var allItems: MutableList<Location>
-    private fun iniData() {
+    private fun iniRecyclerView() {
         lifecycleScope.launch {
 
             val items = withContext(Dispatchers.IO) {
                 val dbManager = DBManager(this@LocationSelectActivity)
-                val allCities = dbManager.allCities
-
-                allCities
+                dbManager.allCities
             }
-
             val hotItems = withContext(Dispatchers.IO) {
-
-                val hotitems = mutableListOf<Location>()
-                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
-                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
-                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
-                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
-                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
-                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
-
-                hotitems
+                getHotLocations()
             }
             items[0] = LocatedLocation("正在定位", "未知", "未知")
             items[1] = HotLocation("热门城市", "未知", "未知")
 
             allItems = items
-            bind.recyclerView.adapter =
-                LocationSelectAdapter(allItems, hotItems).also { adapter = it }
-
+            bind.recyclerView.setHasFixedSize(true)
+            bind.recyclerView.layoutManager = LinearLayoutManager(this@LocationSelectActivity)
+            bind.recyclerView.adapter = LocationSelectAdapter(allItems, hotItems).also {
+                adapter = it
+                adapter.setLayoutManager(bind.recyclerView.layoutManager as LinearLayoutManager)
+            }
+            bind.recyclerView.addItemDecoration(
+                SectionItemDecoration(
+                    this@LocationSelectActivity,
+                    allItems
+                )
+            )
+            bind.recyclerView.addItemDecoration(DividerItemDecoration(this@LocationSelectActivity))
         }
     }
 
+    private fun getHotLocations(): List<Location> {
+        //初始化热门城市
+        val mHotCities = ArrayList<HotLocation>()
+        mHotCities.add(HotLocation("北京", "北京", ""))
+        mHotCities.add(HotLocation("上海", "上海", ""))
+        mHotCities.add(HotLocation("广州", "广东", ""))
+        mHotCities.add(HotLocation("深圳", "广东", ""))
+        mHotCities.add(HotLocation("成都", "四川", ""))
+        mHotCities.add(HotLocation("天津", "天津", ""))
+        mHotCities.add(HotLocation("杭州", "浙江", ""))
+        mHotCities.add(HotLocation("南京", "江苏", ""))
+        mHotCities.add(HotLocation("武汉", "湖北", ""))
+
+        return mHotCities
+    }
+
+
+    private fun setEmptyViewVisibility(show: Boolean) {
+        bind.emptyView.root.visibility = if (show) View.VISIBLE else View.GONE
+    }
 
     // 设置状态栏颜色为透明
     private fun setStatusBarColor() {

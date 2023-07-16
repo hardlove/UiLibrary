@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UiLibrary.LocationPicker">
         <activity
+            android:theme="@style/Theme.UiLibrary.LocationPicker.LocationSelectActivity"
             android:name="com.hongwen.location.ui.LocationSelectActivity"
             android:exported="true">
             <intent-filter>

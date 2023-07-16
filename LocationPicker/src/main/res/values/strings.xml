@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">LocationPicker</string>
+
+    <string name="cp_search_hint_text">搜索城市</string>
+    <string name="cp_cancel">取消</string>
+    <string name="cp_no_result">暂未搜索到城市..</string>
+    <string name="cp_locate_failed">定位失败</string>
+    <string name="cp_locating">正在定位…</string>
 </resources>

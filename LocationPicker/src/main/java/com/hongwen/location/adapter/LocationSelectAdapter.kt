@@ -1,9 +1,11 @@
 package com.hongwen.location.adapter
 
 import android.annotation.SuppressLint
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hongwen.location.databinding.ItemSectionHotBinding
 import com.hongwen.location.databinding.ItemSectionLocationBinding
@@ -20,7 +22,10 @@ import com.hongwen.location.model.Location
  * 悬浮分组
  * https://github.com/timehop/sticky-headers-recyclerview
  */
-class LocationSelectAdapter(private var allItems: MutableList<Location>, val hotItems: MutableList<Location>) :
+class LocationSelectAdapter(
+    private var allItems: MutableList<Location>,
+    private val hotItems: List<Location>
+) :
     RecyclerView.Adapter<BindingViewHolder>() {
     companion object {
         private const val VIEW_TYPE_LOCATION = 0x01
@@ -29,6 +34,10 @@ class LocationSelectAdapter(private var allItems: MutableList<Location>, val hot
     }
 
     private var locateState: LocateState = LocateState.LOCATING
+    private lateinit var mLayoutManager: LinearLayoutManager
+    fun setLayoutManager(manager: LinearLayoutManager) {
+        this.mLayoutManager = manager
+    }
 
     override fun getItemViewType(position: Int): Int {
         return when (allItems[position]) {
@@ -87,7 +96,8 @@ class LocationSelectAdapter(private var allItems: MutableList<Location>, val hot
             is HotLocation -> {
                 val binding = viewBinding as ItemSectionHotBinding
                 binding.innerRecyclerView.setHasFixedSize(true)
-                binding.innerRecyclerView.layoutManager = GridLayoutManager(binding.root.context,3,RecyclerView.VERTICAL,false)
+                binding.innerRecyclerView.layoutManager =
+                    GridLayoutManager(binding.root.context, 3, RecyclerView.VERTICAL, false)
                 binding.innerRecyclerView.adapter = HotLocationAdapter(hotItems)
             }
             else -> {
@@ -98,7 +108,7 @@ class LocationSelectAdapter(private var allItems: MutableList<Location>, val hot
 
     }
 
-    fun locationChanged(location: LocatedLocation,locateState: LocateState) {
+    fun locationChanged(location: LocatedLocation, locateState: LocateState) {
         this.locateState = locateState
         allItems[0] = location
         notifyItemChanged(0)
@@ -109,6 +119,23 @@ class LocationSelectAdapter(private var allItems: MutableList<Location>, val hot
         allItems = items
         notifyDataSetChanged()
     }
+
+    /**
+     * 滚动RecyclerView到索引位置
+     * @param index
+     */
+    fun scrollToSection(index: String) {
+        if (allItems.isEmpty()) return
+        if (TextUtils.isEmpty(index)) return
+        val size: Int = allItems.size
+        for (i in 0 until size) {
+            if (TextUtils.equals(index.substring(0, 1), allItems[i].section.substring(0, 1))) {
+                mLayoutManager.scrollToPositionWithOffset(i, 0)
+                return
+            }
+        }
+    }
+
 
 }
 
