@@ -1,5 +1,6 @@
 package com.hongwen.location.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,7 +20,7 @@ import com.hongwen.location.model.Location
  * 悬浮分组
  * https://github.com/timehop/sticky-headers-recyclerview
  */
-class LocationSelectAdapter(private val allItems: MutableList<Location>, val hotItems: MutableList<Location>) :
+class LocationSelectAdapter(private var allItems: MutableList<Location>, val hotItems: MutableList<Location>) :
     RecyclerView.Adapter<BindingViewHolder>() {
     companion object {
         private const val VIEW_TYPE_LOCATION = 0x01
@@ -101,6 +102,12 @@ class LocationSelectAdapter(private val allItems: MutableList<Location>, val hot
         this.locateState = locateState
         allItems[0] = location
         notifyItemChanged(0)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(items: MutableList<Location>) {
+        allItems = items
+        notifyDataSetChanged()
     }
 
 }

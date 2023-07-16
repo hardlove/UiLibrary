@@ -8,12 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.FragmentActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hongwen.location.adapter.LocationSelectAdapter
 import com.hongwen.location.databinding.ActivityLocationSelectBinding
 import com.hongwen.location.db.DBManager
+import com.hongwen.location.model.HotLocation
+import com.hongwen.location.model.LocatedLocation
 import com.hongwen.location.model.Location
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,9 +63,39 @@ class LocationSelectActivity : AppCompatActivity() {
 
 
         initWidgets()
-
         iniData()
+        initListener()
 
+    }
+
+    private fun initListener() {
+        bind.searchLl.editText.addTextChangedListener(
+            afterTextChanged = {
+                val keyWord = it?.toString()?.trim()
+                Log.d("Carlos", "搜索。。。。。。。。。。。。。。")
+                if (keyWord.isNullOrEmpty()) {
+                    resetData()
+                } else {
+                    searchData(keyWord)
+                }
+
+            }
+        )
+    }
+
+    private fun resetData() {
+        adapter.updateData(allItems)
+    }
+
+    private fun searchData(keyWord: String?) {
+        lifecycleScope.launch {
+            val items = withContext(Dispatchers.IO) {
+                val dbManager = DBManager(this@LocationSelectActivity)
+                dbManager.searchLocation(keyWord)
+            }
+            adapter.updateData(items)
+
+        }
     }
 
     private fun initWidgets() {
@@ -73,6 +105,7 @@ class LocationSelectActivity : AppCompatActivity() {
 
     }
 
+    private lateinit var allItems: MutableList<Location>
     private fun iniData() {
         lifecycleScope.launch {
 
@@ -83,11 +116,26 @@ class LocationSelectActivity : AppCompatActivity() {
                 allCities
             }
 
-            val hotItems = ArrayList<Location>()
-            bind.recyclerView.adapter = LocationSelectAdapter(items, hotItems).also { adapter = it }
+            val hotItems = withContext(Dispatchers.IO) {
+
+                val hotitems = mutableListOf<Location>()
+                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
+                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
+                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
+                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
+                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
+                hotitems.add(Location("北京", "河北", "beigin", "02412421"))
+
+                hotitems
+            }
+            items[0] = LocatedLocation("正在定位", "未知", "未知")
+            items[1] = HotLocation("热门城市", "未知", "未知")
+
+            allItems = items
+            bind.recyclerView.adapter =
+                LocationSelectAdapter(allItems, hotItems).also { adapter = it }
 
         }
-
     }
 
 

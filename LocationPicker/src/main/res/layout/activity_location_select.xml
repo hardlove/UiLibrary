@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <com.hardlove.library.view.CToolBar
+        app:c_show_search_layout="false"
         android:id="@+id/cToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,7 +30,7 @@
             android:background="@android:color/transparent">
 
             <com.hardlove.library.view.SearchLayout
-                android:id="@+id/search_layout"
+                android:id="@+id/search_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
@@ -45,6 +46,9 @@
                 app:c_search_layout_stroke_color="@android:color/transparent"
                 app:c_search_text_padding_left_right="15dp"
                 app:c_search_text_size="12sp"
+                app:c_show_search_search_icon="true"
+                app:c_show_search_delete_icon="true"
+                app:c_close_delete_icon_while_empty="true"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed|enterAlways" />
         </com.google.android.material.appbar.AppBarLayout>
 

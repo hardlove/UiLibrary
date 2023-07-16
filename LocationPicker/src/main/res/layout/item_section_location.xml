@@ -7,6 +7,8 @@
     android:paddingEnd="@dimen/h_item_content_padding">
 
     <TextView
+        android:clickable="true"
+        android:focusable="true"
         android:id="@+id/tv_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,6 +26,8 @@
         android:layout_weight="1" />
 
     <TextView
+        android:clickable="true"
+        android:focusable="true"
         android:id="@+id/tv_relocate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
