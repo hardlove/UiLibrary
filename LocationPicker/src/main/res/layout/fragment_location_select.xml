@@ -8,15 +8,14 @@
     android:theme="@style/Theme.UiLibrary.LocationPicker.LocationSelectActivity">
 
     <com.hardlove.library.view.CToolBar
+        app:c_bar_background="#FF0000"
         android:id="@+id/cToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
         app:c_bar_icon_color="@color/white"
         app:c_bar_text_color="@color/white"
         app:c_center_tv_text="车站选择"
-        app:c_show_search_layout="false"
-        app:layout_collapseMode="pin" />
+        app:c_show_search_layout="false" />
 
     <com.hardlove.library.view.SearchLayout
         android:id="@+id/search_ll"

@@ -57,18 +57,21 @@ class LocationSelectDialogFragment : DialogFragment() {
 
     private fun setWindow(dialog: Dialog) {
         val window = dialog.window
+        //显示系统状态栏
+        dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window?.statusBarColor = Color.TRANSPARENT
+
         // 获取Dialog的Window对象并配置属性
         window?.apply {
-            val decorView = window.decorView
             //两个 flag 要结合使用，表示让应用的主体内容占用系统状态栏的空间
             val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             decorView.systemUiVisibility = option
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        }
+            window.statusBarColor = Color.TRANSPARENT
+            //设置导航栏颜
+            window.navigationBarColor = Color.TRANSPARENT
 
-        //显示系统状态栏
-        dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        window?.statusBarColor = Color.TRANSPARENT
+        }
 
         window?.apply {
             //设置Dialog的宽高充满屏幕
@@ -84,6 +87,7 @@ class LocationSelectDialogFragment : DialogFragment() {
 
 
     }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
