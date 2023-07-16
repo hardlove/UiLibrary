@@ -66,6 +66,10 @@ class LocationSelectDialogFragment : DialogFragment() {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         }
 
+        //显示系统状态栏
+        dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window?.statusBarColor = Color.TRANSPARENT
+
         window?.apply {
             //设置Dialog的宽高充满屏幕
             val lp = window.attributes
