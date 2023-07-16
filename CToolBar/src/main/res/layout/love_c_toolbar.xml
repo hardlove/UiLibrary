@@ -96,7 +96,7 @@
         </LinearLayout>
 
         <com.hardlove.library.view.SearchLayout
-            android:id="@+id/search_layout"
+            android:id="@+id/c_search_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"

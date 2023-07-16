@@ -590,11 +590,11 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
             this.paddingBottom = paddingBottom;
         }
 
-        public void setMarging(int margingLeft, int margingRight, int margingTop, int margingBottom) {
-            this.margingLeft = margingLeft;
-            this.margingRight = margingRight;
-            this.margingTop = margingTop;
-            this.margingBottom = margingBottom;
+        public void setMargin(int marginLeft, int marginRight, int marginTop, int marginBottom) {
+            this.margingLeft = marginLeft;
+            this.margingRight = marginRight;
+            this.margingTop = marginTop;
+            this.margingBottom = marginBottom;
         }
 
         public void setIsShow(boolean isShow) {
@@ -623,7 +623,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         left_layout = view.findViewById(R.id.left_layout);
         center_layout = view.findViewById(R.id.center_layout);
         right_layout = view.findViewById(R.id.right_layout);
-        search_layout = view.findViewById(R.id.search_layout);
+        search_layout = view.findViewById(R.id.c_search_layout);
 
 
     }
@@ -1127,7 +1127,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         int c_left_iv_icon_paddingRight = array.getDimensionPixelSize(R.styleable.CToolBar_c_left_iv_icon_paddingRight, DEFAULT_PADDING_RIGHT);
         left_iv_settings = new ImageViewSettings(c_left_iv_icon, c_left_iv_icon_color, c_left_iv_icon_alpha_press);
         left_iv_settings.setPadding(c_left_iv_icon_paddingLeft, c_left_iv_icon_paddingRight, 0, 0);
-        left_iv_settings.setMarging(0, 0, 0, 0);
+        left_iv_settings.setMargin(0, 0, 0, 0);
         left_iv_settings.setIsShow(c_show_left_iv);
 
         String c_center_tv_text = array.getString(R.styleable.CToolBar_c_center_tv_text);
@@ -1144,7 +1144,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         float c_center_iv_icon_alpha_press = array.getFloat(R.styleable.CToolBar_c_center_iv_icon_alpha_press, DEFAULT_ALPHA_NORMAL);
         center_iv_settings = new ImageViewSettings(c_center_iv_icon, c_center_iv_icon_color, c_center_iv_icon_alpha_press);
         center_iv_settings.setPadding(0, 0, 0, 0);
-        center_iv_settings.setMarging(0, 0, 0, 0);
+        center_iv_settings.setMargin(0, 0, 0, 0);
         center_iv_settings.setIsShow(c_show_center_iv);
 
         String c_right_tv1_text = array.getString(R.styleable.CToolBar_c_right_tv1_text);
@@ -1165,7 +1165,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         right_tv1_settings.setIsShow(c_show_right_tv1);
         right_iv1_settings = new ImageViewSettings(c_right_iv1_icon, c_right_iv1_icon_color, c_right_iv1_icon_alpha_press);
         right_iv1_settings.setPadding(c_right_iv1_icon_paddingLeft, c_right_iv1_icon_paddingRight, 0, 0);
-        right_iv1_settings.setMarging(0, 0, 0, 0);
+        right_iv1_settings.setMargin(0, 0, 0, 0);
         right_iv1_settings.setIsShow(c_show_right_iv1);
 
         String c_right_tv2_text = array.getString(R.styleable.CToolBar_c_right_tv2_text);
@@ -1186,7 +1186,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         right_tv2_settings.setIsShow(c_show_right_tv2);
         right_iv2_settings = new ImageViewSettings(c_right_iv2_icon, c_right_iv2_icon_color, c_right_iv2_icon_alpha_press);
         right_iv2_settings.setPadding(c_right_iv2_icon_paddingLeft, c_right_iv2_icon_paddingRight, 0, 0);
-        right_iv2_settings.setMarging(0, 0, 0, 0);
+        right_iv2_settings.setMargin(0, 0, 0, 0);
         right_iv2_settings.setIsShow(c_show_right_iv2);
 
         String c_right_tv3_text = array.getString(R.styleable.CToolBar_c_right_tv3_text);
@@ -1207,7 +1207,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         right_tv3_settings.setIsShow(c_show_right_tv3);
         right_iv3_settings = new ImageViewSettings(c_right_iv3_icon, c_right_iv3_icon_color, c_right_iv3_icon_alpha_press);
         right_iv3_settings.setPadding(c_right_iv3_icon_paddingLeft, c_right_iv3_icon_paddingRight, 0, 0);
-        right_iv3_settings.setMarging(0, 0, 0, 0);
+        right_iv3_settings.setMargin(0, 0, 0, 0);
         right_iv3_settings.setIsShow(c_show_right_iv3);
 
         addStatusBar = array.getBoolean(R.styleable.CToolBar_c_add_status_bar, addStatusBar);
