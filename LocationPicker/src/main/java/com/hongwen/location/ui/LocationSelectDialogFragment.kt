@@ -70,6 +70,7 @@ class LocationSelectDialogFragment : DialogFragment() {
             window.statusBarColor = Color.TRANSPARENT
             //设置导航栏颜
             window.navigationBarColor = Color.WHITE
+            //window.navigationBarColor = Color.RED
 
         }
 
