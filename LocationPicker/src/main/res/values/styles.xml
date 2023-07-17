@@ -8,9 +8,8 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
-        <!--设置dialog浮与activity上面-->
-        <item name="android:windowIsFloating">false</item>
-
+<!--        &lt;!&ndash;设置dialog浮与activity上面&ndash;&gt;-->
+<!--        <item name="android:windowIsFloating">true</item>-->
 
     </style>
 

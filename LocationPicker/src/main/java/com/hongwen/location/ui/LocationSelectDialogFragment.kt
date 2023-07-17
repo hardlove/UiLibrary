@@ -69,7 +69,7 @@ class LocationSelectDialogFragment : DialogFragment() {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = Color.TRANSPARENT
             //设置导航栏颜
-            window.navigationBarColor = Color.TRANSPARENT
+            window.navigationBarColor = Color.WHITE
 
         }
 
