@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 @Entity(tableName ="china_city" )
 public class Location {
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
     private String pinyin;
