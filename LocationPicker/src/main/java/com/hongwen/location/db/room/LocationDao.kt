@@ -23,6 +23,6 @@ interface LocationDao {
     @Query("select * from china_city")
     fun queryAll(): MutableList<Location>
 
-    @Query("SELECT * FROM china_city WHERE name LIKE '%' || :keyword || '%'")
+    @Query("SELECT * FROM china_city WHERE name LIKE '%' || :keyword || '%' or pinyin LIKE '%' || :keyword || '%'")
     fun search(keyword: String): MutableList<Location>
 }
