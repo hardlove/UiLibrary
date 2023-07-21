@@ -22,4 +22,13 @@
         android:layout_height="wrap_content"
         android:text="OnCLick" />
 
+    <Button
+        android:layout_marginTop="290dp"
+        android:fitsSystemWindows="true"
+        android:background="@color/cp_colorPrimary"
+        android:id="@+id/btnWriteToDb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="写入数据库" />
+
 </FrameLayout>

@@ -137,8 +137,9 @@ class LocationSelectDialogFragment : DialogFragment() {
             val hotItems = withContext(Dispatchers.IO) {
                 getHotLocations()
             }
-            items[0] = LocatedLocation("正在定位", "未知", "未知")
-            items[1] = HotLocation("热门城市", "未知", "未知")
+
+            items.add(0,LocatedLocation("正在定位", "未知", "未知"))
+            items.add(1,HotLocation("热门城市", "未知", "未知"))
 
             allItems = items
             binding.recyclerView.setHasFixedSize(true)

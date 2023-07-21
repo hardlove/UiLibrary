@@ -10,6 +10,8 @@ import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hongwen.location.databinding.ActivityLocationSelectBinding
+import com.hongwen.location.db.JsonUtils
+import com.hongwen.location.utils.FileUtils
 
 /**
  * Created by chenlu at 2023/7/13 16:59
@@ -67,6 +69,16 @@ class LocationSelectActivity : AppCompatActivity() {
 
             val locationSelectDialogFragment = LocationSelectDialogFragment()
             locationSelectDialogFragment.show(supportFragmentManager, "select")
+        }
+
+        binding.btnWriteToDb.setOnClickListener {
+            Thread {
+                JsonUtils.writeStationJsonToDb(context = this,"train_station.json")
+                JsonUtils.writeLocationJsonToDb(context = this,"china_city.json")
+
+                FileUtils.copyDatabaseToExternalStorage(context = this)
+
+            }.start()
         }
 
     }
