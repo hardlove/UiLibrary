@@ -10,7 +10,7 @@ import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hongwen.location.databinding.ActivityLocationSelectBinding
-import com.hongwen.location.db.JsonUtils
+import com.hongwen.location.utils.JsonUtils
 import com.hongwen.location.utils.FileUtils
 
 /**

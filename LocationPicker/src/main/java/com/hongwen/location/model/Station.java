@@ -1,5 +1,7 @@
 package com.hongwen.location.model;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -7,7 +9,7 @@ import androidx.room.PrimaryKey;
  * Created by chenlu at 2023/7/21 9:38
  */
 @Entity(tableName = "train_station")
-public class Station {
+public class Station implements IModel{
     @PrimaryKey
     private int id;
     private String name;
@@ -143,5 +145,17 @@ public class Station {
 
     public void setIsVip(double isVip) {
         this.isVip = isVip;
+    }
+
+    @NonNull
+    @Override
+    public String getPingYin() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getSection() {
+        return IModel.super.getSection();
     }
 }

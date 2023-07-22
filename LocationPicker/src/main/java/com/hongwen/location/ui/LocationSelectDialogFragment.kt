@@ -2,6 +2,7 @@ package com.hongwen.location.ui
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -13,13 +14,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hongwen.location.R
 import com.hongwen.location.adapter.LocationSelectAdapter
+import com.hongwen.location.callback.OnPickerListener
 import com.hongwen.location.databinding.FragmentLocationSelectBinding
 import com.hongwen.location.db.DBManager
 import com.hongwen.location.decoration.DividerItemDecoration
 import com.hongwen.location.decoration.SectionItemDecoration
-import com.hongwen.location.model.HotLocation
-import com.hongwen.location.model.LocatedLocation
-import com.hongwen.location.model.Location
+import com.hongwen.location.model.*
 import com.hongwen.location.utils.ScreenUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,13 +32,45 @@ import kotlinx.coroutines.withContext
 class LocationSelectDialogFragment : DialogFragment() {
     private lateinit var binding: FragmentLocationSelectBinding
     private lateinit var adapter: LocationSelectAdapter
+    private val allItems: MutableList<IModel> = mutableListOf()
 
+    private var autoLocate: Boolean = false
+    private var onShowListener: OnPickerListener.OnShowListener? = null
+    private var onDismissListener: OnPickerListener.OnDismissListener? = null
+    private var onCancelListener: OnPickerListener.OnCancelListener? = null
+    private var onLocateListener: OnPickerListener.OnLocateListener? = null
+    private lateinit var iModelLoader: OnPickerListener.IModelLoader<IModel>
+
+
+    fun setAutoLocate(autoLocate: Boolean) {
+        this.autoLocate = autoLocate
+    }
+
+    fun setOnShowListener(onShowListener: OnPickerListener.OnShowListener?) {
+        this.onShowListener = onShowListener
+    }
+
+    fun setOnCancelListener(onCancelListener: OnPickerListener.OnCancelListener?) {
+        this.onCancelListener = onCancelListener
+    }
+
+    fun setOnDismissListener(onDismissListener: OnPickerListener.OnDismissListener?) {
+        this.onDismissListener = onDismissListener
+    }
+
+    fun setOnLocateListener(onLocateListener: OnPickerListener.OnLocateListener?) {
+        this.onLocateListener = onLocateListener
+    }
+
+    fun setIModelLoader(iModelLoader: OnPickerListener.IModelLoader<IModel>) {
+        this.iModelLoader = iModelLoader
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)// 隐藏标题栏（如果有）
         binding = FragmentLocationSelectBinding.inflate(inflater, container, false)
         return binding.root
@@ -49,11 +81,13 @@ class LocationSelectDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d("Carlos-DialogFragment", "onViewCreated~~~~~")
 
+
         iniRecyclerView()
         initListener()
 
 
     }
+
 
     private fun setWindow(dialog: Dialog) {
         val window = dialog.window
@@ -105,7 +139,22 @@ class LocationSelectDialogFragment : DialogFragment() {
 
         //如果是Dialog模式
         dialog?.let { setWindow(it) }
+        dialog?.setOnShowListener {
+            onShowListener?.onShow(it)
+        }
     }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        onCancelListener?.onCancel(dialog)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissListener?.onDismiss(dialog)
+
+    }
+
 
     private fun resetData() {
         adapter.updateData(allItems)
@@ -115,9 +164,9 @@ class LocationSelectDialogFragment : DialogFragment() {
 
     private fun searchData(keyWord: String?) {
         lifecycleScope.launch {
-            val items = withContext(Dispatchers.IO) {
+            val items: MutableList<IModel> = withContext(Dispatchers.IO) {
                 val dbManager = DBManager(requireContext())
-                dbManager.searchLocation(keyWord)
+                dbManager.searchLocation(keyWord).toMutableList()
             }
             adapter.updateData(items)
             setEmptyViewVisibility(items.isEmpty())
@@ -126,22 +175,22 @@ class LocationSelectDialogFragment : DialogFragment() {
     }
 
 
-    private lateinit var allItems: MutableList<Location>
     private fun iniRecyclerView() {
         lifecycleScope.launch {
 
-            val items = withContext(Dispatchers.IO) {
-                val dbManager = DBManager(requireContext())
-                dbManager.allCities
+            val items: List<IModel> = withContext(Dispatchers.IO) {
+                iModelLoader.getAllItems()
             }
             val hotItems = withContext(Dispatchers.IO) {
-                getHotLocations()
+                iModelLoader.getHotItems()
             }
 
-            items.add(0,LocatedLocation("正在定位", "未知", "未知"))
-            items.add(1,HotLocation("热门城市", "未知", "未知"))
 
-            allItems = items
+            allItems.clear()
+            allItems.add(0, LocatedLocation("点击定位", LocateState.INIT))
+            allItems.add(1, HotLocation("热门城市"))
+            allItems.addAll(items)
+
             binding.recyclerView.setHasFixedSize(true)
             binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
             binding.recyclerView.adapter = LocationSelectAdapter(allItems, hotItems).also {
@@ -183,25 +232,10 @@ class LocationSelectDialogFragment : DialogFragment() {
         }
     }
 
-    private fun getHotLocations(): List<Location> {
-        //初始化热门城市
-        val mHotCities = ArrayList<HotLocation>()
-        mHotCities.add(HotLocation("北京", "北京", ""))
-        mHotCities.add(HotLocation("上海", "上海", ""))
-        mHotCities.add(HotLocation("广州", "广东", ""))
-        mHotCities.add(HotLocation("深圳", "广东", ""))
-        mHotCities.add(HotLocation("成都", "四川", ""))
-        mHotCities.add(HotLocation("天津", "天津", ""))
-        mHotCities.add(HotLocation("杭州", "浙江", ""))
-        mHotCities.add(HotLocation("南京", "江苏", ""))
-        mHotCities.add(HotLocation("武汉", "湖北", ""))
-
-        return mHotCities
-    }
-
 
     private fun setEmptyViewVisibility(show: Boolean) {
         binding.emptyView.root.visibility = if (show) View.VISIBLE else View.GONE
     }
+
 
 }

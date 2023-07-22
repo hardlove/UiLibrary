@@ -13,13 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.hongwen.location.R;
+import com.hongwen.location.model.IModel;
 import com.hongwen.location.model.Location;
 
 import java.util.List;
 import java.util.Objects;
 
 public class SectionItemDecoration extends RecyclerView.ItemDecoration {
-    private List<Location> mData;
+    private List<IModel> mData;
     private Paint mBgPaint;
     private TextPaint mTextPaint;
     private Rect mBounds;
@@ -29,7 +30,7 @@ public class SectionItemDecoration extends RecyclerView.ItemDecoration {
     private int mTextColor;
     private int mTextSize;
 
-    public SectionItemDecoration(Context context, List<Location> data) {
+    public SectionItemDecoration(Context context, List<IModel> data) {
         this.mData = data;
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.cpSectionBackground, typedValue, true);
@@ -54,7 +55,7 @@ public class SectionItemDecoration extends RecyclerView.ItemDecoration {
         mBounds = new Rect();
     }
 
-    public void setData(List<Location> data) {
+    public void setData(List<IModel> data) {
         this.mData = data;
     }
 

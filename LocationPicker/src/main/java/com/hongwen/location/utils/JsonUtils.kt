@@ -1,4 +1,4 @@
-package com.hongwen.location.db
+package com.hongwen.location.utils
 
 import android.content.Context
 import android.util.Log

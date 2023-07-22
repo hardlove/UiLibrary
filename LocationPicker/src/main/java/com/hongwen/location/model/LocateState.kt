@@ -9,6 +9,7 @@ package com.hongwen.location.model
  * ==================================================
  **/
 sealed class LocateState {
+    object INIT : LocateState()
     object LOCATING : LocateState()
     object SUCCESS : LocateState()
     object FAILURE : LocateState()

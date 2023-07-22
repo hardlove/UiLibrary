@@ -11,10 +11,7 @@ import com.hongwen.location.databinding.ItemSectionHotBinding
 import com.hongwen.location.databinding.ItemSectionLocationBinding
 import com.hongwen.location.databinding.ItemSectionNormalBinding
 import com.hongwen.location.holder.BindingViewHolder
-import com.hongwen.location.model.HotLocation
-import com.hongwen.location.model.LocateState
-import com.hongwen.location.model.LocatedLocation
-import com.hongwen.location.model.Location
+import com.hongwen.location.model.*
 
 /**
  * Created by chenlu at 2023/7/14 16:40
@@ -23,8 +20,8 @@ import com.hongwen.location.model.Location
  * https://github.com/timehop/sticky-headers-recyclerview
  */
 class LocationSelectAdapter(
-    private var allItems: MutableList<Location>,
-    private val hotItems: List<Location>
+    private var allItems: MutableList<IModel>,
+    private val hotItems: List<IModel>
 ) :
     RecyclerView.Adapter<BindingViewHolder>() {
     companion object {
@@ -90,7 +87,7 @@ class LocationSelectAdapter(
         when (location) {
             is LocatedLocation -> {
                 val binding = viewBinding as ItemSectionLocationBinding
-                binding.tvLocation.text = location.name
+                binding.tvLocation.text = location.getName()
 
             }
             is HotLocation -> {
@@ -102,7 +99,7 @@ class LocationSelectAdapter(
             }
             else -> {
                 val binding = viewBinding as ItemSectionNormalBinding
-                binding.tvName.text = location.name
+                binding.tvName.text = location.getName()
             }
         }
 
@@ -115,7 +112,7 @@ class LocationSelectAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(items: MutableList<Location>) {
+    fun updateData(items: MutableList<IModel>) {
         allItems = items
         notifyDataSetChanged()
     }
@@ -129,7 +126,7 @@ class LocationSelectAdapter(
         if (TextUtils.isEmpty(index)) return
         val size: Int = allItems.size
         for (i in 0 until size) {
-            if (TextUtils.equals(index.substring(0, 1), allItems[i].section.substring(0, 1))) {
+            if (TextUtils.equals(index.substring(0, 1), allItems[i].getSection().substring(0, 1))) {
                 mLayoutManager.scrollToPositionWithOffset(i, 0)
                 return
             }

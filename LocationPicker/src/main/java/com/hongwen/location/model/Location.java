@@ -1,20 +1,16 @@
 package com.hongwen.location.model;
 
-import android.text.TextUtils;
-
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by chenlu at 2023/7/14 17:22
  */
 
-@Entity(tableName ="china_city" )
-public class Location {
+@Entity(tableName = "china_city")
+public class Location implements IModel {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
@@ -44,6 +40,7 @@ public class Location {
         this.code = code;
         this.flag = flag;
     }
+
     @Ignore
 
     public Location(String name, String province, String pinyin, String code, int type, String typeName) {
@@ -147,25 +144,17 @@ public class Location {
         this.typeName = typeName;
     }
 
-    /***
-     * 获取悬浮栏文本，（#、定位、热门 需要特殊处理）
-     * @return
-     */
-    public String getSection(){
-        if (TextUtils.isEmpty(pinyin)) {
-            return "#";
-        } else {
-            String c = pinyin.substring(0, 1);
-            Pattern p = Pattern.compile("[a-zA-Z]");
-            Matcher m = p.matcher(c);
-            if (m.matches()) {
-                return c.toUpperCase();
-            }
-            //在添加定位和热门数据时设置的section就是‘定’、’热‘开头
-            else if (TextUtils.equals(c, "定") || TextUtils.equals(c, "热"))
-                return pinyin;
-            else
-                return "#";
-        }
+
+    @NonNull
+    @Override
+    public String getPingYin() {
+        return pinyin;
+    }
+
+
+    @NonNull
+    @Override
+    public String getSection() {
+        return IModel.super.getSection();
     }
 }
