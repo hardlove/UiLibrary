@@ -1,7 +1,9 @@
 package com.hongwen.location.decoration;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.TypedValue;
@@ -19,9 +21,20 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     public DividerItemDecoration(Context context) {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
+        //TypedValue typedValue = new TypedValue();
+        //context.getTheme().resolveAttribute(R.attr.cpSectionBackground, typedValue, true);
+        //mPaint.setColor(context.getResources().getColor(typedValue.resourceId));
+
+        // 解析主题中的LocationPickerStyle属性
         TypedValue typedValue = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.cpSectionBackground, typedValue, true);
-        mPaint.setColor(context.getResources().getColor(typedValue.resourceId));
+        context.getTheme().resolveAttribute(R.attr.locationPickerStyle, typedValue, true);
+        int resourceId = typedValue.resourceId;
+        TypedArray locationPickerStyleAttrs = context.getTheme().obtainStyledAttributes(
+                resourceId, R.styleable.LocationPicker);
+
+        int color = locationPickerStyleAttrs.getColor(R.styleable.LocationPicker_cpSectionBackground, Color.RED);
+        mPaint.setColor(color);
+
         dividerHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0.5f, context.getResources().getDisplayMetrics());
     }
 

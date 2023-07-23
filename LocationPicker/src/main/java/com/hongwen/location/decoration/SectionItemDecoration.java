@@ -1,7 +1,9 @@
 package com.hongwen.location.decoration;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.TextPaint;
@@ -11,10 +13,8 @@ import android.view.View;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.hongwen.location.R;
 import com.hongwen.location.model.IModel;
-import com.hongwen.location.model.Location;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,18 +32,30 @@ public class SectionItemDecoration extends RecyclerView.ItemDecoration {
 
     public SectionItemDecoration(Context context, List<IModel> data) {
         this.mData = data;
+        //TypedValue typedValue = new TypedValue();
+        //context.getTheme().resolveAttribute(R.attr.cpSectionBackground, typedValue, true);
+        //mBgColor = context.getResources().getColor(typedValue.resourceId);
+        //
+        //context.getTheme().resolveAttribute(R.attr.cpSectionHeight, typedValue, true);
+        //mSectionHeight = context.getResources().getDimensionPixelSize(typedValue.resourceId);
+        //
+        //context.getTheme().resolveAttribute(R.attr.cpSectionTextSize, typedValue, true);
+        //mTextSize = context.getResources().getDimensionPixelSize(typedValue.resourceId);
+        //
+        //context.getTheme().resolveAttribute(R.attr.cpSectionTextColor, typedValue, true);
+        //mTextColor = context.getResources().getColor(typedValue.resourceId);
+
+        // 解析主题中的LocationPickerStyle属性
         TypedValue typedValue = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.cpSectionBackground, typedValue, true);
-        mBgColor = context.getResources().getColor(typedValue.resourceId);
+        context.getTheme().resolveAttribute(R.attr.locationPickerStyle, typedValue, true);
+        int resourceId = typedValue.resourceId;
+        TypedArray array = context.getTheme().obtainStyledAttributes(
+                resourceId, R.styleable.LocationPicker);
 
-        context.getTheme().resolveAttribute(R.attr.cpSectionHeight, typedValue, true);
-        mSectionHeight = context.getResources().getDimensionPixelSize(typedValue.resourceId);
-
-        context.getTheme().resolveAttribute(R.attr.cpSectionTextSize, typedValue, true);
-        mTextSize = context.getResources().getDimensionPixelSize(typedValue.resourceId);
-
-        context.getTheme().resolveAttribute(R.attr.cpSectionTextColor, typedValue, true);
-        mTextColor = context.getResources().getColor(typedValue.resourceId);
+        mBgColor = array.getColor(R.styleable.LocationPicker_cpSectionBackground, Color.RED);
+        mSectionHeight = array.getDimensionPixelSize(R.styleable.LocationPicker_cpSectionHeight, 0);
+        mTextSize = array.getDimensionPixelSize(R.styleable.LocationPicker_cpSectionTextSize, 12);
+        mTextColor = array.getColor(R.styleable.LocationPicker_cpSectionTextColor, Color.BLACK);
 
         mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBgPaint.setColor(mBgColor);

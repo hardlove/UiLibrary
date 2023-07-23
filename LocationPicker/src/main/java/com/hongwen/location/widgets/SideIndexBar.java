@@ -1,7 +1,9 @@
 package com.hongwen.location.widgets;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -68,15 +70,26 @@ public class SideIndexBar extends View {
         mIndexItems = new ArrayList<>();
         mIndexItems.addAll(Arrays.asList(DEFAULT_INDEX_ITEMS));
 
+        //TypedValue typedValue = new TypedValue();
+        //context.getTheme().resolveAttribute(R.attr.cpIndexBarTextSize, typedValue, true);
+        //mTextSize = context.getResources().getDimensionPixelSize(typedValue.resourceId);
+        //
+        //context.getTheme().resolveAttribute(R.attr.cpIndexBarNormalTextColor, typedValue, true);
+        //mTextColor = context.getResources().getColor(typedValue.resourceId);
+        //
+        //context.getTheme().resolveAttribute(R.attr.cpIndexBarSelectedTextColor, typedValue, true);
+        //mTextTouchedColor = context.getResources().getColor(typedValue.resourceId);
+
+        // 解析主题中的LocationPickerStyle属性
         TypedValue typedValue = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.cpIndexBarTextSize, typedValue, true);
-        mTextSize = context.getResources().getDimensionPixelSize(typedValue.resourceId);
+        context.getTheme().resolveAttribute(R.attr.locationPickerStyle, typedValue, true);
+        int resourceId = typedValue.resourceId;
+        TypedArray array = context.getTheme().obtainStyledAttributes(
+                resourceId, R.styleable.LocationPicker);
 
-        context.getTheme().resolveAttribute(R.attr.cpIndexBarNormalTextColor, typedValue, true);
-        mTextColor = context.getResources().getColor(typedValue.resourceId);
-
-        context.getTheme().resolveAttribute(R.attr.cpIndexBarSelectedTextColor, typedValue, true);
-        mTextTouchedColor = context.getResources().getColor(typedValue.resourceId);
+        mTextSize = array.getDimensionPixelSize(R.styleable.LocationPicker_cpIndexBarTextSize, 12);
+        mTextColor = array.getColor(R.styleable.LocationPicker_cpIndexBarNormalTextColor, Color.BLACK);
+        mTextTouchedColor = array.getColor(R.styleable.LocationPicker_cpIndexBarSelectedTextColor, Color.BLACK);
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setTextSize(mTextSize);
