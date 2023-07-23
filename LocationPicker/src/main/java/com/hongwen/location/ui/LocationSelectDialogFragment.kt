@@ -8,10 +8,12 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -251,6 +253,9 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
     }
 
     private fun initListener() {
+        binding.cToolBar.tv_left_back.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
         binding.searchLl.editText.addTextChangedListener(afterTextChanged = {
             val keyWord = it?.toString()?.trim()
             if (keyWord.isNullOrEmpty()) {

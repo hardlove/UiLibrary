@@ -121,6 +121,7 @@ class LocationPicker private constructor() {
             this.setOnDismissListener(this@LocationPicker.onDismissListener)
             this.setOnShowListener(this@LocationPicker.onShowListener)
             this.setOnLocateListener(this@LocationPicker.onLocateListener)
+            this.setOnItemClickListener(this@LocationPicker.onItemClickListener)
             this.setIModelLoader(this@LocationPicker.iModelLoader)
         }
         dialogFragment.show(fragmentManager, TAG)

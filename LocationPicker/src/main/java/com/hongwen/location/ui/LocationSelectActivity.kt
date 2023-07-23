@@ -1,6 +1,5 @@
 package com.hongwen.location.ui
 
-import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -11,13 +10,15 @@ import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hongwen.location.LocationPicker
-import com.hongwen.location.callback.OnPickerListener
+import com.hongwen.location.callback.setOnItemClickListener
+import com.hongwen.location.callback.setOnCancelListener
+import com.hongwen.location.callback.setOnDismissListener
 import com.hongwen.location.databinding.ActivityLocationSelectBinding
 import com.hongwen.location.model.IModel
 import com.hongwen.location.model.Location
 import com.hongwen.location.model.LocationType
-import com.hongwen.location.utils.JsonUtils
 import com.hongwen.location.utils.FileUtils
+import com.hongwen.location.utils.JsonUtils
 
 /**
  * Created by chenlu at 2023/7/13 16:59
@@ -95,21 +96,44 @@ class LocationSelectActivity : AppCompatActivity() {
             .isAutoLocate(false)
             .setCancelable(true)
             .setLocationType(LocationType.ChinaCity)
-            .setOnCancelListener(onCancelListener = object : OnPickerListener.OnCancelListener {
-                override fun onCancel(dialog: DialogInterface?) {
-                }
+            //.setOnCancelListener(onCancelListener = object : OnPickerListener.OnCancelListener {
+            //    override fun onCancel(dialog: DialogInterface?) {
+            //        Log.d("Carlos","onCancel~~~~~~")
+            //    }
+            //
+            //})
+            .setOnCancelListener {
+                Log.d("Carlos","onCancel~~~~~~")
+            }
 
-            })
-            .setOnItemClickListener(object : OnPickerListener.OnItemClickListener<IModel> {
-                override fun onItemClick(item: IModel) {
-                    item as Location
-                    Log.d("Carlos","选择城市："+item.getName())
-                }
-
-            }).show(this)
+            //.setOnDismissListener(onDismissListener = object : OnPickerListener.OnDismissListener {
+            //    override fun onDismiss(dialog: DialogInterface?) {
+            //
+            //        Log.d("Carlos", "onDismiss~~~~~~")
+            //    }
+            //
+            //})
+            .setOnDismissListener {
+                Log.d("Carlos", "onDismiss~~~~~~")
+            }
+            //.setOnItemClickListener(object : OnPickerListener.OnItemClickListener<IModel> {
+            //    override fun onItemClick(item: IModel) {
+            //        item as Location
+            //        Log.d("Carlos", "选择城市：" + item.getName())
+            //    }
+            //
+            //})
+            .setOnItemClickListener{ item:IModel->
+                item as Location
+                Log.d("Carlos", "选择城市：" + item.getName())
+            }
+            .show(this)
 
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
 
     // 设置状态栏颜色为透明
     private fun setStatusBarColor() {
@@ -139,3 +163,5 @@ class LocationSelectActivity : AppCompatActivity() {
     }
 
 }
+
+

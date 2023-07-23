@@ -1,6 +1,7 @@
 package com.hongwen.location.callback
 
 import android.content.DialogInterface
+import com.hongwen.location.LocationPicker
 import com.hongwen.location.model.IModel
 import com.hongwen.location.model.LocatedLocation
 
@@ -60,4 +61,32 @@ interface OnPickerListener {
         fun onSuccess(locate: LocatedLocation)
         fun onFailed(msg: String?)
     }
+}
+
+fun LocationPicker.setOnCancelListener(onCancelListener: (DialogInterface?) -> Unit): LocationPicker {
+    val listener = object : OnPickerListener.OnCancelListener {
+        override fun onCancel(dialog: DialogInterface?) {
+            onCancelListener(dialog)
+        }
+    }
+    setOnCancelListener(listener)
+    return this
+}
+
+fun LocationPicker.setOnDismissListener(onDismissListener: (DialogInterface?) -> Unit): LocationPicker {
+    val listener = object : OnPickerListener.OnDismissListener {
+        override fun onDismiss(dialog: DialogInterface?) {
+            onDismissListener(dialog)
+        }
+    }
+    setOnDismissListener(listener)
+    return this
+}
+fun LocationPicker.setOnItemClickListener(onItemClick: (IModel) -> Unit): LocationPicker {
+    setOnItemClickListener(object :OnPickerListener.OnItemClickListener<IModel>{
+        override fun onItemClick(item: IModel) {
+            onItemClick(item)
+        }
+    })
+    return this
 }
