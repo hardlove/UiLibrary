@@ -95,7 +95,7 @@ class LocationSelectActivity : AppCompatActivity() {
         LocationPicker.from(this)
             .isAutoLocate(false)
             .setCancelable(true)
-            .setLocationType(LocationType.ChinaCity)
+            .setLocationType(LocationType.TrainStation)
             //.setOnCancelListener(onCancelListener = object : OnPickerListener.OnCancelListener {
             //    override fun onCancel(dialog: DialogInterface?) {
             //        Log.d("Carlos","onCancel~~~~~~")

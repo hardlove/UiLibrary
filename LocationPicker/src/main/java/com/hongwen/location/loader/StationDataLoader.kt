@@ -17,7 +17,7 @@ class StationDataLoader(var context: Context) :OnPickerListener.IModelLoader<Sta
     override fun getAllItems(): List<Station> {
         val count = dao.getCount()
         if (count == 0) {
-            JsonUtils.writeLocationJsonToDb(context, "train_station.json")
+            JsonUtils.writeStationJsonToDb(context, "train_station.json")
         }
         return dao.queryAll()
     }
