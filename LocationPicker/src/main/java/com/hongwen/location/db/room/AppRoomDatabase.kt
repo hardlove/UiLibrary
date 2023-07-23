@@ -11,7 +11,7 @@ import com.hongwen.location.model.Station
 /**
  * Created by chenlu at 2023/7/21 9:44
  */
-@Database(entities = [Station::class,Location::class], version = 1, exportSchema = false)
+@Database(entities = [Station::class,Location::class], version = 2, exportSchema = false)
 abstract class AppRoomDatabase : RoomDatabase() {
 
 
@@ -25,7 +25,7 @@ abstract class AppRoomDatabase : RoomDatabase() {
                     context,
                     AppRoomDatabase::class.java,
                     "location_picker_v1.db"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
             }
         }
 

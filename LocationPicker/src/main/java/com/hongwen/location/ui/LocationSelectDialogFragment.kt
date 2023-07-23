@@ -7,6 +7,10 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
@@ -143,6 +147,13 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        val windowInsetsController = ViewCompat.getWindowInsetsController(binding.root)
+        windowInsetsController?.hide(WindowInsetsCompat.Type.ime())
+    }
+
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
         onCancelListener?.onCancel(dialog)
@@ -217,9 +228,9 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
             binding.recyclerView.adapter = LocationSelectAdapter(
                 allItems = allItems, hotItems = hotItems, locateState = locateState
             ).also {
-                    adapter = it
-                    adapter.setLayoutManager(binding.recyclerView.layoutManager as LinearLayoutManager)
-                }
+                adapter = it
+                adapter.setLayoutManager(binding.recyclerView.layoutManager as LinearLayoutManager)
+            }
             binding.recyclerView.addItemDecoration(
                 SectionItemDecoration(
                     requireContext(), allItems
@@ -271,6 +282,9 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
 
     override fun onItemClick(item: IModel) {
         onItemClickListener?.onItemClick(item)
+
+        dismissAllowingStateLoss()
+
     }
 
     override fun onLocate(callback: OnPickerListener.OnLocationStateChangeListener) {
