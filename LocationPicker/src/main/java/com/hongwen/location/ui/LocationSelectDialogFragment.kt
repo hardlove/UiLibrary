@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
@@ -19,7 +18,10 @@ import com.hongwen.location.databinding.FragmentLocationSelectBinding
 import com.hongwen.location.db.DBManager
 import com.hongwen.location.decoration.DividerItemDecoration
 import com.hongwen.location.decoration.SectionItemDecoration
-import com.hongwen.location.model.*
+import com.hongwen.location.model.HotLocation
+import com.hongwen.location.model.IModel
+import com.hongwen.location.model.LocateState
+import com.hongwen.location.model.LocatedLocation
 import com.hongwen.location.utils.ScreenUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,7 +31,8 @@ import kotlinx.coroutines.withContext
 /**
  * Created by chenlu at 2023/7/16 16:47
  */
-class LocationSelectDialogFragment : DialogFragment() {
+class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemClickListener<IModel>,
+    OnPickerListener.OnLocateListener {
     private lateinit var binding: FragmentLocationSelectBinding
     private lateinit var adapter: LocationSelectAdapter
     private val allItems: MutableList<IModel> = mutableListOf()
@@ -39,6 +42,7 @@ class LocationSelectDialogFragment : DialogFragment() {
     private var onDismissListener: OnPickerListener.OnDismissListener? = null
     private var onCancelListener: OnPickerListener.OnCancelListener? = null
     private var onLocateListener: OnPickerListener.OnLocateListener? = null
+    private var onItemClickListener: OnPickerListener.OnItemClickListener<IModel>? = null
     private lateinit var iModelLoader: OnPickerListener.IModelLoader<IModel>
 
 
@@ -62,14 +66,16 @@ class LocationSelectDialogFragment : DialogFragment() {
         this.onLocateListener = onLocateListener
     }
 
+    fun setOnItemClickListener(onItemClickListener: OnPickerListener.OnItemClickListener<IModel>?) {
+        this.onItemClickListener = onItemClickListener
+    }
+
     fun setIModelLoader(iModelLoader: OnPickerListener.IModelLoader<IModel>) {
         this.iModelLoader = iModelLoader
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)// 隐藏标题栏（如果有）
         binding = FragmentLocationSelectBinding.inflate(inflater, container, false)
@@ -79,9 +85,6 @@ class LocationSelectDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("Carlos-DialogFragment", "onViewCreated~~~~~")
-
-
         iniRecyclerView()
         initListener()
 
@@ -126,16 +129,12 @@ class LocationSelectDialogFragment : DialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Log.d("Carlos-DialogFragment", "onAttach~~~~~")
-
         setStyle(STYLE_NORMAL, R.style.CityPickerStyle)
 
     }
 
     override fun onStart() {
         super.onStart()
-        Log.d("Carlos-DialogFragment", "onStart~~~~~")
-
 
         //如果是Dialog模式
         dialog?.let { setWindow(it) }
@@ -186,39 +185,66 @@ class LocationSelectDialogFragment : DialogFragment() {
             }
 
 
-            allItems.clear()
-            allItems.add(0, LocatedLocation("点击定位", LocateState.INIT))
-            allItems.add(1, HotLocation("热门城市"))
-            allItems.addAll(items)
+            val locateState = withContext(Dispatchers.IO) {
+                allItems.clear()
+
+                val locateState: LocateState
+                val lastLocation = findLastLocated()
+
+                if (lastLocation == null) {
+                    if (autoLocate) {
+                        locateState = LocateState.LOCATING
+                        allItems.add(0, LocatedLocation("正在定位"))
+                    } else {
+                        locateState = LocateState.INIT
+                        allItems.add(0, LocatedLocation("点击定位"))
+                    }
+                } else {
+                    locateState = LocateState.SUCCESS
+                    allItems.add(0, lastLocation)
+                }
+
+
+                allItems.add(1, HotLocation("热门城市"))
+                allItems.addAll(items)
+
+                locateState
+            }
+
 
             binding.recyclerView.setHasFixedSize(true)
             binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-            binding.recyclerView.adapter = LocationSelectAdapter(allItems, hotItems).also {
+            binding.recyclerView.adapter = LocationSelectAdapter(
+                allItems = allItems, hotItems = hotItems, locateState = locateState
+            ).also {
                 adapter = it
                 adapter.setLayoutManager(binding.recyclerView.layoutManager as LinearLayoutManager)
             }
             binding.recyclerView.addItemDecoration(
                 SectionItemDecoration(
-                    requireContext(),
-                    allItems
+                    requireContext(), allItems
                 )
             )
             binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext()))
+
         }
     }
 
-    private fun initListener() {
-        binding.searchLl.editText.addTextChangedListener(
-            afterTextChanged = {
-                val keyWord = it?.toString()?.trim()
-                if (keyWord.isNullOrEmpty()) {
-                    resetData()
-                } else {
-                    searchData(keyWord)
-                }
+    private fun findLastLocated(): LocatedLocation? {
+        return null
 
+    }
+
+    private fun initListener() {
+        binding.searchLl.editText.addTextChangedListener(afterTextChanged = {
+            val keyWord = it?.toString()?.trim()
+            if (keyWord.isNullOrEmpty()) {
+                resetData()
+            } else {
+                searchData(keyWord)
             }
-        )
+
+        })
 
         binding.cpSideIndexBar.setNavigationBarHeight(
             ScreenUtil.getNavigationBarHeight(
@@ -230,11 +256,24 @@ class LocationSelectDialogFragment : DialogFragment() {
             //滚动RecyclerView到索引位置
             adapter.scrollToSection(index)
         }
+
+        //设置定位回调
+        adapter.setOnLocateListener(this)
+        //设置点击事件
+        adapter.setOnItemClickListener(this)
     }
 
 
     private fun setEmptyViewVisibility(show: Boolean) {
         binding.emptyView.root.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
+    override fun onItemClick(item: IModel) {
+        onItemClickListener?.onItemClick(item)
+    }
+
+    override fun onLocate(callback: OnPickerListener.OnLocationStateChangeListener) {
+        onLocateListener?.onLocate(callback)
     }
 
 

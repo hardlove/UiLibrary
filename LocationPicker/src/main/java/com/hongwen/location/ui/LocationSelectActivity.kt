@@ -1,5 +1,6 @@
 package com.hongwen.location.ui
 
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -9,7 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.hongwen.location.LocationPicker
+import com.hongwen.location.callback.OnPickerListener
 import com.hongwen.location.databinding.ActivityLocationSelectBinding
+import com.hongwen.location.model.IModel
+import com.hongwen.location.model.Location
+import com.hongwen.location.model.LocationType
 import com.hongwen.location.utils.JsonUtils
 import com.hongwen.location.utils.FileUtils
 
@@ -67,19 +73,40 @@ class LocationSelectActivity : AppCompatActivity() {
         binding.btnConfirm.setOnClickListener {
 
 
-            val locationSelectDialogFragment = LocationSelectDialogFragment()
-            locationSelectDialogFragment.show(supportFragmentManager, "select")
+            showDialog()
+
         }
 
         binding.btnWriteToDb.setOnClickListener {
             Thread {
-                JsonUtils.writeStationJsonToDb(context = this,"train_station.json")
-                JsonUtils.writeLocationJsonToDb(context = this,"china_city.json")
+                JsonUtils.writeStationJsonToDb(context = this, "train_station.json")
+                JsonUtils.writeLocationJsonToDb(context = this, "china_city.json")
 
                 FileUtils.copyDatabaseToExternalStorage(context = this)
 
             }.start()
         }
+
+    }
+
+    private fun showDialog() {
+
+        LocationPicker.from(this)
+            .isAutoLocate(false)
+            .setCancelable(true)
+            .setLocationType(LocationType.ChinaCity)
+            .setOnCancelListener(onCancelListener = object : OnPickerListener.OnCancelListener {
+                override fun onCancel(dialog: DialogInterface?) {
+                }
+
+            })
+            .setOnItemClickListener(object : OnPickerListener.OnItemClickListener<IModel> {
+                override fun onItemClick(item: IModel) {
+                    item as Location
+                    Log.d("Carlos","选择城市："+item.getName())
+                }
+
+            })
 
     }
 

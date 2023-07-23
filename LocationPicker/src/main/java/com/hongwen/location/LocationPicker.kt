@@ -24,17 +24,22 @@ class LocationPicker private constructor() {
     private var onDismissListener: OnPickerListener.OnDismissListener? = null
     private var onShowListener: OnPickerListener.OnShowListener? = null
     private var onLocateListener: OnPickerListener.OnLocateListener? = null
+    private var onItemClickListener: OnPickerListener.OnItemClickListener<IModel>? = null
 
     private constructor(fragmentManager: FragmentManager) : this() {
         this.fragmentManager = fragmentManager
     }
 
-    fun from(activity: FragmentActivity): LocationPicker {
-        return LocationPicker(activity.supportFragmentManager)
-    }
+    companion object {
+        @JvmStatic
+        fun from(activity: FragmentActivity): LocationPicker {
+            return LocationPicker(activity.supportFragmentManager)
+        }
 
-    fun from(fragment: Fragment): LocationPicker {
-        return LocationPicker(fragment.childFragmentManager)
+        @JvmStatic
+        fun from(fragment: Fragment): LocationPicker {
+            return LocationPicker(fragment.childFragmentManager)
+        }
     }
 
     /**
@@ -87,6 +92,9 @@ class LocationPicker private constructor() {
         return this
     }
 
+    fun setOnItemClickListener(onItemClickListener: OnPickerListener.OnItemClickListener<IModel>) {
+        this.onItemClickListener = onItemClickListener
+    }
     /**
      * 显示
      */
@@ -101,7 +109,7 @@ class LocationPicker private constructor() {
             this.setOnCancelListener(this@LocationPicker.onCancelListener)
             this.setOnDismissListener(this@LocationPicker.onDismissListener)
             this.setOnShowListener(this@LocationPicker.onShowListener)
-            this.setOnLocateListener( this@LocationPicker.onLocateListener)
+            this.setOnLocateListener(this@LocationPicker.onLocateListener)
             this.setIModelLoader(this@LocationPicker.iModelLoader)
         }
         dialogFragment.show(fragmentManager, TAG)

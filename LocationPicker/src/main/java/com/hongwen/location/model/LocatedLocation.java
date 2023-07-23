@@ -2,16 +2,16 @@ package com.hongwen.location.model;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
+
 /**
  * Created by chenlu at 2023/7/14 17:22
  */
-public class LocatedLocation implements IModel {
+public class LocatedLocation implements IModel, Serializable {
     private final String name;
-    private LocateState state;
 
-    public LocatedLocation(String name,LocateState state) {
+    public LocatedLocation(String name) {
         this.name = name;
-        this.state = state;
     }
 
     @NonNull
@@ -19,6 +19,7 @@ public class LocatedLocation implements IModel {
     public String getName() {
         return name;
     }
+
 
     @NonNull
     @Override
