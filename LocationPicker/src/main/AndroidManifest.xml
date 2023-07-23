@@ -7,8 +7,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.UiLibrary.LocationPicker">
+        android:supportsRtl="true">
         <activity
             android:theme="@style/Theme.UiLibrary.LocationPicker.LocationSelectActivity"
             android:name="com.hongwen.location.ui.LocationSelectActivity"

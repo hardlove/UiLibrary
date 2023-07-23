@@ -20,9 +20,9 @@
             android:paddingBottom="40dp">
 
             <com.hardlove.library.view.StatusBarPlaceholderView
-                android:background="#FF0000"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="#FF0000">
 
             </com.hardlove.library.view.StatusBarPlaceholderView>
 
@@ -38,11 +38,11 @@
                     android:layout_margin="15dp"
                     android:contentDescription="转盘"
                     app:add_split_line="true"
-                    app:split_line_size="5px"
                     app:flash_active_color="#00ff00"
                     app:flash_inactive_color="#FFFFFF"
                     app:outCircleColor="@color/colorAccent"
-                    app:outCircleSize="20dp" />
+                    app:outCircleSize="20dp"
+                    app:split_line_size="5px" />
 
                 <ImageView
                     android:id="@+id/iv_start2"
@@ -69,10 +69,16 @@
 
 
             <Button
-                android:text="自定义相机"
                 android:id="@+id/btn_carmera"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="自定义相机" />
+
+            <Button
+                android:id="@+id/btn_select_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="城市选择" />
 
             <com.hardlove.library.view.StatusBarPlaceholderView
                 android:layout_width="match_parent"
@@ -213,7 +219,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:c_add_status_bar="true"
-                app:c_status_bar_color="@color/colorAccent"
                 app:c_bottom_line_color="#ff0000"
                 app:c_left_back_drawable_padding="10dp"
                 app:c_left_back_paddingRight="0dp"
@@ -226,7 +231,8 @@
                 app:c_show_back="true"
                 app:c_show_bottom_line="true"
                 app:c_show_right_tv1="true"
-                app:c_show_search_layout="true" />
+                app:c_show_search_layout="true"
+                app:c_status_bar_color="@color/colorAccent" />
 
             <com.hardlove.library.view.CToolBar
                 android:layout_width="match_parent"

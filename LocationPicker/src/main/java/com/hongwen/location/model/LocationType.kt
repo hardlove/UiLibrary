@@ -6,7 +6,7 @@ package com.hongwen.location.model
  */
 sealed class LocationType {
     /*城市*/
-    object ChinaCity:LocationType()
+   object ChinaCity:LocationType()
     /*火车站点*/
     object TrainStation:LocationType()
     /*自定义数据*/

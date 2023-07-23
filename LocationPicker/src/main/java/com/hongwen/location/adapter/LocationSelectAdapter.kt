@@ -197,7 +197,7 @@ class LocationSelectAdapter(
      * 定位失败
      */
 
-    override fun onFailed(msg: String?) {
+    override fun onFailed(msg: String) {
         updateLocationStateChanged(LocatedLocation("定位失败"), LocateState.FAILURE)
     }
 

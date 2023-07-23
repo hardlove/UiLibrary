@@ -10,15 +10,15 @@ import com.hongwen.location.model.LocatedLocation
  */
 interface OnPickerListener {
     interface OnCancelListener {
-        fun onCancel(dialog: DialogInterface?)
+        fun onCancel(dialog: DialogInterface)
     }
 
     interface OnDismissListener {
-        fun onDismiss(dialog: DialogInterface?)
+        fun onDismiss(dialog: DialogInterface)
     }
 
     interface OnShowListener {
-        fun onShow(dialog: DialogInterface?)
+        fun onShow(dialog: DialogInterface)
     }
 
     /**
@@ -59,31 +59,41 @@ interface OnPickerListener {
      */
     interface OnLocationStateChangeListener {
         fun onSuccess(locate: LocatedLocation)
-        fun onFailed(msg: String?)
+        fun onFailed(msg: String)
     }
 }
 
-fun LocationPicker.setOnCancelListener(onCancelListener: (DialogInterface?) -> Unit): LocationPicker {
+fun LocationPicker.setOnCancelListener(onCancel: (DialogInterface) -> Unit): LocationPicker {
     val listener = object : OnPickerListener.OnCancelListener {
-        override fun onCancel(dialog: DialogInterface?) {
-            onCancelListener(dialog)
+        override fun onCancel(dialog: DialogInterface) {
+            onCancel(dialog)
         }
     }
     setOnCancelListener(listener)
     return this
 }
 
-fun LocationPicker.setOnDismissListener(onDismissListener: (DialogInterface?) -> Unit): LocationPicker {
+fun LocationPicker.setOnDismissListener(onDismiss: (DialogInterface) -> Unit): LocationPicker {
     val listener = object : OnPickerListener.OnDismissListener {
-        override fun onDismiss(dialog: DialogInterface?) {
-            onDismissListener(dialog)
+        override fun onDismiss(dialog: DialogInterface) {
+            onDismiss(dialog)
         }
     }
     setOnDismissListener(listener)
     return this
 }
+fun LocationPicker.setOnShowListener(onShow: (dialog: DialogInterface)->Unit) :LocationPicker{
+    val listener = object : OnPickerListener.OnShowListener {
+        override fun onShow(dialog: DialogInterface) {
+            onShow(dialog)
+        }
+    }
+    setOnShowListener(listener)
+    return this
+}
+
 fun LocationPicker.setOnItemClickListener(onItemClick: (IModel) -> Unit): LocationPicker {
-    setOnItemClickListener(object :OnPickerListener.OnItemClickListener<IModel>{
+    setOnItemClickListener(object : OnPickerListener.OnItemClickListener<IModel> {
         override fun onItemClick(item: IModel) {
             onItemClick(item)
         }

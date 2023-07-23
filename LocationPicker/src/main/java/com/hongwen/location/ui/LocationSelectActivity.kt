@@ -1,5 +1,6 @@
 package com.hongwen.location.ui
 
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +14,7 @@ import com.hongwen.location.LocationPicker
 import com.hongwen.location.callback.setOnItemClickListener
 import com.hongwen.location.callback.setOnCancelListener
 import com.hongwen.location.callback.setOnDismissListener
+import com.hongwen.location.callback.setOnShowListener
 import com.hongwen.location.databinding.ActivityLocationSelectBinding
 import com.hongwen.location.model.IModel
 import com.hongwen.location.model.Location
@@ -95,7 +97,8 @@ class LocationSelectActivity : AppCompatActivity() {
         LocationPicker.from(this)
             .isAutoLocate(false)
             .setCancelable(true)
-            .setLocationType(LocationType.TrainStation)
+            //.setLocationType(LocationType.TrainStation)
+            .setLocationType(LocationType.ChinaCity)
             //.setOnCancelListener(onCancelListener = object : OnPickerListener.OnCancelListener {
             //    override fun onCancel(dialog: DialogInterface?) {
             //        Log.d("Carlos","onCancel~~~~~~")
@@ -115,6 +118,9 @@ class LocationSelectActivity : AppCompatActivity() {
             //})
             .setOnDismissListener {
                 Log.d("Carlos", "onDismiss~~~~~~")
+            }
+            .setOnShowListener {
+
             }
             //.setOnItemClickListener(object : OnPickerListener.OnItemClickListener<IModel> {
             //    override fun onItemClick(item: IModel) {

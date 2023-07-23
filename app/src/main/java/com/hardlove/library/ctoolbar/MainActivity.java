@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +29,10 @@ import com.hardlove.library.utils.ColorUtil;
 import com.hardlove.library.view.LuckDiskView;
 import com.hardlove.library.view.SearchLayout;
 import com.hardlove.library.view.SendVerifyCodeView;
+import com.hongwen.location.LocationPicker;
+import com.hongwen.location.callback.OnPickerListener;
+import com.hongwen.location.model.IModel;
+import com.hongwen.location.model.LocationType;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
@@ -59,6 +64,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, TestActivtiy.class));
+            }
+        });
+        findViewById(R.id.btn_select_city).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LocationPicker.from(MainActivity.this)
+                        .isAutoLocate(false)
+                        .setCancelable(true)
+                        .setLocationType(LocationType.ChinaCity.INSTANCE)
+                        .setOnItemClickListener(item -> {
+                            ToastUtils.showShort(item.getName());
+
+                        }).show(MainActivity.this);
+
+
             }
         });
 
@@ -272,29 +292,29 @@ public class MainActivity extends AppCompatActivity {
                         .addPermission(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.CALL_PHONE, Manifest.permission.SEND_SMS, Manifest.permission.READ_PHONE_STATE), Arrays.asList("照相机权限使用说明<br>.............", "打电话机权限使用说明<br>.............", "发短信权限使用说明<br>.............", "设备信息权限使用说明<br>............."))
                         .disableGroupRequest(true)
                         .callback(new PermissionHelper.SimpleCallback() {
-                    @Override
-                    public void onGranted() {
-                        LogUtils.dTag("XXX", "SimpleCallback  onGranted~~~~~");
-                        ToastUtils.showShort("已授予全部权限");
-                    }
+                            @Override
+                            public void onGranted() {
+                                LogUtils.dTag("XXX", "SimpleCallback  onGranted~~~~~");
+                                ToastUtils.showShort("已授予全部权限");
+                            }
 
-                    @Override
-                    public void onDenied() {
-                        LogUtils.dTag("XXX", "SimpleCallback onDenied~~~~~");
-                        ToastUtils.showShort("部分或全部权限拒绝");
-                    }
-                }).callback(new PermissionHelper.FullCallback() {
-                    @Override
-                    public void onGranted() {
-                        LogUtils.dTag("XXX", "FullCallback onGranted~~~~~");
-                    }
+                            @Override
+                            public void onDenied() {
+                                LogUtils.dTag("XXX", "SimpleCallback onDenied~~~~~");
+                                ToastUtils.showShort("部分或全部权限拒绝");
+                            }
+                        }).callback(new PermissionHelper.FullCallback() {
+                            @Override
+                            public void onGranted() {
+                                LogUtils.dTag("XXX", "FullCallback onGranted~~~~~");
+                            }
 
-                    @Override
-                    public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted) {
-                        LogUtils.dTag("XXX", "FullCallback onDenied~~~~~deniedForever：" + GsonUtils.toJson(deniedForever) + "   denied：" + GsonUtils.toJson(denied));
+                            @Override
+                            public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied, @NonNull List<String> granted) {
+                                LogUtils.dTag("XXX", "FullCallback onDenied~~~~~deniedForever：" + GsonUtils.toJson(deniedForever) + "   denied：" + GsonUtils.toJson(denied));
 
-                    }
-                }).request();
+                            }
+                        }).request();
 
             }
         });
