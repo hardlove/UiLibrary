@@ -12,10 +12,10 @@
             android:theme="@style/Theme.UiLibrary.LocationPicker.LocationSelectActivity"
             android:name="com.hongwen.location.ui.LocationSelectActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
 
     </application>
