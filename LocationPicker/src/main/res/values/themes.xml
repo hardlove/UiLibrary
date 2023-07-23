@@ -18,8 +18,11 @@
         <item name="android:windowBackground">@android:color/white</item>
     </style>
 
+    <style name="Theme.UiLibrary.LocationPicker.LocationSelectActivity" parent="Theme.UiLibrary.LocationPicker">
+        <item name="locationPickerStyle">@style/Theme.UiLibrary.LocationPicker.Style</item>
+    </style>
 
-    <style name="Theme.UiLibrary.LocationPicker.Style" parent="Theme.UiLibrary.LocationPicker">
+    <style name="Theme.UiLibrary.LocationPicker.Style">
         <item name="cpCancelTextSize">@dimen/cp_cancel_text_size</item>
         <item name="cpCancelTextColor">@color/cp_color_gray</item>
 
