@@ -106,7 +106,7 @@ class LocationSelectActivity : AppCompatActivity() {
                     Log.d("Carlos","选择城市："+item.getName())
                 }
 
-            })
+            }).show(this)
 
     }
 

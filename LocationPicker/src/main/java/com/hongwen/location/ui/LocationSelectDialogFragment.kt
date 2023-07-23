@@ -217,9 +217,9 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
             binding.recyclerView.adapter = LocationSelectAdapter(
                 allItems = allItems, hotItems = hotItems, locateState = locateState
             ).also {
-                adapter = it
-                adapter.setLayoutManager(binding.recyclerView.layoutManager as LinearLayoutManager)
-            }
+                    adapter = it
+                    adapter.setLayoutManager(binding.recyclerView.layoutManager as LinearLayoutManager)
+                }
             binding.recyclerView.addItemDecoration(
                 SectionItemDecoration(
                     requireContext(), allItems
@@ -227,6 +227,10 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
             )
             binding.recyclerView.addItemDecoration(DividerItemDecoration(requireContext()))
 
+            //设置定位回调
+            adapter.setOnLocateListener(this@LocationSelectDialogFragment)
+            //设置点击事件
+            adapter.setOnItemClickListener(this@LocationSelectDialogFragment)
         }
     }
 
@@ -257,10 +261,7 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
             adapter.scrollToSection(index)
         }
 
-        //设置定位回调
-        adapter.setOnLocateListener(this)
-        //设置点击事件
-        adapter.setOnItemClickListener(this)
+
     }
 
 

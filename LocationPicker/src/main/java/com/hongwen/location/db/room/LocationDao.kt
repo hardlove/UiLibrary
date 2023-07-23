@@ -12,10 +12,8 @@ import com.hongwen.location.model.Station
  */
 @Dao
 interface LocationDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(item: Location)
-
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(items: List<Location>)
@@ -25,4 +23,7 @@ interface LocationDao {
 
     @Query("SELECT * FROM china_city WHERE name LIKE '%' || :keyword || '%' or pinyin LIKE '%' || :keyword || '%'")
     fun search(keyword: String): MutableList<Location>
+
+    @Query("SELECT COUNT(*) FROM china_city")
+    fun getCount(): Int
 }

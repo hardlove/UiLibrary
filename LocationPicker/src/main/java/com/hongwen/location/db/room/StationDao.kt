@@ -24,6 +24,13 @@ interface StationDao {
     @Query("select * from train_station")
     fun queryAll(): MutableList<Station>
 
-    //@Query("select * from location where name like '% '||:keyword|| '%' or pinyin like '%'||:keyword|| '%'")
+    //@Query("select * from train_station where name like '% '||:keyword|| '%' or pinyin like '%'||:keyword|| '%'")
     //fun search(keyword: String): MutableList<Station>
+
+    @Query("select * from train_station where name like '% '||:keyword|| '%'")
+    fun search(keyword: String): MutableList<Station>
+
+
+    @Query("SELECT COUNT(*) FROM china_city")
+    fun getCount(): Int
 }

@@ -7,11 +7,11 @@
     android:fitsSystemWindows="true"
     android:theme="@style/Theme.UiLibrary.LocationPicker.LocationSelectActivity">
 
-    <fragment
-        android:id="@+id/fragment"
-        class="com.hongwen.location.ui.LocationSelectDialogFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+<!--    <fragment-->
+<!--        android:id="@+id/fragment"-->
+<!--        class="com.hongwen.location.ui.LocationSelectDialogFragment"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent" />-->
 
     <Button
         android:layout_marginTop="190dp"

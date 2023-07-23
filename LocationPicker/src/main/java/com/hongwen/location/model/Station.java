@@ -3,6 +3,7 @@ package com.hongwen.location.model;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 /**
@@ -13,6 +14,7 @@ public class Station implements IModel{
     @PrimaryKey
     private int id;
     private String name;
+    private String pingYin;
     private String address;
     private String ownership;
     private String type;
@@ -42,6 +44,7 @@ public class Station implements IModel{
     public void setName(String name) {
         this.name = name;
     }
+
 
     public String getAddress() {
         return address;
@@ -147,10 +150,24 @@ public class Station implements IModel{
         this.isVip = isVip;
     }
 
+    @Ignore
+    public Station(String name, String city, String province) {
+        this.name = name;
+        this.city = city;
+        this.province = province;
+    }
+
+    public Station() {
+    }
+
     @NonNull
     @Override
     public String getPingYin() {
-        return null;
+        return pingYin;
+    }
+
+    public void setPingYin(String pingYin) {
+        this.pingYin = pingYin;
     }
 
     @Nullable

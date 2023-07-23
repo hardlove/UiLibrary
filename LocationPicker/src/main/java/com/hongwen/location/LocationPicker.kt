@@ -1,9 +1,12 @@
 package com.hongwen.location
 
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.hongwen.location.callback.OnPickerListener
+import com.hongwen.location.loader.ChinaCityDataLoader
+import com.hongwen.location.loader.StationDataLoader
 import com.hongwen.location.model.IModel
 import com.hongwen.location.model.LocationType
 import com.hongwen.location.ui.LocationSelectDialogFragment
@@ -92,15 +95,23 @@ class LocationPicker private constructor() {
         return this
     }
 
-    fun setOnItemClickListener(onItemClickListener: OnPickerListener.OnItemClickListener<IModel>) {
+    fun setOnItemClickListener(onItemClickListener: OnPickerListener.OnItemClickListener<IModel>): LocationPicker {
         this.onItemClickListener = onItemClickListener
+        return this
     }
+
     /**
      * 显示
      */
-    fun show() {
+    fun show(context:Context) {
         if (!::iModelLoader.isInitialized) {
-            throw InvalidParameterException("iModelLoader 未初始化,请调用函数setIModelLoader(loader: OnPickerListener.IModelLoader<T>)进行初始化")
+            if (locationType == LocationType.ChinaCity) {
+                iModelLoader = ChinaCityDataLoader(context.applicationContext)
+            } else if (locationType == LocationType.TrainStation) {
+                iModelLoader = StationDataLoader(context.applicationContext)
+            } else {
+                throw InvalidParameterException("iModelLoader 未初始化,请调用函数setIModelLoader(loader: OnPickerListener.IModelLoader<T>)进行初始化")
+            }
         }
         val dialogFragment = LocationSelectDialogFragment()
         dialogFragment.apply {
