@@ -28,3 +28,51 @@ dependencies {
     api 'com.google.android.material:material:1.4.0'
 
 }
+
+
+apply plugin: 'maven-publish'
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
+
+publishing {
+    publications {
+        Production(MavenPublication) {
+            // 使用方引用 implementation "com.github.hardlove.UiLibrary:CustomProgressBar:2.4.1"
+            groupId = "com.github.hardlove.UiLibrary"
+            artifactId = "CustomProgressBar"
+            version = "2.4.41"
+            afterEvaluate {
+                artifact(tasks.getByName("bundleReleaseAar"))
+            }
+            artifact generateSourcesJar
+
+
+            //添加三方依赖库
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+                configurations.implementation.allDependencies.each {
+                    //遍历依赖库
+                    if (it.group != null && (it.name != null && "unspecified" != it.name) && it.version != null) {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+                        dependencyNode.appendNode('scope', 'implementation')
+                    }
+
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+//            url = "$rootDir/repos"
+//            url = "${rootDir.parent}/repos"
+            url = "D:\\Work\\repos"
+//            url = "../../../repos"
+        }
+        mavenLocal()
+    }
+}
