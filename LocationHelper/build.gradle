@@ -42,7 +42,7 @@ task generateSourcesJar(type: Jar) {
 publishing {
     publications {
         Production(MavenPublication) {
-            // 使用方引用 implementation "com.github.hardlove.UiLibrary:LocationHelper:2.4.1"
+            // 使用方引用 implementation "com.github.hardlove.UiLibrary:LocationHelper:2.4.41"
             groupId = "com.github.hardlove.UiLibrary"
             artifactId = "LocationHelper"
             version = "2.4.41"
