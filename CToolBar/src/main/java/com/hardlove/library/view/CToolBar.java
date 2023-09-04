@@ -607,7 +607,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         statusBar = view.findViewById(R.id.system_status_bar);
         custom_layer = view.findViewById(R.id.custom_layer);
 
-        bottom_line = view.findViewById(R.id.line);
+        bottom_line = view.findViewById(R.id.c_bottom_line);
         tv_left_back = view.findViewById(R.id.tv_left_back);
         left_tv = view.findViewById(R.id.left_tv);
         left_iv = view.findViewById(R.id.left_iv);

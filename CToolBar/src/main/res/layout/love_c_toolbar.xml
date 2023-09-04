@@ -186,7 +186,7 @@
 
     <!--底部线条-->
     <View
-        android:id="@+id/line"
+        android:id="@+id/c_bottom_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#F7F9FA"
