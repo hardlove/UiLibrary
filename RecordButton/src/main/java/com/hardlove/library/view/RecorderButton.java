@@ -193,11 +193,12 @@ public class RecorderButton extends AppCompatButton {
                     if (checkExternalStoragePermission()) {
                         // 判断两次点击时间少于500毫秒不执行操作
                         doubleTime = System.currentTimeMillis() - exitTime;
+                        exitTime = System.currentTimeMillis();
                         if (doubleTime > 500) {
                             prepareStartRecording();
-                            exitTime = System.currentTimeMillis();
                             flag = false;
                         }
+
                     } else {
                         if (checkRecordPermissionListener != null) {
                             checkRecordPermissionListener.checkExternalStoragePermission();
