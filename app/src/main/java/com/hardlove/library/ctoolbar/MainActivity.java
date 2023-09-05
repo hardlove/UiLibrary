@@ -26,7 +26,9 @@ import com.carlos.library.location.XLocation;
 import com.carlos.library.location.utils.XLocationManager;
 import com.carlos.permissionhelper.PermissionHelper;
 import com.hardlove.library.utils.ColorUtil;
+import com.hardlove.library.view.CheckRecordPermissionListener;
 import com.hardlove.library.view.LuckDiskView;
+import com.hardlove.library.view.RecorderButton;
 import com.hardlove.library.view.SearchLayout;
 import com.hardlove.library.view.SendVerifyCodeView;
 import com.hongwen.location.LocationPicker;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         findViewById(R.id.btn_carmera).setOnClickListener(new View.OnClickListener() {
             @Override

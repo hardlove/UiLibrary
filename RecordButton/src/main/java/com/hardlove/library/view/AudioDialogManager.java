@@ -27,16 +27,19 @@ public class AudioDialogManager {
     }
 
     public void showRecordingDialog() {
-        mDialog = new Dialog(mContext, R.style.record_button_toast_dialog_style);
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        View view = inflater.inflate(R.layout.dialog_recorder, null);
-        mDialog.setContentView(view);
+        if (mDialog == null) {
+            mDialog = new Dialog(mContext, R.style.record_button_toast_dialog_style);
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View view = inflater.inflate(R.layout.dialog_recorder, null);
+            mDialog.setContentView(view);
 
 
-        mIcon = (ImageView) mDialog.findViewById(R.id.id_recorder_dialog_icon);
-        mVoice = (ImageView) mDialog.findViewById(R.id.id_recorder_dialog_voice);
-        mLable = (TextView) mDialog.findViewById(R.id.id_recorder_dialog_label);
-        mLable.setText(R.string.record_button_toCancel);
+            mIcon = (ImageView) mDialog.findViewById(R.id.id_recorder_dialog_icon);
+            mVoice = (ImageView) mDialog.findViewById(R.id.id_recorder_dialog_voice);
+            mLable = (TextView) mDialog.findViewById(R.id.id_recorder_dialog_label);
+            mLable.setText(R.string.record_button_toCancel);
+        }
+
         mDialog.show();
     }
 
@@ -81,6 +84,11 @@ public class AudioDialogManager {
         }
     }
 
+    public void hideDialog() {
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.hide();
+        }
+    }
     /**
      * 用level更新voice图片
      *

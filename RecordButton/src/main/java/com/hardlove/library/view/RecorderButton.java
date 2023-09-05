@@ -1,6 +1,7 @@
 package com.hardlove.library.view;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,7 +45,7 @@ public class RecorderButton extends AppCompatButton {
     /**
      * 最短录音时间
      */
-    private  long minRecordTime = 2000;
+    private long minRecordTime = 2000;
     /**
      * 最大录音时长
      */
@@ -63,12 +64,12 @@ public class RecorderButton extends AppCompatButton {
     private long doubleTime = 0;
     //是否应用于IM
     private boolean usedInIm = false;
-    private Context mContext;
+    private final Context mContext;
     private CheckRecordPermissionListener checkRecordPermissionListener;
 
 
     //检查录音时长
-    private static int FLAG_CHECK_TIME = 0x01;
+    private static final int FLAG_CHECK_TIME = 0x01;
     private static final int FLAG_DISMISS_DIALOG = 0x02;
     private static final int FLAG_UPDATE_VOICE_LEVEL = 0x03;
 
@@ -92,16 +93,19 @@ public class RecorderButton extends AppCompatButton {
 
     /**
      * 最大录音时长 （毫秒）
+     *
      * @param maxMills
      */
     public void setMaxRecordTime(long maxMills) {
         if (maxRecordTime < minRecordTime) {
-            throw new InvalidParameterException(MessageFormat.format("最大录音时长{0}秒，不能小于最小录音时长{1}秒",maxMills, minRecordTime));
+            throw new InvalidParameterException(MessageFormat.format("最大录音时长{0}秒，不能小于最小录音时长{1}秒", maxMills, minRecordTime));
         }
         this.maxRecordTime = maxMills;
     }
+
     /**
      * 最小录音时长 （毫秒）
+     *
      * @param minMills
      */
     public void setMinRecordTime(long minMills) {
@@ -119,6 +123,7 @@ public class RecorderButton extends AppCompatButton {
     /**
      * 设置保存录音文件的目录
      * 注意：从Android 11 开始，无法在外部存储创建目录
+     *
      * @param saveDirPath
      */
     public void setSaveDirPath(String saveDirPath) {
@@ -191,6 +196,7 @@ public class RecorderButton extends AppCompatButton {
                         if (doubleTime > 500) {
                             prepareStartRecording();
                             exitTime = System.currentTimeMillis();
+                            flag = false;
                         }
                     } else {
                         if (checkRecordPermissionListener != null) {
@@ -214,6 +220,8 @@ public class RecorderButton extends AppCompatButton {
                 }
                 break;
             case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                flag = false;
                 if (isRecording) {
                     if (mCurState == STATE_WANT_TO_CANCEL) {
                         cancelRecord();
@@ -258,6 +266,7 @@ public class RecorderButton extends AppCompatButton {
                 onRecordStateListener.onStartRecording();
             }
             if (dialogEnable) {
+                mAudioDialogManager.dismissDialog();
                 mAudioDialogManager.showRecordingDialog();
             }
             changeState(STATE_RECORDING);
@@ -287,6 +296,12 @@ public class RecorderButton extends AppCompatButton {
     private void finishRecord() {
         stopRecording();
         if (doubleTime <= 2000) {
+            if (onRecordStateListener != null) {
+                onRecordStateListener.onCancel();
+            }
+            if (dialogEnable) {
+                mAudioDialogManager.dismissDialog();
+            }
             return;
         }
         mLong = System.currentTimeMillis() - startTime;
@@ -450,6 +465,7 @@ public class RecorderButton extends AppCompatButton {
 
     }
 
+    @SuppressLint("HandlerLeak")
     class ShowVolumeHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -466,7 +482,7 @@ public class RecorderButton extends AppCompatButton {
                 if (dialogEnable) {
                     mAudioDialogManager.dismissDialog();
                 }
-            } else if (msg.what == FLAG_UPDATE_VOICE_LEVEL){
+            } else if (msg.what == FLAG_UPDATE_VOICE_LEVEL) {
                 if (dialogEnable) {
                     mAudioDialogManager.updateVoiceLevel(msg.arg1);
                 }
@@ -495,6 +511,7 @@ public class RecorderButton extends AppCompatButton {
     private static final int STATE_WANT_TO_CANCEL = 3;
     private int mCurState = STATE_NORMAL;
     private boolean isRecording = false;
+    private boolean flag = false;
 
     private OnRecordStateListener onRecordStateListener;
 
@@ -520,20 +537,25 @@ public class RecorderButton extends AppCompatButton {
                     break;
                 case STATE_RECORDING:
                     if (isRecording) {
-                        if (usedInIm) {
-                            setBackgroundResource(R.drawable.button_recorder_recording);
-                            setText(R.string.str_recorder_recording);
+                        if (!flag) {//避免重复多次调用
+                            flag = true;
+                            if (usedInIm) {
+                                setBackgroundResource(R.drawable.button_recorder_recording);
+                                setText(R.string.str_recorder_recording);
+                            }
+                            if (onRecordStateListener != null) {
+                                onRecordStateListener.onRecording();
+                            }
+                            if (dialogEnable) {
+                                mAudioDialogManager.recording();
+                            }
                         }
-                        if (onRecordStateListener != null) {
-                            onRecordStateListener.onRecording();
-                        }
-                        if (dialogEnable) {
-                            mAudioDialogManager.recording();
-                        }
+
                     }
                     break;
                 case STATE_WANT_TO_CANCEL:
                     if (isRecording) {
+                        flag = false;
                         if (usedInIm) {
                             setBackgroundResource(R.drawable.button_recorder_recording);
                         }

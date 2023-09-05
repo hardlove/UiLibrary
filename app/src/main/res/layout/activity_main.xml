@@ -54,6 +54,11 @@
                     android:tag="startView" />
             </FrameLayout>
 
+            <com.hardlove.library.view.RecorderButton
+                android:id="@+id/recorder_button"
+                android:text="点击录音"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/tv_message"
