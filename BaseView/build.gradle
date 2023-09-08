@@ -7,7 +7,7 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 33
 
         consumerProguardFiles "consumer-rules.pro"
@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.5.1'
 }
 
 
