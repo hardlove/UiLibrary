@@ -40,12 +40,13 @@ import androidx.core.view.WindowInsetsCompat
  *
  */
 object ViewCompatUtils {
+    @JvmStatic
     fun setStatusBarColor(window: Window, @ColorInt color: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = color
         }
     }
-
+    @JvmStatic
     fun setImmersiveSystemUiVisibility(window: Window) {
         setImmersiveSystemUiVisibility(window.decorView)
     }
@@ -55,6 +56,7 @@ object ViewCompatUtils {
      * 视图根布局加上
       android:fitsSystemWindows="true" 可自动为根布局添加导航栏高度的paddingBottom,避免被导航栏覆盖
      */
+    @JvmStatic
     fun setImmersiveSystemUiVisibility(view: View) {
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -75,6 +77,7 @@ object ViewCompatUtils {
     /**
      * 沉浸式状态栏实现 二
      */
+    @JvmStatic
     fun setImmersiveSystemUiVisibility2(window: Window) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.apply {
