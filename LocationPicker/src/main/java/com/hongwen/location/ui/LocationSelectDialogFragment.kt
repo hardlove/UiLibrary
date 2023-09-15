@@ -6,9 +6,11 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -146,6 +148,27 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
         dialog?.let { setWindow(it) }
         dialog?.setOnShowListener {
             onShowListener?.onShow(it)
+        }
+        dialog?.window?.let {
+            view?.fitsSystemWindows = true
+            setImmersiveSystemUiVisibility(it.decorView)
+        }
+    }
+
+    private fun setImmersiveSystemUiVisibility(view: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            Log.d(
+                "Carlos",
+                "systemBarsInsets.bottom:" + systemBarsInsets.bottom + "  rect:" + systemBarsInsets
+            )
+            WindowInsetsCompat.Builder(insets)
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                    // android:fitsSystemWindows="true" 可自动为根布局添加导航栏高度的paddingBottom,避免被导航栏覆盖
+                    Insets.of(0, 0, 0, systemBarsInsets.bottom)
+                )
+                .build()
         }
     }
 
