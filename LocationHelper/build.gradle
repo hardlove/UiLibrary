@@ -45,7 +45,7 @@ publishing {
             // 使用方引用 implementation "com.github.hardlove.UiLibrary:LocationHelper:2.4.41"
             groupId = "com.github.hardlove.UiLibrary"
             artifactId = "LocationHelper"
-            version = "2.4.41"
+            version = "2.4.42"
             afterEvaluate {
                 artifact(tasks.getByName("bundleReleaseAar"))
             }

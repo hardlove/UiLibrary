@@ -16,6 +16,7 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Pair;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -247,13 +248,18 @@ public class CompassView extends ImageView {
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
+            if (onSensorChangedListener != null) {
+                onSensorChangedListener.onSensorChanged(sensorEvent);
+            }
             float direction;
             Log.d("Carlos", "onSensorChanged~~~~~~~~~~~ type:" + sensorEvent.sensor.getType() + "  name:" + sensorEvent.sensor.getName());
             switch (sensorEvent.sensor.getType()) {
                 case Sensor.TYPE_ORIENTATION:
                     direction = sensorEvent.values[0] * -1.0f;
                     mTargetDirection = normalizeDegree(direction);
-
+                    if (onSensorChangedListener != null) {
+                        onSensorChangedListener.onDirectionChangeListener(sensorEvent, getCurrentDirection());
+                    }
                     break;
                 case Sensor.TYPE_ROTATION_VECTOR:
                     // 处理旋转矢量传感器数据
@@ -261,6 +267,9 @@ public class CompassView extends ImageView {
                     SensorManager.getOrientation(mRotationMatrix, mOrientationValues);
                     direction = (float) Math.toDegrees(mOrientationValues[0]) * -1.0f;
                     mTargetDirection = normalizeDegree(direction);
+                    if (onSensorChangedListener != null) {
+                        onSensorChangedListener.onDirectionChangeListener(sensorEvent, getCurrentDirection());
+                    }
                     break;
 
                 case Sensor.TYPE_MAGNETIC_FIELD:
@@ -285,6 +294,9 @@ public class CompassView extends ImageView {
                 SensorManager.getOrientation(mRotationMatrix, mOrientationValues);
                 float azimuth = (float) Math.toDegrees(mOrientationValues[0]) * -1.0f;
                 mTargetDirection = normalizeDegree(azimuth);
+                if (onSensorChangedListener != null) {
+                    onSensorChangedListener.onDirectionChangeListener(sensorEvent, getCurrentDirection());
+                }
             }
 
 
@@ -307,4 +319,43 @@ public class CompassView extends ImageView {
             mHandler.removeCallbacksAndMessages(null);
         }
     }
+
+    public Pair<String, Float> getCurrentDirection() {
+        String direction;
+
+        if (mTargetDirection >= 337.5 || mTargetDirection < 22.5) {
+            direction = "北";
+        } else if (mTargetDirection >= 22.5 && mTargetDirection < 67.5) {
+            direction = "东北";
+        } else if (mTargetDirection >= 67.5 && mTargetDirection < 112.5) {
+            direction = "东";
+        } else if (mTargetDirection >= 112.5 && mTargetDirection < 157.5) {
+            direction = "东南";
+        } else if (mTargetDirection >= 157.5 && mTargetDirection < 202.5) {
+            direction = "南";
+        } else if (mTargetDirection >= 202.5 && mTargetDirection < 247.5) {
+            direction = "西南";
+        } else if (mTargetDirection >= 247.5 && mTargetDirection < 292.5) {
+            direction = "西";
+        } else {
+            direction = "西北";
+        }
+
+
+        Log.d("Direction", "Direction: " + direction);
+        return new Pair<>(direction, mTargetDirection);
+    }
+
+    private OnSensorChangedListener onSensorChangedListener;
+
+    public void setOnSensorChangedListener(OnSensorChangedListener onSensorChangedListener) {
+        this.onSensorChangedListener = onSensorChangedListener;
+    }
+
+    public interface OnSensorChangedListener {
+        void onSensorChanged(SensorEvent sensorEvent);
+
+        void onDirectionChangeListener(SensorEvent sensorEvent, Pair<String, Float> pair);
+    }
+
 }
