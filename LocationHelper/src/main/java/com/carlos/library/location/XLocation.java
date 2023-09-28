@@ -24,6 +24,10 @@ public class XLocation {
      */
     private double mLongitude;
     /**
+     * 海拔
+     */
+    private double mAltitude;
+    /**
      * 国家名称
      */
     private String mCountryName;
@@ -87,6 +91,7 @@ public class XLocation {
     public XLocation(Location location) {
         mLatitude = location.getLatitude();
         mLongitude = location.getLongitude();
+        mAltitude = location.getAltitude();
         this.mErrorCode = -1;
         this.mErrorMsg = "未进行地理位置解析";
     }
@@ -94,6 +99,14 @@ public class XLocation {
     public XLocation(double latitude, double longitude) {
         mLatitude = latitude;
         mLongitude = longitude;
+        this.mErrorCode = -1;
+        this.mErrorMsg = "未进行地理位置解析";
+    }
+
+    public XLocation(double latitude, double longitude,double altitude) {
+        mLatitude = latitude;
+        mLongitude = longitude;
+        mAltitude = altitude;
         this.mErrorCode = -1;
         this.mErrorMsg = "未进行地理位置解析";
     }
@@ -113,6 +126,14 @@ public class XLocation {
 
     public void setLongitude(double mLongitude) {
         this.mLongitude = mLongitude;
+    }
+
+    public double getAltitude() {
+        return mAltitude;
+    }
+
+    public void setAltitude(double mAltitude) {
+        this.mAltitude = mAltitude;
     }
 
     public String getCountryName() {
