@@ -600,20 +600,19 @@ public class PermissionHelper {
                 }
             }
         }
+        String scenarioKey = getCurrentScenarioKey();
         if (mSimpleCallback != null) {
             if (flag) {
                 mSimpleCallback.onGranted();
             } else {
                 mSimpleCallback.onDenied();
                 if (goSetting) {
-                    String scenarioKey = getCurrentScenarioKey();
                     if (isAutoRequest && !isFirstRequest(scenarioKey)) {
                         //当前场景非用户手动触发请求,并且非第一次请求
                         ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限", getDeniedPermissionName()));
                         return;
                     }
 
-                    setRequestTime(scenarioKey);
                     if (!isShowing) {
                         showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", generateGoSettingMsg(), cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
@@ -625,6 +624,7 @@ public class PermissionHelper {
                 }
             }
         }
+        setRequestTime(scenarioKey);
     }
 
     private String generateGoSettingMsg() {
