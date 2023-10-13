@@ -1,5 +1,6 @@
 package com.hongwen.hongutils.share
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.media.MediaMetadataRetriever
@@ -16,13 +17,25 @@ import java.io.File
  * ==================================================
  **/
 object SystemShareHelper {
+
+    enum class Client(val client: String,val  componentName: ComponentName) {
+        WeChat("微信",ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI")),
+        PYQ("微信",ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI")),
+        QQ("QQ",ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity")),
+    }
     /**
      * 调用系统API分享文件
      * @param authority The authority of a FileProvider defined in a <provider> element in your app's manifest.
      */
-    fun shareFile(context: Context, file: File, authority: String) {
+    @JvmStatic
+    fun shareFile(context: Context, file: File, authority: String, component: ComponentName?=null) {
         val uri = file2Uri(context, file, authority)
+        shareFile(context, uri, component)
+    }
+    @JvmStatic
+    fun shareFile(context: Context, uri: Uri, component: ComponentName?=null) {
         val intent = Intent(Intent.ACTION_SEND).apply {
+            component?.let { setComponent(component) }
             addCategory(Intent.CATEGORY_DEFAULT)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             setType(getMimeType(context, uri))
@@ -35,6 +48,7 @@ object SystemShareHelper {
     /**
      * 获取文件的MimeType
      */
+    @JvmStatic
     fun getMimeType(context: Context, uri: Uri): String {
         //通过contentResolver获取mimeTYpe
         var mimeType = context.contentResolver.getType(uri)
@@ -53,6 +67,7 @@ object SystemShareHelper {
     /**
      * file转Uri
      */
+    @JvmStatic
     fun file2Uri(context: Context, file: File, authority: String): Uri {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return FileProvider.getUriForFile(context, authority, file)
