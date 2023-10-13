@@ -1,5 +1,6 @@
 package com.hongwen.hongutils.view
 
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
 import android.util.Log
@@ -91,5 +92,19 @@ object ViewCompatUtils {
                 window.navigationBarColor = Color.WHITE
             }
         }
+    }
+
+    /**
+     * 获取系统状态栏高度
+     * WindowInsetsCompat from the top of the view hierarchy or null if View is detached
+     */
+    fun getSystemStatusBartHeight(view:View) :Int{
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val windowInsets = ViewCompat.getRootWindowInsets(view)
+            if (windowInsets != null) {
+                return windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            }
+        }
+        return view.resources.getIdentifier("status_bar_height", "dimen", "android")
     }
 }
