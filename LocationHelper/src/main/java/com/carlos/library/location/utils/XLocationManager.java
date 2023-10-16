@@ -157,8 +157,28 @@ public class XLocationManager {
 
         String bestProvider = locationManager.getBestProvider(criteria, true);
 
-        if (android.location.LocationManager.FUSED_PROVIDER.equals(bestProvider)) {
-            bestProvider = LocationManager.GPS_PROVIDER;
+
+        if (bestProvider == null || !locationManager.isProviderEnabled(bestProvider)) {
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                bestProvider = LocationManager.GPS_PROVIDER;
+            } else {
+                if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    bestProvider = LocationManager.NETWORK_PROVIDER;
+                } else {
+                    if (locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
+                        bestProvider = LocationManager.PASSIVE_PROVIDER;
+                    } else {
+                        if (locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
+                            bestProvider = LocationManager.FUSED_PROVIDER;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (bestProvider == null) {
+            notifyFailed(3, "你的设备当前不支持定位，请检查网络或GPS定位是否开启");
+            return;
         }
 
         /**
@@ -184,10 +204,10 @@ public class XLocationManager {
             return;
         }
 
-        if (bestProvider == null) {
-            notifyFailed(3, "你的设备当前不支持定位，请检查网络或GPS定位是否开启");
-            return;
-        }
+
+        Location location1 = locationManager.getLastKnownLocation(LocationManager.FUSED_PROVIDER);
+        Location location2 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location3 = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
 //        locationManager.requestLocationUpdates(bestProvider, 1000 * 10, 0, locationListener);
         //在异步线程mHandlerThread中回调
