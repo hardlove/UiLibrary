@@ -76,8 +76,8 @@ public class XLocationManager {
 
     }
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
-    private LocationListener locationListener = new LocationListener() {
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
             if (location != null) {
@@ -109,7 +109,7 @@ public class XLocationManager {
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-
+            Log.d(TAG, "onStatusChanged~~~~~~provider:" + provider + " status:" + status);
         }
 
         @Override
@@ -156,6 +156,11 @@ public class XLocationManager {
         criteria.setPowerRequirement(Criteria.POWER_LOW);
 
         String bestProvider = locationManager.getBestProvider(criteria, true);
+
+        if (android.location.LocationManager.FUSED_PROVIDER.equals(bestProvider)) {
+            bestProvider = LocationManager.GPS_PROVIDER;
+        }
+
         /**
          * gps定位：java.lang.SecurityException: "gps" location provider requires ACCESS_FINE_LOCATION permission. 需要两个权限
          * network定位：只需要ACCESS_COARSE_LOCATION即可
@@ -186,7 +191,9 @@ public class XLocationManager {
 
 //        locationManager.requestLocationUpdates(bestProvider, 1000 * 10, 0, locationListener);
         //在异步线程mHandlerThread中回调
-        locationManager.requestLocationUpdates(bestProvider, 1000 * 10, 0, locationListener, mHandlerThread.getLooper());
+        locationManager.removeUpdates(locationListener);
+        locationManager.requestLocationUpdates(bestProvider, 1000 * 10, 1, locationListener, mHandlerThread.getLooper());
+        Log.d(TAG, "请求定位 。。。。bestProvider：" + bestProvider);
     }
 
 
@@ -310,9 +317,9 @@ public class XLocationManager {
     }
 
     public static class LifecycleWrap implements LifecycleObserver {
-        private LifecycleOwner lifecycleOwner;
-        private OnResultCallBack onResultCallBack;
-        private List<LifecycleWrap> lifecycleWraps;
+        private final LifecycleOwner lifecycleOwner;
+        private final OnResultCallBack onResultCallBack;
+        private final List<LifecycleWrap> lifecycleWraps;
 
         public LifecycleWrap(List<LifecycleWrap> lifecycleWraps, LifecycleOwner lifecycleOwner, OnResultCallBack onResultCallBack) {
             this.lifecycleWraps = lifecycleWraps;
