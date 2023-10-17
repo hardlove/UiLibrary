@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onGranted() {
 
-                                XLocationManager.getInstance().queryCurrentLocation(MainActivity.this, new XLocationManager.OnResultCallBack() {
+                                XLocationManager.getInstance().setCanUseCoarse(false).queryCurrentLocation(MainActivity.this, new XLocationManager.OnResultCallBack() {
                                     @Override
                                     public void onSucceed(XLocation location) {
                                         TextView tv = findViewById(R.id.tv_message);

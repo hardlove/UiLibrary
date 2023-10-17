@@ -7,13 +7,18 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.location.LocationManagerCompat;
 import androidx.lifecycle.Lifecycle;
@@ -24,6 +29,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import com.carlos.library.location.InitProvider;
 import com.carlos.library.location.XLocation;
 
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +48,6 @@ import java.util.List;
  * （4）FUSED_PROVIDER：这个本来已经被废弃了，但是目前在Android12（即android api 31）上又重新使用了起来，但是它依赖GMS，所以国内暂时无法使用。
  */
 public class XLocationManager {
-    private static XLocationManager instance;
     private final Context context;
     private LocationManager locationManager;
 
@@ -52,17 +57,21 @@ public class XLocationManager {
     }
 
     public static XLocationManager getInstance() {
-        if (instance == null) {
-            synchronized (XLocationManager.class) {
-                if (instance == null) {
-                    instance = new XLocationManager();
-                }
-            }
-        }
-        return instance;
+        return new XLocationManager();
     }
 
     HandlerThread mHandlerThread = new HandlerThread(this.getClass().getSimpleName());
+    private String mDefaultProvider;
+    private boolean mCanUseCoarse = true;//是否可以使用低精度
+
+    public XLocationManager setCanUseCoarse(boolean canUseCoarse) {
+        this.mCanUseCoarse = canUseCoarse;
+        return this;
+    }
+
+    public void setDefaultProvider(String provider) {
+        this.mDefaultProvider = provider;
+    }
 
     /*初始化服务*/
     private void init() {
@@ -134,88 +143,121 @@ public class XLocationManager {
         }
 
 
+        String provider = getProvider();
+
+        if (provider == null) {
+            notifyFailed(2, "你的设备当前不支持定位，请检查网络或GPS定位是否已开启");
+            return;
+        }
+
+
+        if (LocationManager.GPS_PROVIDER.equals(provider) || LocationManager.FUSED_PROVIDER.equals(provider)) {
+
+            if (!isNetworkAvailable(context)) {
+                notifyFailed(3, "请检查网络");
+                return;
+            }
+            /**
+             * gps定位：java.lang.SecurityException: "gps" location provider requires ACCESS_FINE_LOCATION permission. 需要两个权限
+             * network定位：只需要ACCESS_COARSE_LOCATION即可
+             */
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                //需要权限才能调用
+                boolean flagCoarse = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                notifyFailed(4, !flagCoarse ? "未开启定位权限" : "未开启精准定位权限");
+                return;
+            }
+        } else if (LocationManager.NETWORK_PROVIDER.equals(provider)) {
+            //NETWORK_PROVIDER 使用的是网络基站和 Wi-Fi 网络的信息来进行定位，而不是使用 GPS。因此，只需要获取粗略位置权限（ACCESS_COARSE_LOCATION）来使用 NETWORK_PROVIDER 进行定位。
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                //需要权限才能调用
+                notifyFailed(5, "未开启定位权限");
+                return;
+            }
+        }
+        //在异步线程mHandlerThread中回调
+        locationManager.removeUpdates(locationListener);
+        locationManager.requestLocationUpdates(provider, 1000 * 10, 0, locationListener, mHandlerThread.getLooper());
+        Log.d(TAG, "请求定位 。。。。provider：" + provider);
+    }
+
+    private String getProvider() {
+        if (!TextUtils.isEmpty(mDefaultProvider)) {
+            return mDefaultProvider;
+        }
+
+
+        int accuracy;
+        if (mCanUseCoarse) {//可以使用低精度定位,则低精度优先
+            accuracy = Criteria.ACCURACY_COARSE;
+        } else {//高精度定位
+            accuracy = Criteria.ACCURACY_FINE;
+        }
+
         Criteria criteria = new Criteria();
         // 设置定位精确度 Criteria.ACCURACY_COARSE比较粗略，Criteria.ACCURACY_FINE则比较精细
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setAccuracy(accuracy);
         // 设置是否要求速度
-        criteria.setSpeedRequired(false);
-        //如果设置要求速度，那么就可以用:
-        //criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH)来设置速度的精度；
-        //Criteria.ACCURACY_HIGH:精度高，误差在100米内
-        //ACCURACY_MEDIUM精度中等，误差在100-500米之间
-        //ACCURACY_LOW精度低，误差大于500米
+        criteria.setSpeedRequired(Criteria.ACCURACY_FINE == accuracy);
+        //如果设置要求速度，那么就可以用:criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH)来设置速度的精度；
+        if (criteria.isSpeedRequired()) {
+            //Criteria.ACCURACY_HIGH:精度高，误差在100米内
+            //ACCURACY_MEDIUM精度中等，误差在100-500米之间
+            //ACCURACY_LOW精度低，误差大于500米
+            criteria.setSpeedAccuracy(Criteria.ACCURACY_HIGH);
+        }
+
         // 设置是否允许运营商收费
         criteria.setCostAllowed(false);
         // 设置是否需要方位信息
-        criteria.setBearingRequired(false);
+        criteria.setBearingRequired(true);
         // 设置是否需要海拔信息
-        criteria.setAltitudeRequired(false);
+        criteria.setAltitudeRequired(true);
         // 设置对电源的需求
         //Criteria.POWER_LOW:耗电低，Criteria.POWER_MEDIUM:中度耗电
         //Criteria.POWER_HIGH：耗电高，但是精确度也高
-        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        criteria.setPowerRequirement(mCanUseCoarse ? Criteria.POWER_LOW : Criteria.POWER_MEDIUM);
 
         String bestProvider = locationManager.getBestProvider(criteria, true);
-
-
         if (bestProvider == null || !locationManager.isProviderEnabled(bestProvider)) {
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                bestProvider = LocationManager.GPS_PROVIDER;
-            } else {
+            if (mCanUseCoarse) {
                 if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     bestProvider = LocationManager.NETWORK_PROVIDER;
                 } else {
                     if (locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)) {
                         bestProvider = LocationManager.PASSIVE_PROVIDER;
                     } else {
-                        if (locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
-                            bestProvider = LocationManager.FUSED_PROVIDER;
+                        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                            bestProvider = LocationManager.GPS_PROVIDER;
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                if (locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)) {
+                                    bestProvider = LocationManager.FUSED_PROVIDER;
+                                }
+                            }
                         }
                     }
                 }
+            } else {
+                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    bestProvider = LocationManager.GPS_PROVIDER;
+                }
             }
+
         }
-
-        if (bestProvider == null) {
-            notifyFailed(3, "你的设备当前不支持定位，请检查网络或GPS定位是否开启");
-            return;
+        boolean flagFine = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean flagCoarse = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        if (mCanUseCoarse && isNetworkAvailable(context) && !flagFine && flagCoarse) {
+            bestProvider = LocationManager.NETWORK_PROVIDER;
         }
-
-        /**
-         * gps定位：java.lang.SecurityException: "gps" location provider requires ACCESS_FINE_LOCATION permission. 需要两个权限
-         * network定位：只需要ACCESS_COARSE_LOCATION即可
-         */
-        if (android.location.LocationManager.GPS_PROVIDER.equals(bestProvider)) {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                //需要权限才能调用
-                notifyFailed(2, "未开启定位权限");
-                return;
-            }
-        } else if (android.location.LocationManager.NETWORK_PROVIDER.equals(bestProvider)) {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                //需要权限才能调用
-                notifyFailed(2, "未开启定位权限");
-                return;
-            }
-        }
-
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            notifyFailed(2, "未开启定位权限");
-            return;
-        }
-
-
-        Location location1 = locationManager.getLastKnownLocation(LocationManager.FUSED_PROVIDER);
-        Location location2 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Location location3 = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-//        locationManager.requestLocationUpdates(bestProvider, 1000 * 10, 0, locationListener);
-        //在异步线程mHandlerThread中回调
-        locationManager.removeUpdates(locationListener);
-        locationManager.requestLocationUpdates(bestProvider, 1000 * 10, 1, locationListener, mHandlerThread.getLooper());
-        Log.d(TAG, "请求定位 。。。。bestProvider：" + bestProvider);
+        return bestProvider;
     }
 
+    public static boolean isNetworkAvailable(Context context) {
+        NetworkInfo netInfo = ((ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 
     private void notifySucceed(XLocation xLocation) {
         //1. 通知查询当前位置成功
