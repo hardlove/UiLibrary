@@ -20,9 +20,12 @@ buildscript {
 
     }
 }
-
+ext.LOCAL_REPOS = "D:\\Work\\repos"
 allprojects {
     repositories {
+        //maven本地仓库
+        maven { url "file://${LOCAL_REPOS}" }
+
         //https://maven.aliyun.com/mvn/view(摘自阿里云镜像仓库服务)
         maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
