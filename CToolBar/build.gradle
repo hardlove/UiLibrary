@@ -42,10 +42,10 @@ task generateSourcesJar(type: Jar) {
 publishing {
     publications {
         Production(MavenPublication) {
-            // 使用方引用 implementation "com.github.hardlove.UiLibrary:CToolBar:2.4.41"
+            // 使用方引用 implementation "com.github.hardlove.UiLibrary:CToolBar:2.4.42"
             groupId = "com.github.hardlove.UiLibrary"
             artifactId = "CToolBar"
-            version = "2.4.41"
+            version = "2.4.42"
             afterEvaluate {
                 artifact(tasks.getByName("bundleReleaseAar"))
             }
