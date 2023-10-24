@@ -164,7 +164,7 @@ public class CToolBar extends FrameLayout implements View.OnTouchListener, View.
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CToolBar, defStyleAttr, R.style.CToolBar);
         getAttrs(typedArray);
 
-        ViewGroup title = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.love_c_toolbar, this);
+        ViewGroup title = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.c_toolbar_layout, this);
         findViews(title);
         initViews();
         views = new View[]{tv_left_back, left_tv, left_iv, center_tv, center_iv, right_tv1, right_iv1, right_tv2, right_iv2, right_tv3, right_iv3};
