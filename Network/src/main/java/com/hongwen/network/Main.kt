@@ -3,6 +3,7 @@ package com.hongwen.network
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 const val URL = "http://browser.51star.top:8080"
 
@@ -32,10 +33,22 @@ fun main(args: Array<String>) {
             Thread.sleep(1000 * 2)
         })
         // 3
-         apiService.getAdvList("huawei", "10201", "com.nanjingwx.train")
+        apiService.getAdvList("huawei", "10201", "com.nanjingwx.train")
             .transform()
+            .let {
+                return@let withContext(Dispatchers.Main) {
+//                    it.onSuccess {
+//
+//                    }
+//                        .onError {
+//
+//                        }
+                    it
+                }
+            }
             .executeOnThread(Dispatchers.Default) {
                 println("3333 executeOnThread:" + "thread:" + Thread.currentThread())
+
             }
             .onError(Dispatchers.IO) {
                 println("3333 onError:" + Gson().toJson(it) + "thread:" + Thread.currentThread())

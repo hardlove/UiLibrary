@@ -40,10 +40,10 @@ suspend inline fun <T> Result<T>.onError(
     return this
 }
 
-suspend inline fun <T> Result<T>.executeOnThread(
+suspend inline fun <T> T.executeOnThread(
     dispatcher: CoroutineDispatcher,
     crossinline block: suspend () -> Unit,
-): Result<T> {
+): T {
     withContext(dispatcher) {
         block()
     }
