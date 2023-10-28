@@ -1,7 +1,12 @@
 package com.hongwen.network
 
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
+
 /*封装请求结果*/
 sealed class Result<out T> {
+
+
     data class Success<T>(val data: T) : Result<T>()
     data class Error(val exception: Code) : Result<Nothing>()
 }
@@ -20,4 +25,19 @@ inline fun  <T> Result<T>.onError(action: (Code) -> Unit): Result<T> {
         action(exception)
     }
     return this
+}
+
+suspend fun <T> T.toThread(dispatcher: CoroutineDispatcher): T {
+
+    return withContext(dispatcher){
+
+
+        this@toThread
+    }
+
+}
+fun <T> T.toIoThread(): T {
+
+    return this
+
 }

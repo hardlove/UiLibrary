@@ -15,5 +15,5 @@ interface ApiService {
 
         @Path("page") page: Int
 
-    ): Response<DataResponse<String>>
+    ): Response<DataResponse<UserInfo>>
 }

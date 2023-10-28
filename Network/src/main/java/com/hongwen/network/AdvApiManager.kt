@@ -1,5 +1,7 @@
 package com.hongwen.network
 
+import kotlinx.coroutines.Dispatchers
+
 const val URL = "https://www.baidu.com"
 
 object AdvApiManager :
@@ -9,17 +11,24 @@ object AdvApiManager :
         this.getData("", 3, 1).transformResult(success = {
 
 
-        }, failed = {
+        }, fail = {
         })
 
 
-        this.getData("", 1, 2).transformData(success = {
+        this.getData("", 1, 2).transform(success = {
 
-
-        }, failed = {
 
         })
-        val result: Result<String> = this.getData("", 1, 2).toResult()
+        this.getData("", 1, 2)
+            .transformToResult()
+            .toThread(Dispatchers.Main)
+            .onError {
+
+            }
+            .onSuccess {
+
+            }
+        val result: Result<UserInfo> = this.getData("", 1, 2).transformToResult()
         when (result) {
             is Result.Success -> {
 
@@ -29,6 +38,13 @@ object AdvApiManager :
 
         }
 
+        result.transform {
+
+        }
+
+        this.getData("", 1, 3).transform(success = {
+
+        })
     }
 
 }
