@@ -54,7 +54,7 @@ fun <T> Response<DataResponse<T>>.transform(
 
 }
 
-fun <T> Response<DataResponse<T>>.transformToResult(): Result<T> {
+fun <T> Response<DataResponse<T>>.transform(): Result<T> {
     return if (this.isSuccessful) {
         val dataResponse = this.body()
         if (dataResponse != null) {

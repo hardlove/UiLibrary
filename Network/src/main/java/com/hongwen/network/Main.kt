@@ -32,8 +32,8 @@ fun main(args: Array<String>) {
             Thread.sleep(1000 * 2)
         })
         // 3
-        apiService.getAdvList("huawei", "10201", "com.nanjingwx.train")
-            .transformToResult()
+         apiService.getAdvList("huawei", "10201", "com.nanjingwx.train")
+            .transform()
             .executeOnThread(Dispatchers.Default) {
                 println("3333 executeOnThread:" + "thread:" + Thread.currentThread())
             }
@@ -43,8 +43,9 @@ fun main(args: Array<String>) {
             .onSuccess(Dispatchers.Unconfined) {
                 println("3333 onSuccess:" + Gson().toJson(it) + "thread:" + Thread.currentThread())
             }
-        val result: Result<List<AdvertModel>> =
-            apiService.getAdvList("huawei", "10201", "com.nanjingwx.train").transformToResult()
+
+        val result = apiService.getAdvList("huawei", "10201", "com.nanjingwx.train")
+            .transform()
         when (result) {
             is Result.Success -> {
                 println("3333 is Success:" + Gson().toJson(result.data) + "thread:" + Thread.currentThread())
@@ -57,7 +58,7 @@ fun main(args: Array<String>) {
         }
 
         result.transform {
-            println("============")
+            println("============finish")
         }
 
 
