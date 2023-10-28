@@ -8,7 +8,7 @@ data class DataResponse<out T>(val code: Int, val data: T, val msg: String) {
     }
 }
 
-fun <T> Response<DataResponse<T>>.map(
+fun <T> Response<DataResponse<T>>.transformResult(
     success: (result: Result.Success<T>) -> Unit,
     failed: (result: Result.Error) -> Unit,
 ) {
@@ -27,7 +27,7 @@ fun <T> Response<DataResponse<T>>.map(
     failed.invoke(Result.Error(Code.of(this.code(), this.message())))
 }
 
-fun <T> Response<DataResponse<T>>.map(
+fun <T> Response<DataResponse<T>>.transformData(
     success: (result: T) -> Unit,
     failed: (result: Code) -> Unit,
 ) {

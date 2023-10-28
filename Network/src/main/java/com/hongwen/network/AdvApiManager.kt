@@ -6,19 +6,19 @@ object AdvApiManager :
     ApiService by ServiceFactory.getService(url = URL, clazz = ApiService::class.java) {
 
     suspend fun tet() {
-        this.getData("", 3, 1).map(success = { result: Result.Success<String> ->
+        this.getData("", 3, 1).transformResult(success = {
 
 
-            }, failed = { result: Result.Error ->
-            })
+        }, failed = {
+        })
 
 
-        this.getData("", 1, 2).map(success = { it: String ->
+        this.getData("", 1, 2).transformData(success = {
 
 
-            }, failed = { it: Code ->
+        }, failed = {
 
-            })
+        })
         val result: Result<String> = this.getData("", 1, 2).toResult()
         when (result) {
             is Result.Success -> {
