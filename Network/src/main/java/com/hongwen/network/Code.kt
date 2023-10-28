@@ -13,8 +13,8 @@ data class Code(val code: Int, val msg: String) {
             return Code(code, message)
         }
 
-        val OK = Code(1, "")
-        val Net = Code(2, "")
+        val OK = Code(1, "成功")
+        val Net = Code(2, "网络出错")
     }
 
 }
