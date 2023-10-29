@@ -19,3 +19,44 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0'
 }
+
+
+apply plugin: 'maven-publish'
+// 创建源码 JAR
+tasks.register('generateSourcesJar', Jar) {
+    from sourceSets.main.allSource
+    classifier 'sources'
+}
+
+
+// 创建 Javadoc JAR
+tasks.register('generateJavadocJar', Jar) {
+    dependsOn javadoc
+    classifier 'javadoc'
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        Production(MavenPublication) {
+            from components.java
+            artifact generateSourcesJar
+            artifact generateJavadocJar
+
+            // 使用方引用 implementation "com.github.hardlove.UiLibrary:Network:2.4.42"
+            groupId = "com.github.hardlove.UiLibrary"
+            artifactId = "Network"
+            version = "2.4.42"
+
+        }
+    }
+    repositories {
+        maven {
+//            url = "$rootDir/repos"
+//            url = "${rootDir.parent}/repos"
+            url = "D:\\Work\\repos"
+//            url = "../../../repos"
+        }
+        mavenLocal()
+    }
+}
