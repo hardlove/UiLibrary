@@ -12,9 +12,9 @@ inline fun <T, R> T.transform(action: (T) -> R): R {
     return action.invoke(this)
 }
 
-fun <T> Response<DataResponse<T>>.transformResult(
-    success: (result: Result.Success<T>) -> Unit,
-    fail: (result: Result.Error) -> Unit = {},
+suspend fun <T> Response<DataResponse<T>>.transformResult(
+    success:suspend (result: Result.Success<T>) -> Unit,
+    fail: suspend (result: Result.Error) -> Unit = {},
 ) {
     if (this.isSuccessful) {
         val dataResponse = this.body()
@@ -33,9 +33,9 @@ fun <T> Response<DataResponse<T>>.transformResult(
 
 }
 
-fun <T> Response<DataResponse<T>>.transform(
-    success: (result: T) -> Unit,
-    fail: (result: Code) -> Unit = {},
+suspend fun <T> Response<DataResponse<T>>.transform(
+    success: suspend (result: T) -> Unit,
+    fail: suspend (result: Code) -> Unit = {},
 ) {
     if (this.isSuccessful) {
         val dataResponse = this.body()
