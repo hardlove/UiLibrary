@@ -13,7 +13,8 @@ fun main(args: Array<String>) {
         val apiService = ServiceFactory.getService(url = URL, clazz = ApiService::class.java)
 
         // 1
-        apiService.getAdvList("huawei", "10201", "com.nanjingwx.train").transformResult(success = {
+        apiService.getAdvList("huawei", "10201", "com.nanjingwx.train")
+            .transformResult(success = {
             Thread.sleep(1000 * 5)
             println("11111 success:" + Gson().toJson(it.data))
             Thread.sleep(1000 * 2)
@@ -36,7 +37,7 @@ fun main(args: Array<String>) {
         apiService.getAdvList("huawei", "10201", "com.nanjingwx.train")
             .transform()
             .let {
-                return@let withContext(Dispatchers.Main) {
+                return@let withContext(Dispatchers.IO) {
 //                    it.onSuccess {
 //
 //                    }
