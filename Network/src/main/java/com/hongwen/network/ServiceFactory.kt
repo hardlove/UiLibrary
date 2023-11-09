@@ -1,6 +1,7 @@
 package com.hongwen.network
 
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -14,6 +15,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 object ServiceFactory {
     private val okHttpClient by lazy {
         OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY // 设置日志级别
+            })
             .addNetworkInterceptor { chain ->
                 chain.proceed(chain.request())
             }
