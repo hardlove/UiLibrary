@@ -10,5 +10,5 @@ interface ApiService {
         @Query("channel") channel: String,
         @Query("versionCode") versionCode: String,
         @Query("appName") appName: String,
-    ): Response<DataResponse<List<AdvertModel>>>
+    ): DataResponse<List<AdvertModel>>
 }
