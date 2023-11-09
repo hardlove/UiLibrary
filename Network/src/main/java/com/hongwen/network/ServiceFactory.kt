@@ -30,7 +30,7 @@ object ServiceFactory {
             .Builder()
             .client(client)
             .baseUrl(url)
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+//            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
