@@ -74,7 +74,7 @@ public class PermissionHelper {
     private boolean ignore48H = true;//48小时内请求过的权限不再重复请求
     private boolean onlyRequestOnce = true;//是否永久不重复请求，即只能申请一次
     private boolean goSetting = false;//跳转系统权限设置页面
-    private boolean showToast = false;//权限拒绝后是否显示Toast提示,goSetting 为false时生效
+    private boolean showToast = true;//权限拒绝后是否显示Toast提示,goSetting 为false时生效
     private boolean isAutoRequest = false;//是否自动请求,非用户手动触发
     private OnGoSettingUIListener onGoSettingUIListener;//跳转系统权限设置页面监听
     private String goSettingMsg;//跳转系统权限设置页面弹框描述内容
