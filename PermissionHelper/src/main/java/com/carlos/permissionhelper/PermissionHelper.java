@@ -579,12 +579,11 @@ public class PermissionHelper {
             if (flag) {
                 mFullCallback.onGranted();
             } else {
-                mFullCallback.onDenied(deniedForever, denied, granted);
                 if (goSetting) {
                     String scenarioKey = getCurrentScenarioKey();
                     if (isAutoRequest && !isFirstRequest(scenarioKey)) {
                         //当前场景非用户手动触发请求,并且非第一次请求
-                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限", getDeniedPermissionName()));
+                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()));
                         return;
                     }
 
@@ -595,9 +594,10 @@ public class PermissionHelper {
                     isShowing = true;
                 } else {
                     if (showToast) {
-                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限", getDeniedPermissionName()));
+                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()));
                     }
                 }
+                mFullCallback.onDenied(deniedForever, denied, granted);
             }
         }
         String scenarioKey = getCurrentScenarioKey();
@@ -605,11 +605,10 @@ public class PermissionHelper {
             if (flag) {
                 mSimpleCallback.onGranted();
             } else {
-                mSimpleCallback.onDenied();
                 if (goSetting) {
                     if (isAutoRequest && !isFirstRequest(scenarioKey)) {
                         //当前场景非用户手动触发请求,并且非第一次请求
-                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限", getDeniedPermissionName()));
+                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()));
                         return;
                     }
 
@@ -619,9 +618,10 @@ public class PermissionHelper {
                     isShowing = true;
                 }else {
                     if (showToast) {
-                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限", getDeniedPermissionName()));
+                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()));
                     }
                 }
+                mSimpleCallback.onDenied();
             }
         }
         setRequestTime(scenarioKey);
@@ -645,7 +645,7 @@ public class PermissionHelper {
         }
         //return MessageFormat.format("您已拒绝我们申请的<font color=\"#FF0000\"><b>{0}</b></font>权限，如需使用该功能，请手动授予权限！", list.toString());
         //return MessageFormat.format("您已拒绝我们申请的<font><b>{0}</b></font>权限，如需使用该功能，请手动授予权限！", list.toString());
-        return MessageFormat.format("您已拒绝我们申请的{0}权限，如需使用该功能，请手动授予权限！", list.toString());
+        return MessageFormat.format("您已拒绝我们申请的{0}权限！如需使用该功能，请手动授予权限！", list.toString());
     }
 
     private String getDeniedPermissionName() {
@@ -674,7 +674,7 @@ public class PermissionHelper {
                 break;
             case Manifest.permission.READ_EXTERNAL_STORAGE:
             case Manifest.permission.WRITE_EXTERNAL_STORAGE:
-                msg = "媒体和文件";
+                msg = "媒体或文件";
                 break;
             case Manifest.permission.CAMERA:
                 msg = "照相机";
