@@ -12,8 +12,10 @@ import android.provider.MediaStore;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 
 import com.blankj.utilcode.util.RomUtils;
+import com.blankj.utilcode.util.UriUtils;
 import com.hardlove.wallpaper.service.VideoWallpaperService;
 
 import java.io.File;
@@ -226,26 +228,28 @@ public class WallpaperUtils {
      * @return content Uri
      */
     public static Uri getImageContentUri(Context context, File imageFile) {
-        String filePath = imageFile.getAbsolutePath();
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Images.Media._ID}, MediaStore.Images.Media.DATA + "=? ",
-                new String[]{filePath}, null);
-        Uri uri = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
-//            Uri baseUri = Uri.parse("content://media/external/images/media");
-            Uri baseUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            uri = Uri.withAppendedPath(baseUri, "" + id);
-        } else {
-            if (imageFile.exists()) {
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Images.Media.DATA, filePath);
-                uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            }
-        }
-        if (cursor != null) {
-            cursor.close();
-        }
+//        String filePath = imageFile.getAbsolutePath();
+//        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//                new String[]{MediaStore.Images.Media._ID}, MediaStore.Images.Media.DATA + "=? ",
+//                new String[]{filePath}, null);
+//        Uri uri = null;
+//        if (cursor != null && cursor.moveToFirst()) {
+//            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+////            Uri baseUri = Uri.parse("content://media/external/images/media");
+//            Uri baseUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//            uri = Uri.withAppendedPath(baseUri, "" + id);
+//        } else {
+//            if (imageFile.exists()) {
+//                ContentValues values = new ContentValues();
+//                values.put(MediaStore.Images.Media.DATA, filePath);
+//                uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+//            }
+//        }
+//        if (cursor != null) {
+//            cursor.close();
+//        }
+
+        Uri uri = UriUtils.file2Uri(imageFile);
 
         return uri;
     }

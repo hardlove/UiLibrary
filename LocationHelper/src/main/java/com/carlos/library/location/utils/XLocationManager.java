@@ -29,6 +29,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import com.carlos.library.location.InitProvider;
 import com.carlos.library.location.XLocation;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -164,9 +165,13 @@ public class XLocationManager {
                 notifyFailed(4, "未开启定位权限");
                 return;
             }
+            if (!locationManager.isProviderEnabled(currentProvider)) {
+                notifyFailed(5, "请检查网络或是否开启定位权限");
+                return;
+            }
         } else if (LocationManager.GPS_PROVIDER.equals(currentProvider) || LocationManager.FUSED_PROVIDER.equals(currentProvider)) {
             if (!isNetworkAvailable(context)) {
-                notifyFailed(5, "请检查网络");
+                notifyFailed(6, "请检查网络");
                 return;
             }
             /**
@@ -176,14 +181,27 @@ public class XLocationManager {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 //需要权限才能调用
                 boolean flagCoarse = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-                notifyFailed(6, !flagCoarse ? "未开启定位权限" : "未开启精准定位权限");
+                notifyFailed(7, !flagCoarse ? "未开启定位权限" : "未开启精准定位权限");
+                return;
+            }
+            if (!locationManager.isProviderEnabled(currentProvider)) {
+                notifyFailed(8, "请检查网络或是否开启定位权限");
                 return;
             }
         }
-        //在异步线程mHandlerThread中回调
-        locationManager.removeUpdates(locationListener);
-        locationManager.requestLocationUpdates(currentProvider, 1000 * 10, 0, locationListener, mHandlerThread.getLooper());
-        Log.d(TAG, "请求定位 。。。。provider：" + currentProvider);
+
+        boolean enable = locationManager.isProviderEnabled(currentProvider);
+        if (enable) {
+            //在异步线程mHandlerThread中回调
+            locationManager.removeUpdates(locationListener);
+            Log.d(TAG, "请求定位 。。。。provider：" + currentProvider);
+            locationManager.requestLocationUpdates(currentProvider, 1000 * 10, 0, locationListener, mHandlerThread.getLooper());
+        } else {
+            Log.e(TAG, MessageFormat.format("定位失败, 当前定位提供者'['{0}']'不可用", currentProvider));
+            notifyFailed(9, MessageFormat.format("当前定位提供者'['{0}']'不可用", currentProvider));
+        }
+
+
     }
 
     private String getProvider() {
@@ -191,7 +209,7 @@ public class XLocationManager {
             return mDefaultProvider;
         }
         String bestProvider;
-        if (mCanUseCoarse) {
+        if (mCanUseCoarse && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             bestProvider = LocationManager.NETWORK_PROVIDER;
         } else {
             Criteria criteria = new Criteria();
