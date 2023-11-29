@@ -17,7 +17,7 @@ public class InitProvider extends ContentProvider {
     private static Context context;
 
 
-    public static Context getAppContext() {
+    public static Context getApplicationContext() {
         return context;
     }
 

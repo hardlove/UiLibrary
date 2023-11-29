@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.carlos.permissionhelper">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.carlos.permissionhelper">
 
+    <application>
+        <activity
+            android:name=".TranslucentActivity"
+            android:theme="@style/Theme.Translucent.Activity" />
+        <provider
+            android:name="com.carlos.permissionhelper.InitProvider"
+            android:authorities="${applicationId}.permission.init" />
+    </application>
 </manifest>

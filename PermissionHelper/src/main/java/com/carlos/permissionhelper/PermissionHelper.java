@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -18,23 +19,20 @@ import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.GsonUtils;
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.PermissionUtils;
-import com.blankj.utilcode.util.SPStaticUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.blankj.utilcode.util.Utils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.reactivestreams.Publisher;
@@ -69,6 +67,9 @@ public class PermissionHelper {
 
 
     private final static String PERMISSION_REQUEST_RECORD = "PERMISSION_REQUEST_RECORD";
+    private final Activity mActivity;
+    private final SharedPreferences preferences;
+    private final Gson mGson;
     private SimpleCallback mSimpleCallback;
     private FullCallback mFullCallback;
     private boolean ignore48H = true;//48小时内请求过的权限不再重复请求
@@ -98,18 +99,13 @@ public class PermissionHelper {
 
 
     public static PermissionHelper builder() {
-        return new PermissionHelper();
+        return new PermissionHelper(InitProvider.getCurrentActivity());
     }
 
-    /**
-     * @param permissions
-     * @return
-     * @see #builder()
-     */
-    @Deprecated
-    public static PermissionHelper permission(@NonNull final String[] permissions) {
-        return builder().addPermission(permissions);
+    public static PermissionHelper builder(Activity activity) {
+        return new PermissionHelper(activity);
     }
+
 
     @Deprecated
     public PermissionHelper addReasons(@NonNull final String... reasons) {
@@ -126,10 +122,14 @@ public class PermissionHelper {
         return this;
     }
 
-    private PermissionHelper() {
+    private PermissionHelper(Activity activity) {
+        mActivity = activity;
+        mGson = new GsonBuilder().create();
+        preferences = activity.getSharedPreferences("permission_record", Context.MODE_PRIVATE);
         requestPermissions = new ArrayList<>();
         requestReasons = new HashMap<>();
         permissionRecords = getPermissionRequestRecords();
+
     }
 
 
@@ -307,9 +307,9 @@ public class PermissionHelper {
      * key:权限名称
      * value:时间戳 毫秒
      */
-    private static HashMap<String, Long> getPermissionRequestRecords() {
-        String json = SPStaticUtils.getString(PERMISSION_REQUEST_RECORD);
-        HashMap<String, Long> records = GsonUtils.fromJson(json, TypeToken.getParameterized(HashMap.class, String.class, Long.class).getType());
+    private HashMap<String, Long> getPermissionRequestRecords() {
+        String json = preferences.getString(PERMISSION_REQUEST_RECORD, null);
+        HashMap<String, Long> records = mGson.fromJson(json, TypeToken.getParameterized(HashMap.class, String.class, Long.class).getType());
         if (records == null) {
             records = new HashMap<>();
         }
@@ -322,8 +322,8 @@ public class PermissionHelper {
      * @param scenarioKey
      * @return
      */
-    private static boolean isFirstRequest(String scenarioKey) {
-        return SPStaticUtils.getLong(scenarioKey, 0) == 0;
+    private boolean isFirstRequest(String scenarioKey) {
+        return preferences.getLong(scenarioKey, 0) == 0;
     }
 
     /**
@@ -331,8 +331,8 @@ public class PermissionHelper {
      *
      * @param scenarioKey
      */
-    private static void setRequestTime(String scenarioKey) {
-        SPStaticUtils.put(scenarioKey, System.currentTimeMillis());
+    private void setRequestTime(String scenarioKey) {
+        preferences.edit().putLong(scenarioKey, System.currentTimeMillis()).apply();
     }
 
     /**
@@ -340,17 +340,17 @@ public class PermissionHelper {
      *
      * @param permission
      */
-    private static void addRequestedPermission(String... permission) {
+    private void addRequestedPermission(String... permission) {
         if (permission == null || permission.length == 0) return;
-        String json = SPStaticUtils.getString(PERMISSION_REQUEST_RECORD);
-        HashMap<String, Long> records = GsonUtils.fromJson(json, TypeToken.getParameterized(HashMap.class, String.class, Long.class).getType());
+        String json = preferences.getString(PERMISSION_REQUEST_RECORD, null);
+        HashMap<String, Long> records = mGson.fromJson(json, TypeToken.getParameterized(HashMap.class, String.class, Long.class).getType());
         if (records == null) {
             records = new HashMap<>();
         }
         for (String s : permission) {
             records.put(s, System.currentTimeMillis());
         }
-        SPStaticUtils.put(PERMISSION_REQUEST_RECORD, GsonUtils.toJson(records));
+        preferences.edit().putString(PERMISSION_REQUEST_RECORD, mGson.toJson(records)).apply();
     }
 
     public void request() {
@@ -417,7 +417,7 @@ public class PermissionHelper {
                     QueueSubscription<String> subscription;
                     ReasonSimpleDialog simpleDialog;
                     ReasonSelectDialog selectDialog;
-                    final Activity currentActivity = ActivityUtils.getTopActivity();
+                    final Activity currentActivity = mActivity;
 
                     @Override
                     public void onSubscribe(@NonNull Subscription s) {
@@ -427,7 +427,7 @@ public class PermissionHelper {
 
                     @Override
                     public void onNext(List<String> permissionList) {
-                        LogUtils.dTag("XXX", "onNext~~~~~~~" + permissionList);
+                        Log.d("XXX", "onNext~~~~~~~" + permissionList);
 
                         //添加到权限申请记录到文件
                         if (ignore48H || onlyRequestOnce) {
@@ -509,7 +509,7 @@ public class PermissionHelper {
                     }
 
                     private void performRequestPermission(List<String> permission) {
-                        PermissionUtils.permission(permission.toArray(new String[0])).callback(new PermissionUtils.SimpleCallback() {
+                        PermissionUtils.permission(mActivity, permission.toArray(new String[0])).callback(new PermissionUtils.SimpleCallback() {
                             @Override
                             public void onGranted() {
                                 if (simpleDialog != null) {
@@ -541,14 +541,13 @@ public class PermissionHelper {
 
                     @Override
                     public void onError(Throwable t) {
-                        LogUtils.dTag("XXX", "onError~~~~~~~");
+                        Log.d("XXX", "onError~~~~~~~");
 
                     }
 
                     @Override
                     public void onComplete() {
-                        LogUtils.dTag("XXX", "onComplete~~~~~~~");
-
+                        Log.d("XXX", "onComplete~~~~~~~");
                     }
                 });
     }
@@ -562,10 +561,10 @@ public class PermissionHelper {
         List<String> granted = new ArrayList<>();
         boolean flag = true;
         for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(Utils.getApp(), permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(mActivity, permission) != PackageManager.PERMISSION_GRANTED) {
                 denied.add(permission);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (!ActivityUtils.getTopActivity().shouldShowRequestPermissionRationale(permission)) {
+                    if (!mActivity.shouldShowRequestPermissionRationale(permission)) {
                         deniedForever.add(permission);
                     }
                 }
@@ -583,18 +582,18 @@ public class PermissionHelper {
                     String scenarioKey = getCurrentScenarioKey();
                     if (isAutoRequest && !isFirstRequest(scenarioKey)) {
                         //当前场景非用户手动触发请求,并且非第一次请求
-                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()));
+                        Toast.makeText(mActivity, MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     setRequestTime(scenarioKey);
                     if (!isShowing) {
-                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", generateGoSettingMsg(), cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
+                        showOpenAppSettingDialog(mActivity, "温馨提示", generateGoSettingMsg(), cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
                     isShowing = true;
                 } else {
                     if (showToast) {
-                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()));
+                        Toast.makeText(mActivity, MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()), Toast.LENGTH_SHORT).show();
                     }
                 }
                 mFullCallback.onDenied(deniedForever, denied, granted);
@@ -608,17 +607,17 @@ public class PermissionHelper {
                 if (goSetting) {
                     if (isAutoRequest && !isFirstRequest(scenarioKey)) {
                         //当前场景非用户手动触发请求,并且非第一次请求
-                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()));
+                        Toast.makeText(mActivity, MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     if (!isShowing) {
-                        showOpenAppSettingDialog(ActivityUtils.getTopActivity(), "温馨提示", generateGoSettingMsg(), cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
+                        showOpenAppSettingDialog(mActivity, "温馨提示", generateGoSettingMsg(), cancelTextColor, confirmTextColor, "取消", "去设置", onGoSettingUIListener);
                     }
                     isShowing = true;
-                }else {
+                } else {
                     if (showToast) {
-                        ToastUtils.showShort(MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()));
+                        Toast.makeText(mActivity, MessageFormat.format("您已拒绝授权我们申请的{0}权限,请到应用设置界面手动开启！", getDeniedPermissionName()), Toast.LENGTH_SHORT).show();
                     }
                 }
                 mSimpleCallback.onDenied();
@@ -634,7 +633,7 @@ public class PermissionHelper {
 
         ArrayList<String> list = new ArrayList<>();
         for (String s : requestPermissions) {
-            boolean flag = !hasPermissions(Utils.getApp(), s);
+            boolean flag = !hasPermissions(mActivity, s);
             if (flag) {
                 String name = getPermissionName(s);
                 if (!list.contains(name)) {
@@ -651,7 +650,7 @@ public class PermissionHelper {
     private String getDeniedPermissionName() {
         ArrayList<String> list = new ArrayList<>();
         for (String s : requestPermissions) {
-            boolean flag = !hasPermissions(Utils.getApp(), s);
+            boolean flag = !hasPermissions(mActivity, s);
             if (flag) {
                 String name = getPermissionName(s);
                 if (!list.contains(name)) {
@@ -866,11 +865,9 @@ public class PermissionHelper {
 
     public static class ReasonSelectDialog extends Dialog {
         private TextView tvReason;
-        private Button btnCancel;
-        private Button btnConfirm;
-        private CharSequence reason;
-        private int cancelTextColor;
-        private int confirmTextColor;
+        private final CharSequence reason;
+        private final int cancelTextColor;
+        private final int confirmTextColor;
         private String cancel;
         private String confirm;
 
@@ -898,8 +895,8 @@ public class PermissionHelper {
             super.onCreate(savedInstanceState);
 
             tvReason = findViewById(R.id.tv_reason);
-            btnCancel = findViewById(R.id.btn_cancel);
-            btnConfirm = findViewById(R.id.btn_confirm);
+            Button btnCancel = findViewById(R.id.btn_cancel);
+            Button btnConfirm = findViewById(R.id.btn_confirm);
             if (!TextUtils.isEmpty(cancel)) {
                 btnCancel.setText(cancel);
             }
@@ -1032,7 +1029,7 @@ public class PermissionHelper {
 
             @Override
             public void onConfirm() {
-                PermissionUtils.launchAppDetailsSettings();
+                PermissionUtils.launchAppDetailsSettings(context);
                 if (onGoSettingUIListener != null) {
                     onGoSettingUIListener.onConfirm();
                 }
