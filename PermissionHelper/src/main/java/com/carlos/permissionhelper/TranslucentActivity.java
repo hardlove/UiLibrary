@@ -10,8 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
-import com.blankj.utilcode.util.UtilsTransActivity;
-
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -31,6 +29,7 @@ public class TranslucentActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        overridePendingTransition(0, 0);
         super.onCreate(savedInstanceState);
         uuid = getIntent().getStringExtra(KEY);
         delegate = CALLBACK_MAP.get(uuid);
@@ -52,6 +51,7 @@ public class TranslucentActivity extends FragmentActivity {
 
     @Override
     protected void onPause() {
+        overridePendingTransition(0, 0);
         super.onPause();
         delegate.onPaused(this);
     }
@@ -96,7 +96,7 @@ public class TranslucentActivity extends FragmentActivity {
     }
 
     public abstract static class TransActivityDelegate {
-        public void onCreateBefore(@NonNull UtilsTransActivity activity, @Nullable Bundle savedInstanceState) {/**/}
+        public void onCreateBefore(@NonNull TranslucentActivity activity, @Nullable Bundle savedInstanceState) {/**/}
 
         public void onCreated(@NonNull TranslucentActivity activity, @Nullable Bundle savedInstanceState) {/**/}
 
