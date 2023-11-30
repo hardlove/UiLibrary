@@ -11,6 +11,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -20,6 +23,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
@@ -67,6 +71,7 @@ public class PermissionHelper {
 
 
     private final static String PERMISSION_REQUEST_RECORD = "PERMISSION_REQUEST_RECORD";
+    private static final long DELAY_TIME = 500;
     private final Activity mActivity;
     private final SharedPreferences preferences;
     private final Gson mGson;
@@ -96,6 +101,65 @@ public class PermissionHelper {
     private boolean useGroupRequest = true;
     private int cancelTextColor;
     private int confirmTextColor;
+    ReasonSimpleDialog simpleDialog;
+    ReasonSelectDialog selectDialog;
+    QueueSubscription<String> subscription;
+    private final Handler mHandler = new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+
+            switch (msg.what) {
+                case 1:
+                    if (selectDialog != null && selectDialog.isShowing()) {
+                        selectDialog.dismiss();
+                        selectDialog = null;
+                    }
+                    Pair<String,List<String>> pair = (Pair<String, List<String>>) msg.obj;
+                    selectDialog = showReasonSelectDialog(mActivity, pair.first, cancelTextColor, confirmTextColor);
+                    selectDialog.setOnDialogClickListener(new ReasonSelectDialog.OnDialogClickListener() {
+                        @Override
+                        public void onCancel() {
+                            if (selectDialog != null && selectDialog.isShowing()) {
+                                selectDialog.dismiss();
+                            }
+                            selectDialog = null;
+
+                            //下一个
+                            if (subscription.isEmpty()) {
+                                checkPermissionResult(requestPermissions);
+                            } else {
+                                subscription.request(1);
+                            }
+                        }
+
+                        @Override
+                        public void onConfirm() {
+                            if (selectDialog != null && selectDialog.isShowing()) {
+                                selectDialog.dismiss();
+                            }
+                            selectDialog = null;
+
+                            performRequestPermission(pair.second);
+                        }
+                    });
+                    break;
+                case 2:
+                    if (simpleDialog == null) {
+                        simpleDialog = showReasonSimpleDialog(mActivity, (String) msg.obj);
+                    } else {
+                        simpleDialog.updateReason((String) msg.obj);
+                    }
+                    simpleDialog.hide();
+                    simpleDialog.tvReason.postDelayed(() -> {
+                        if (simpleDialog != null) {
+                            simpleDialog.show();
+                        }
+                    }, 500);
+                    break;
+            }
+        }
+    };
 
 
     public static PermissionHelper builder() {
@@ -414,10 +478,8 @@ public class PermissionHelper {
                         return permission;
                     }
                 }).flatMap((Function<GroupedFlowable<String, String>, Publisher<List<String>>>) groupedFlowable -> groupedFlowable.toList().toFlowable()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new FlowableSubscriber<List<String>>() {
-                    QueueSubscription<String> subscription;
-                    ReasonSimpleDialog simpleDialog;
-                    ReasonSelectDialog selectDialog;
-                    final Activity currentActivity = mActivity;
+
+
 
                     @Override
                     public void onSubscribe(@NonNull Subscription s) {
@@ -443,38 +505,11 @@ public class PermissionHelper {
                             if (requestReasons != null) {
                                 String reason = requestReasons.get(permissionList.get(0));
                                 if (!TextUtils.isEmpty(reason)) {
-                                    if (selectDialog != null && selectDialog.isShowing()) {
-                                        selectDialog.dismiss();
-                                        selectDialog = null;
-                                    }
-                                    selectDialog = showReasonSelectDialog(currentActivity, reason, cancelTextColor, confirmTextColor);
-                                    selectDialog.setOnDialogClickListener(new ReasonSelectDialog.OnDialogClickListener() {
-                                        @Override
-                                        public void onCancel() {
-                                            if (selectDialog != null && selectDialog.isShowing()) {
-                                                selectDialog.dismiss();
-                                            }
-                                            selectDialog = null;
-
-                                            //下一个
-                                            if (subscription.isEmpty()) {
-                                                checkPermissionResult(requestPermissions);
-                                            } else {
-                                                subscription.request(1);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onConfirm() {
-                                            if (selectDialog != null && selectDialog.isShowing()) {
-                                                selectDialog.dismiss();
-                                            }
-                                            selectDialog = null;
-
-                                            performRequestPermission(permissionList);
-                                        }
-                                    });
-
+                                    Message msg = Message.obtain();
+                                    msg.what = 1;
+                                    msg.obj = new Pair<>(reason, permissionList);
+                                    mHandler.removeCallbacksAndMessages(null);
+                                    mHandler.sendMessageDelayed(msg, DELAY_TIME);
 
                                 } else {
                                     performRequestPermission(permissionList);
@@ -487,17 +522,13 @@ public class PermissionHelper {
                             if (requestReasons != null) {
                                 String reason = requestReasons.get(permissionList.get(0));
                                 if (!TextUtils.isEmpty(reason)) {
-                                    if (simpleDialog == null) {
-                                        simpleDialog = showReasonSimpleDialog(currentActivity, reason);
-                                    } else {
-                                        simpleDialog.updateReason(reason);
-                                    }
-                                    simpleDialog.hide();
-                                    simpleDialog.tvReason.postDelayed(() -> {
-                                        if (simpleDialog != null) {
-                                            simpleDialog.show();
-                                        }
-                                    }, 500);
+                                    Message msg = Message.obtain();
+                                    msg.what = 2;
+                                    msg.obj = reason;
+                                    mHandler.removeCallbacksAndMessages(null);
+                                    mHandler.sendMessageDelayed(msg, DELAY_TIME);
+
+
                                 }
                             }
 
@@ -508,36 +539,7 @@ public class PermissionHelper {
 
                     }
 
-                    private void performRequestPermission(List<String> permission) {
-                        XPermission.permission(mActivity, permission.toArray(new String[0])).callback(new XPermission.SimpleCallback() {
-                            @Override
-                            public void onGranted() {
-                                if (simpleDialog != null) {
-                                    simpleDialog.dismiss();
-                                    simpleDialog = null;
-                                }
-                                if (subscription.isEmpty()) {
-                                    checkPermissionResult(requestPermissions);
-                                } else {
-                                    subscription.request(1);
-                                }
 
-                            }
-
-                            @Override
-                            public void onDenied() {
-                                if (simpleDialog != null) {
-                                    simpleDialog.dismiss();
-                                    simpleDialog = null;
-                                }
-                                if (subscription.isEmpty()) {
-                                    checkPermissionResult(requestPermissions);
-                                } else {
-                                    subscription.request(1);
-                                }
-                            }
-                        }).request();
-                    }
 
                     @Override
                     public void onError(Throwable t) {
@@ -551,10 +553,41 @@ public class PermissionHelper {
                     }
                 });
     }
+    private void performRequestPermission(List<String> permission) {
+        XPermission.permission(mActivity, permission.toArray(new String[0])).callback(new XPermission.SimpleCallback() {
+            @Override
+            public void onGranted() {
+                if (simpleDialog != null) {
+                    simpleDialog.dismiss();
+                    simpleDialog = null;
+                }
+                if (subscription.isEmpty()) {
+                    checkPermissionResult(requestPermissions);
+                } else {
+                    subscription.request(1);
+                }
 
+            }
+
+            @Override
+            public void onDenied() {
+                if (simpleDialog != null) {
+                    simpleDialog.dismiss();
+                    simpleDialog = null;
+                }
+                if (subscription.isEmpty()) {
+                    checkPermissionResult(requestPermissions);
+                } else {
+                    subscription.request(1);
+                }
+            }
+        }).request();
+    }
     boolean isShowing = false;
 
     private void checkPermissionResult(List<String> permissions) {
+        mHandler.removeCallbacksAndMessages(null);
+
         //申请的权限48小时内已经全部申请过
         List<String> deniedForever = new ArrayList<>();
         List<String> denied = new ArrayList<>();
