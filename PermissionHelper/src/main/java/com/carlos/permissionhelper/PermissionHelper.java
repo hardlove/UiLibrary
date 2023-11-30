@@ -99,7 +99,7 @@ public class PermissionHelper {
 
 
     public static PermissionHelper builder() {
-        return new PermissionHelper(InitProvider.getCurrentActivity());
+        return new PermissionHelper(InitProvider.getTopActivity());
     }
 
     public static PermissionHelper builder(Activity activity) {
@@ -509,7 +509,7 @@ public class PermissionHelper {
                     }
 
                     private void performRequestPermission(List<String> permission) {
-                        PermissionUtils.permission(mActivity, permission.toArray(new String[0])).callback(new PermissionUtils.SimpleCallback() {
+                        XPermission.permission(mActivity, permission.toArray(new String[0])).callback(new XPermission.SimpleCallback() {
                             @Override
                             public void onGranted() {
                                 if (simpleDialog != null) {
@@ -763,7 +763,7 @@ public class PermissionHelper {
      * Set the simple call back.
      *
      * @param callback the simple call back
-     * @return the single {@link PermissionUtils} instance
+     * @return the single {@link XPermission} instance
      */
     public PermissionHelper callback(final SimpleCallback callback) {
         mSimpleCallback = callback;
@@ -774,7 +774,7 @@ public class PermissionHelper {
      * Set the full call back.
      *
      * @param callback the full call back
-     * @return the single {@link PermissionUtils} instance
+     * @return the single {@link XPermission} instance
      */
     public PermissionHelper callback(final FullCallback callback) {
         mFullCallback = callback;
@@ -1029,7 +1029,7 @@ public class PermissionHelper {
 
             @Override
             public void onConfirm() {
-                PermissionUtils.launchAppDetailsSettings(context);
+                XPermission.launchAppDetailsSettings(context);
                 if (onGoSettingUIListener != null) {
                     onGoSettingUIListener.onConfirm();
                 }

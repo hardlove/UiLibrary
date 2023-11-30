@@ -1,4 +1,4 @@
-package com.hongwen.hongutils.context;
+package com.hongwen.hongutils.provider;
 
 import android.app.Activity;
 import android.app.Application;
@@ -16,27 +16,26 @@ import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 public class InitProvider extends ContentProvider {
-    private static Application context;
-    private static WeakReference<Activity> currentActivity;
+    private static Application sContext;
+    private static WeakReference<Activity> sTopActivity;
 
 
     public static Context getApplicationContext() {
-        return context;
+        return sContext;
     }
 
-    public static Activity getCurrentActivity() {
-        return currentActivity.get();
+    public static Activity getTopActivity() {
+        return sTopActivity.get();
     }
-
 
     @Override
     public boolean onCreate() {
-        context = (Application) Objects.requireNonNull(getContext()).getApplicationContext();
+        sContext = (Application) Objects.requireNonNull(getContext()).getApplicationContext();
 
-        context.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+        sContext.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+                sTopActivity = new WeakReference<>(activity);
             }
 
             @Override
@@ -46,7 +45,7 @@ public class InitProvider extends ContentProvider {
 
             @Override
             public void onActivityResumed(Activity activity) {
-                currentActivity = new WeakReference<>(activity);
+
             }
 
             @Override

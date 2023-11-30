@@ -24,7 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class PermissionUtils {
+public class XPermission {
     private static final String TAG = "PermissionUtils";
     private final Context mContext;
     /*用户申请的权限*/
@@ -37,13 +37,13 @@ public class PermissionUtils {
     private List<String> mPermissionsDenied;
     private List<String> mPermissionsDeniedForever;
 
-    private PermissionUtils(Activity activity,String[] permissions) {
+    private XPermission(Activity activity, String[] permissions) {
         this.mPermissionsParam = permissions;
         mContext = activity;
     }
 
-    public static PermissionUtils permission(Activity activity,final String... permissions) {
-        return new PermissionUtils(activity,permissions);
+    public static XPermission permission(Activity activity, final String... permissions) {
+        return new XPermission(activity,permissions);
     }
 
     public static void launchAppDetailsSettings(Context context) {
@@ -53,7 +53,7 @@ public class PermissionUtils {
         context.startActivity(intent);
     }
 
-    public PermissionUtils callback(final SimpleCallback callback) {
+    public XPermission callback(final SimpleCallback callback) {
         mSimpleCallback = callback;
         return this;
     }

@@ -10,7 +10,7 @@
 
     <application>
         <provider
-            android:name="com.hongwen.hongutils.context.InitProvider"
+            android:name="com.hongwen.hongutils.provider.InitProvider"
             android:authorities="${applicationId}.hongutils.init" />
     </application>
 </manifest>
