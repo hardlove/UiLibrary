@@ -45,7 +45,7 @@ public class InitProvider extends ContentProvider {
 
             @Override
             public void onActivityResumed(Activity activity) {
-
+                sTopActivity = new WeakReference<>(activity);
             }
 
             @Override
