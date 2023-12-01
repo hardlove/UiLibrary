@@ -60,7 +60,7 @@ public class PermissionHelper {
 
 
     private final static String PERMISSION_REQUEST_RECORD = "PERMISSION_REQUEST_RECORD";
-    private static final long DELAY_TIME = 100;
+    private static final long DELAY_TIME = 500;
     private final Activity mActivity;
     private final SharedPreferences preferences;
     private final Gson mGson;
