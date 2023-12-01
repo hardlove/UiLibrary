@@ -22,7 +22,6 @@ import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.Window;
@@ -39,8 +38,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.reactivestreams.Subscription;
-
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -51,12 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import io.reactivex.Flowable;
-import io.reactivex.FlowableSubscriber;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.internal.fuseable.QueueSubscription;
-import io.reactivex.schedulers.Schedulers;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class PermissionHelper {
     private static final String[] GROUP_CALENDAR = new String[]{"android.permission.READ_CALENDAR", "android.permission.WRITE_CALENDAR"};
@@ -95,9 +87,9 @@ public class PermissionHelper {
 
     private int cancelTextColor;
     private int confirmTextColor;
-    ReasonSimpleDialog simpleDialog;
-    ReasonSelectDialog selectDialog;
-    QueueSubscription<String> subscription;
+    private ReasonSimpleDialog simpleDialog;
+    private ReasonSelectDialog selectDialog;
+    private final LinkedBlockingQueue<String> blockingQueue = new LinkedBlockingQueue<>();
     boolean isShowing = false;
 
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -122,10 +114,10 @@ public class PermissionHelper {
                             selectDialog = null;
 
                             //下一个
-                            if (subscription.isEmpty()) {
+                            if (blockingQueue.isEmpty()) {
                                 checkPermissionResult(requestPermissions);
                             } else {
-                                subscription.request(1);
+                                mHandler.sendEmptyMessage(3);
                             }
                         }
 
@@ -141,17 +133,16 @@ public class PermissionHelper {
                     });
                     break;
                 case 2:
-                    if (simpleDialog == null) {
-                        simpleDialog = showReasonSimpleDialog(mActivity, (String) msg.obj);
-                    } else {
-                        simpleDialog.updateReason((String) msg.obj);
+                    if (simpleDialog != null && simpleDialog.isShowing()) {
+                        simpleDialog.dismiss();
+                        simpleDialog = null;
                     }
-                    simpleDialog.hide();
-                    simpleDialog.tvReason.postDelayed(() -> {
-                        if (simpleDialog != null) {
-                            simpleDialog.show();
-                        }
-                    }, 500);
+                    simpleDialog = showReasonSimpleDialog(mActivity, (String) msg.obj);
+
+                    break;
+
+                case 3:
+                    checkNext();
                     break;
             }
         }
@@ -440,87 +431,65 @@ public class PermissionHelper {
             o1.removeAll(o2);
         }
 
-        String[] temp = o1.toArray(new String[0]);
-
-
-        if (temp.length == 0) {
+        if (o1.isEmpty()) {
             checkPermissionResult(requestPermissions);
             return;
         }
+        blockingQueue.addAll(o1);
+        mHandler.sendEmptyMessage(3);
+    }
 
-        Flowable.fromArray(temp)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FlowableSubscriber<String>() {
-                    @Override
-                    public void onSubscribe(@NonNull Subscription s) {
-                        subscription = (QueueSubscription<String>) s;
-                        subscription.request(1);
-                    }
-
-                    @Override
-                    public void onNext(String permission) {
-                        Log.d("XXX", "onNext~~~~~~~" + permission);
-
-                        //添加到权限申请记录到文件
-                        if (ignore48H || onlyRequestOnce) {
-                            addRequestedPermission(permission);
-                        }
-                        //添加到权限申请记录到内存
-                        permissionRecords.put(permission, System.currentTimeMillis());
+    private void checkNext() {
+        if (!blockingQueue.isEmpty()) {
+            String peek = blockingQueue.remove();
+            handlePermissionRequest(peek);
+        }
 
 
-                        if (isSplit) {
-                            //分离式请求
-                            if (requestReasons != null) {
-                                String reason = requestReasons.get(permission);
-                                if (!TextUtils.isEmpty(reason)) {
-                                    Message msg = Message.obtain();
-                                    msg.what = 1;
-                                    msg.obj = new Pair<>(permission, reason);
-                                    mHandler.removeCallbacksAndMessages(null);
-                                    mHandler.sendMessageDelayed(msg, DELAY_TIME);
+    }
 
-                                } else {
-                                    performRequestPermission(permission);
-                                }
-                            } else {
-                                performRequestPermission(permission);
-                            }
-                        } else {
-                            //非分离式请求
-                            if (requestReasons != null) {
-                                String reason = requestReasons.get(permission);
-                                if (!TextUtils.isEmpty(reason)) {
-                                    Message msg = Message.obtain();
-                                    msg.what = 2;
-                                    msg.obj = reason;
-                                    mHandler.removeCallbacksAndMessages(null);
-                                    mHandler.sendMessageDelayed(msg, DELAY_TIME);
+    private void handlePermissionRequest(String permission) {
+        //添加到权限申请记录到文件
+        if (ignore48H || onlyRequestOnce) {
+            addRequestedPermission(permission);
+        }
+        //添加到权限申请记录到内存
+        permissionRecords.put(permission, System.currentTimeMillis());
 
 
-                                }
-                            }
+        if (isSplit) {
+            //分离式请求
+            if (requestReasons != null) {
+                String reason = requestReasons.get(permission);
+                if (!TextUtils.isEmpty(reason)) {
+                    Message msg = Message.obtain();
+                    msg.what = 1;
+                    msg.obj = new Pair<>(permission, reason);
+                    mHandler.removeCallbacksAndMessages(null);
+                    mHandler.sendMessageDelayed(msg, DELAY_TIME);
+
+                } else {
+                    performRequestPermission(permission);
+                }
+            } else {
+                performRequestPermission(permission);
+            }
+        } else {
+            //非分离式请求
+            if (requestReasons != null) {
+                String reason = requestReasons.get(permission);
+                if (!TextUtils.isEmpty(reason)) {
+                    Message msg = Message.obtain();
+                    msg.what = 2;
+                    msg.obj = reason;
+                    mHandler.removeCallbacksAndMessages(null);
+                    mHandler.sendMessageDelayed(msg, DELAY_TIME);
 
 
-                            performRequestPermission(permission);
-                        }
-
-
-                    }
-
-
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.d("XXX", "onError~~~~~~~");
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d("XXX", "onComplete~~~~~~~");
-                    }
-                });
+                }
+            }
+            performRequestPermission(permission);
+        }
     }
 
     private void performRequestPermission(String permission) {
@@ -531,10 +500,10 @@ public class PermissionHelper {
                     simpleDialog.dismiss();
                     simpleDialog = null;
                 }
-                if (subscription.isEmpty()) {
+                if (blockingQueue.isEmpty()) {
                     checkPermissionResult(requestPermissions);
                 } else {
-                    subscription.request(1);
+                    mHandler.sendEmptyMessage(3);
                 }
 
             }
@@ -545,10 +514,10 @@ public class PermissionHelper {
                     simpleDialog.dismiss();
                     simpleDialog = null;
                 }
-                if (subscription.isEmpty()) {
+                if (blockingQueue.isEmpty()) {
                     checkPermissionResult(requestPermissions);
                 } else {
-                    subscription.request(1);
+                    mHandler.sendEmptyMessage(3);
                 }
             }
         }).request();
