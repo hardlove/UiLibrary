@@ -39,7 +39,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.security.InvalidParameterException;
@@ -56,8 +55,6 @@ import java.util.UUID;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.flowables.GroupedFlowable;
-import io.reactivex.functions.Function;
 import io.reactivex.internal.fuseable.QueueSubscription;
 import io.reactivex.schedulers.Schedulers;
 
@@ -95,16 +92,15 @@ public class PermissionHelper {
      */
     private final List<String> requestPermissions;
     private HashMap<String, String> requestReasons;
-    /**
-     * 分组申请
-     */
-    private boolean useGroupRequest = true;
+
     private int cancelTextColor;
     private int confirmTextColor;
     ReasonSimpleDialog simpleDialog;
     ReasonSelectDialog selectDialog;
     QueueSubscription<String> subscription;
-    private final Handler mHandler = new Handler(Looper.getMainLooper()){
+    boolean isShowing = false;
+
+    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
@@ -115,8 +111,8 @@ public class PermissionHelper {
                         selectDialog.dismiss();
                         selectDialog = null;
                     }
-                    Pair<String,List<String>> pair = (Pair<String, List<String>>) msg.obj;
-                    selectDialog = showReasonSelectDialog(mActivity, pair.first, cancelTextColor, confirmTextColor);
+                    Pair<String, String> pair = (Pair<String, String>) msg.obj;
+                    selectDialog = showReasonSelectDialog(mActivity, pair.second, cancelTextColor, confirmTextColor);
                     selectDialog.setOnDialogClickListener(new ReasonSelectDialog.OnDialogClickListener() {
                         @Override
                         public void onCancel() {
@@ -140,7 +136,7 @@ public class PermissionHelper {
                             }
                             selectDialog = null;
 
-                            performRequestPermission(pair.second);
+                            performRequestPermission(pair.first);
                         }
                     });
                     break;
@@ -321,16 +317,6 @@ public class PermissionHelper {
         return this;
     }
 
-    /**
-     * 禁止分组申请，即按单个权限申请
-     *
-     * @param disable
-     * @return
-     */
-    public PermissionHelper disableGroupRequest(boolean disable) {
-        this.useGroupRequest = !disable;
-        return this;
-    }
 
     /**
      * 设置是否是分离式请求
@@ -463,24 +449,9 @@ public class PermissionHelper {
         }
 
         Flowable.fromArray(temp)
-                // TODO: 2022/5/28 分组后再请求权限:同一group类的permission是否已有被拒绝的，如果有则不再申请该group类的权限
-                .groupBy(permission -> {
-                    if (useGroupRequest) {
-                        // TODO: 2022/5/28 将权限分组
-                        try {
-                            String[] spl = permission.split("_");
-                            String key = spl[spl.length - 1];
-                            return key;
-                        } catch (Exception e) {
-                            return permission;
-                        }
-                    } else {
-                        return permission;
-                    }
-                }).flatMap((Function<GroupedFlowable<String, String>, Publisher<List<String>>>) groupedFlowable -> groupedFlowable.toList().toFlowable()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new FlowableSubscriber<List<String>>() {
-
-
-
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FlowableSubscriber<String>() {
                     @Override
                     public void onSubscribe(@NonNull Subscription s) {
                         subscription = (QueueSubscription) s;
@@ -488,39 +459,38 @@ public class PermissionHelper {
                     }
 
                     @Override
-                    public void onNext(List<String> permissionList) {
-                        Log.d("XXX", "onNext~~~~~~~" + permissionList);
+                    public void onNext(String permission) {
+                        Log.d("XXX", "onNext~~~~~~~" + permission);
 
                         //添加到权限申请记录到文件
                         if (ignore48H || onlyRequestOnce) {
-                            addRequestedPermission(permissionList.toArray(new String[0]));
+                            addRequestedPermission(permission);
                         }
                         //添加到权限申请记录到内存
-                        for (String s : permissionList) {
-                            permissionRecords.put(s, System.currentTimeMillis());
-                        }
+                        permissionRecords.put(permission, System.currentTimeMillis());
+
 
                         if (isSplit) {
                             //分离式请求
                             if (requestReasons != null) {
-                                String reason = requestReasons.get(permissionList.get(0));
+                                String reason = requestReasons.get(permission);
                                 if (!TextUtils.isEmpty(reason)) {
                                     Message msg = Message.obtain();
                                     msg.what = 1;
-                                    msg.obj = new Pair<>(reason, permissionList);
+                                    msg.obj = new Pair<>(permission, reason);
                                     mHandler.removeCallbacksAndMessages(null);
                                     mHandler.sendMessageDelayed(msg, DELAY_TIME);
 
                                 } else {
-                                    performRequestPermission(permissionList);
+                                    performRequestPermission(permission);
                                 }
                             } else {
-                                performRequestPermission(permissionList);
+                                performRequestPermission(permission);
                             }
                         } else {
                             //非分离式请求
                             if (requestReasons != null) {
-                                String reason = requestReasons.get(permissionList.get(0));
+                                String reason = requestReasons.get(permission);
                                 if (!TextUtils.isEmpty(reason)) {
                                     Message msg = Message.obtain();
                                     msg.what = 2;
@@ -533,12 +503,11 @@ public class PermissionHelper {
                             }
 
 
-                            performRequestPermission(permissionList);
+                            performRequestPermission(permission);
                         }
 
 
                     }
-
 
 
                     @Override
@@ -553,8 +522,9 @@ public class PermissionHelper {
                     }
                 });
     }
-    private void performRequestPermission(List<String> permission) {
-        XPermission.permission(mActivity, permission.toArray(new String[0])).callback(new XPermission.SimpleCallback() {
+
+    private void performRequestPermission(String permission) {
+        XPermission.permission(mActivity, permission).callback(new XPermission.SimpleCallback() {
             @Override
             public void onGranted() {
                 if (simpleDialog != null) {
@@ -583,7 +553,7 @@ public class PermissionHelper {
             }
         }).request();
     }
-    boolean isShowing = false;
+
 
     private void checkPermissionResult(List<String> permissions) {
         mHandler.removeCallbacksAndMessages(null);
@@ -1069,23 +1039,6 @@ public class PermissionHelper {
             }
         });
         selectDialog.show();
-
-
-//        new AlertDialog.Builder(context)
-//                .setTitle(title)
-//                .setMessage(content)
-//                .setCancelable(false)
-//                .setNegativeButton("取消", (dialog, which) -> {
-//                    if (onGoSettingUIListener != null) {
-//                        onGoSettingUIListener.onCancel();
-//                    }
-//                })
-//                .setPositiveButton("去设置", (dialog, which) -> {
-//                    PermissionUtils.launchAppDetailsSettings();
-//                    if (onGoSettingUIListener != null) {
-//                        onGoSettingUIListener.onConfirm();
-//                    }
-//                }).show();
     }
 
     public interface OnGoSettingUIListener {
