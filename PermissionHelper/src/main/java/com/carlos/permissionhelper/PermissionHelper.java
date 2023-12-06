@@ -22,6 +22,7 @@ import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.Window;
@@ -60,7 +61,7 @@ public class PermissionHelper {
 
 
     private final static String PERMISSION_REQUEST_RECORD = "PERMISSION_REQUEST_RECORD";
-    private static final long DELAY_TIME = 500;
+    private static final long DELAY_TIME = 200;
     private final Activity mActivity;
     private final SharedPreferences preferences;
     private final Gson mGson;
@@ -99,23 +100,17 @@ public class PermissionHelper {
 
             switch (msg.what) {
                 case 1:
-                    if (selectDialog != null && selectDialog.isShowing()) {
-                        selectDialog.dismiss();
-                        selectDialog = null;
-                    }
+                    closeDialog();
                     Pair<String, String> pair = (Pair<String, String>) msg.obj;
                     selectDialog = showReasonSelectDialog(mActivity, pair.second, cancelTextColor, confirmTextColor);
                     selectDialog.setOnDialogClickListener(new ReasonSelectDialog.OnDialogClickListener() {
                         @Override
                         public void onCancel() {
-                            if (selectDialog != null && selectDialog.isShowing()) {
-                                selectDialog.dismiss();
-                            }
-                            selectDialog = null;
+                            closeDialog();
 
                             //下一个
                             if (blockingQueue.isEmpty()) {
-                                checkPermissionResult(requestPermissions);
+                                mHandler.sendEmptyMessageAtTime(4, DELAY_TIME);
                             } else {
                                 mHandler.sendEmptyMessage(3);
                             }
@@ -123,26 +118,23 @@ public class PermissionHelper {
 
                         @Override
                         public void onConfirm() {
-                            if (selectDialog != null && selectDialog.isShowing()) {
-                                selectDialog.dismiss();
-                            }
-                            selectDialog = null;
+                            closeDialog();
 
                             performRequestPermission(pair.first);
                         }
                     });
                     break;
                 case 2:
-                    if (simpleDialog != null && simpleDialog.isShowing()) {
-                        simpleDialog.dismiss();
-                        simpleDialog = null;
-                    }
+                    closeDialog();
                     simpleDialog = showReasonSimpleDialog(mActivity, (String) msg.obj);
 
                     break;
 
                 case 3:
                     checkNext();
+                    break;
+                case 4:
+                    checkPermissionResult(requestPermissions);
                     break;
             }
         }
@@ -175,6 +167,7 @@ public class PermissionHelper {
 
     private PermissionHelper(Activity activity) {
         mActivity = activity;
+        Log.d("Permission", "PermissionHelper~~~  activity:" + activity + " activity isFinishing :" + (activity.isFinishing() || activity.isDestroyed()));
         mGson = new GsonBuilder().create();
         preferences = activity.getSharedPreferences("permission_record", Context.MODE_PRIVATE);
         requestPermissions = new ArrayList<>();
@@ -432,7 +425,7 @@ public class PermissionHelper {
         }
 
         if (o1.isEmpty()) {
-            checkPermissionResult(requestPermissions);
+            mHandler.sendEmptyMessageDelayed(4, DELAY_TIME);
             return;
         }
         blockingQueue.addAll(o1);
@@ -465,7 +458,7 @@ public class PermissionHelper {
                     Message msg = Message.obtain();
                     msg.what = 1;
                     msg.obj = new Pair<>(permission, reason);
-                    mHandler.removeCallbacksAndMessages(null);
+
                     mHandler.sendMessageDelayed(msg, DELAY_TIME);
 
                 } else {
@@ -482,7 +475,7 @@ public class PermissionHelper {
                     Message msg = Message.obtain();
                     msg.what = 2;
                     msg.obj = reason;
-                    mHandler.removeCallbacksAndMessages(null);
+
                     mHandler.sendMessageDelayed(msg, DELAY_TIME);
 
 
@@ -496,12 +489,10 @@ public class PermissionHelper {
         XPermission.permission(mActivity, permission).callback(new XPermission.SimpleCallback() {
             @Override
             public void onGranted() {
-                if (simpleDialog != null) {
-                    simpleDialog.dismiss();
-                    simpleDialog = null;
-                }
+                closeDialog();
+                mHandler.removeCallbacksAndMessages(null);
                 if (blockingQueue.isEmpty()) {
-                    checkPermissionResult(requestPermissions);
+                    mHandler.sendEmptyMessageDelayed(4, DELAY_TIME);
                 } else {
                     mHandler.sendEmptyMessage(3);
                 }
@@ -510,12 +501,10 @@ public class PermissionHelper {
 
             @Override
             public void onDenied() {
-                if (simpleDialog != null) {
-                    simpleDialog.dismiss();
-                    simpleDialog = null;
-                }
+                closeDialog();
+                mHandler.removeCallbacksAndMessages(null);
                 if (blockingQueue.isEmpty()) {
-                    checkPermissionResult(requestPermissions);
+                    mHandler.sendEmptyMessageDelayed(4, DELAY_TIME);
                 } else {
                     mHandler.sendEmptyMessage(3);
                 }
@@ -523,9 +512,21 @@ public class PermissionHelper {
         }).request();
     }
 
+    private void closeDialog() {
+        if (simpleDialog != null && simpleDialog.isShowing()) {
+            simpleDialog.dismiss();
+            simpleDialog = null;
+        }
+        if (selectDialog != null && selectDialog.isShowing()) {
+            selectDialog.dismiss();
+            selectDialog = null;
+        }
+    }
+
 
     private void checkPermissionResult(List<String> permissions) {
         mHandler.removeCallbacksAndMessages(null);
+        closeDialog();
 
         //申请的权限48小时内已经全部申请过
         List<String> deniedForever = new ArrayList<>();
@@ -784,7 +785,7 @@ public class PermissionHelper {
 
     public static class ReasonSimpleDialog extends Dialog {
         private TextView tvReason;
-        private String reason;
+        private final String reason;
 
         public ReasonSimpleDialog(@NonNull Context context, String reason) {
             super(context);
@@ -828,6 +829,7 @@ public class PermissionHelper {
     }
 
     public static ReasonSimpleDialog showReasonSimpleDialog(Activity activity, String reason) {
+        Log.d("Permission", "showReasonSimpleDialog~~~  activity:" + activity + " activity isFinishing :" + (activity.isFinishing() || activity.isDestroyed()));
         ReasonSimpleDialog dialog = ReasonSimpleDialog.newInstance(activity, reason);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
