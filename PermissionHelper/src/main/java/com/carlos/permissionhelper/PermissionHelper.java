@@ -52,6 +52,7 @@ import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class PermissionHelper {
+    private static final String TAG = "PermissionHelper";
     private static final String[] GROUP_CALENDAR = new String[]{"android.permission.READ_CALENDAR", "android.permission.WRITE_CALENDAR"};
     private static final String[] GROUP_CONTACTS = new String[]{"android.permission.READ_CONTACTS", "android.permission.WRITE_CONTACTS", "android.permission.GET_ACCOUNTS"};
     private static final String[] GROUP_LOCATION = new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"};
@@ -167,7 +168,7 @@ public class PermissionHelper {
 
     private PermissionHelper(Activity activity) {
         mActivity = activity;
-        Log.d("Permission", "PermissionHelper~~~  activity:" + activity + " activity isFinishing :" + (activity.isFinishing() || activity.isDestroyed()));
+        Log.d(TAG, "PermissionHelper~~~  activity:" + activity + " activity isFinishing :" + (activity.isFinishing() || activity.isDestroyed()));
         mGson = new GsonBuilder().create();
         preferences = activity.getSharedPreferences("permission_record", Context.MODE_PRIVATE);
         requestPermissions = new ArrayList<>();
@@ -442,6 +443,7 @@ public class PermissionHelper {
     }
 
     private void handlePermissionRequest(String permission) {
+        Log.d(TAG, "handlePermissionRequest~~~~~~ " + permission);
         //添加到权限申请记录到文件
         if (ignore48H || onlyRequestOnce) {
             addRequestedPermission(permission);
@@ -478,6 +480,7 @@ public class PermissionHelper {
 
                     mHandler.sendMessageDelayed(msg, DELAY_TIME);
 
+                    Log.d(TAG, "sendMessageDelayed~~~~~~ " + msg.what + "    " + permission);
 
                 }
             }
@@ -486,9 +489,11 @@ public class PermissionHelper {
     }
 
     private void performRequestPermission(String permission) {
+        Log.d(TAG, "performRequestPermission~~~~~~ " + permission);
         XPermission.permission(mActivity, permission).callback(new XPermission.SimpleCallback() {
             @Override
             public void onGranted() {
+                Log.d(TAG, "onGranted~~~~~~ " + permission);
                 closeDialog();
                 mHandler.removeCallbacksAndMessages(null);
                 if (blockingQueue.isEmpty()) {
@@ -501,6 +506,7 @@ public class PermissionHelper {
 
             @Override
             public void onDenied() {
+                Log.d(TAG, "onDenied~~~~~~ " + permission);
                 closeDialog();
                 mHandler.removeCallbacksAndMessages(null);
                 if (blockingQueue.isEmpty()) {
@@ -829,7 +835,7 @@ public class PermissionHelper {
     }
 
     public static ReasonSimpleDialog showReasonSimpleDialog(Activity activity, String reason) {
-        Log.d("Permission", "showReasonSimpleDialog~~~  activity:" + activity + " activity isFinishing :" + (activity.isFinishing() || activity.isDestroyed()));
+        Log.d(TAG, "showReasonSimpleDialog~~~  activity:" + activity + " activity isFinishing :" + (activity.isFinishing() || activity.isDestroyed()));
         ReasonSimpleDialog dialog = ReasonSimpleDialog.newInstance(activity, reason);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
