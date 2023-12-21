@@ -43,6 +43,7 @@ import java.security.InvalidParameterException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1024,4 +1025,32 @@ public class PermissionHelper {
         void onCancel();
     }
 
+
+    /*获取读取媒体库照片访问权限权限*/
+    public static List<String> getMediaStoreImagePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (InitProvider.getApplicationContext().getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.TIRAMISU) {
+                return Collections.singletonList(Manifest.permission.READ_MEDIA_IMAGES);
+            }
+        }
+        return Arrays.asList(Manifest.permission.READ_EXTERNAL_STORAGE/*, Manifest.permission.WRITE_EXTERNAL_STORAGE*/);
+    }
+    /*获取读取媒体库视频访问权限权限*/
+    public static List<String> getMediaStoreVideoPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (InitProvider.getApplicationContext().getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.TIRAMISU) {
+                return Collections.singletonList(Manifest.permission.READ_MEDIA_VIDEO);
+            }
+        }
+        return Arrays.asList(Manifest.permission.READ_EXTERNAL_STORAGE/*, Manifest.permission.WRITE_EXTERNAL_STORAGE*/);
+    }
+    /*获取读取媒体库语音访问权限权限*/
+    public static List<String> getMediaStoreAudioPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (InitProvider.getApplicationContext().getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.TIRAMISU) {
+                return Collections.singletonList(Manifest.permission.READ_MEDIA_AUDIO);
+            }
+        }
+        return Arrays.asList(Manifest.permission.READ_EXTERNAL_STORAGE/*, Manifest.permission.WRITE_EXTERNAL_STORAGE*/);
+    }
 }
