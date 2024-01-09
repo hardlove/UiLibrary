@@ -61,5 +61,9 @@
         <item name="cpOverlayTextSize">@dimen/cp_overlay_text_size</item>
         <item name="cpOverlayTextColor">@android:color/white</item>
         <item name="cpOverlayBackground">@drawable/cp_overlay_bg</item>
+
+        <item name="cpToolBarBackgroundColor">@android:color/transparent</item>
+        <item name="cpToolBarTextColor">@android:color/black</item>
+        <item name="cpToolBarIconColor">@android:color/black</item>
     </style>
 </resources>

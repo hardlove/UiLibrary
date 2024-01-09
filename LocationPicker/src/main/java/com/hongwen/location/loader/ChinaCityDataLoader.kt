@@ -23,10 +23,14 @@ class ChinaCityDataLoader(var context: Context) : OnPickerListener.IModelLoader<
     override fun getHotItems(): List<Location> {
         val items = arrayListOf<Location>()
         items.add(Location("北京", "北京", null, null))
-        items.add(Location("北京", "北京", null, null))
-        items.add(Location("北京", "北京", null, null))
-        items.add(Location("北京", "北京", null, null))
-        items.add(Location("北京", "北京", null, null))
+        items.add(Location("上海", "上海", null, null))
+        items.add(Location("广州", "广东", null, null))
+        items.add(Location("成都", "四川", null, null))
+        items.add(Location("重庆", "重庆", null, null))
+        items.add(Location("杭州", "浙江", null, null))
+        items.add(Location("厦门", "福建", null, null))
+        items.add(Location("深圳", "广东", null, null))
+        items.add(Location("三亚", "海南", null, null))
         return items
     }
 

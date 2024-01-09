@@ -8,12 +8,12 @@
     android:theme="@style/Theme.UiLibrary.LocationPicker.Style">
 
     <com.hardlove.library.view.CToolBar
-        app:c_bar_background="#FF0000"
+        app:c_bar_background="?attr/cpToolBarBackgroundColor"
         android:id="@+id/cToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:c_bar_icon_color="@color/white"
-        app:c_bar_text_color="@color/white"
+        app:c_bar_icon_color="?attr/cpToolBarIconColor"
+        app:c_bar_text_color="?attr/cpToolBarTextColor"
         app:c_center_tv_text="车站选择"
         app:c_show_search_layout="false" />
 
