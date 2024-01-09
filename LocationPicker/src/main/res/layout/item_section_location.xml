@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:drawableStart="@mipmap/icon_csdei"
         android:drawablePadding="5dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:text="成都市"
         android:textColor="@color/black"
         android:textSize="14sp" />

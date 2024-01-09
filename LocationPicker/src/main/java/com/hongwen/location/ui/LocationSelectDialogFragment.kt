@@ -46,6 +46,7 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
     private lateinit var adapter: LocationSelectAdapter
     private val allItems: MutableList<IModel> = mutableListOf()
 
+    private var hintText: String? = null
     private var autoLocate: Boolean = false
     private var onShowListener: OnPickerListener.OnShowListener? = null
     private var onDismissListener: OnPickerListener.OnDismissListener? = null
@@ -54,6 +55,10 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
     private var onItemClickListener: OnPickerListener.OnItemClickListener<IModel>? = null
     private lateinit var iModelLoader: OnPickerListener.IModelLoader<IModel>
 
+
+    fun setSearchHintText(hint: String) {
+        this.hintText = hint
+    }
 
     fun setAutoLocate(autoLocate: Boolean) {
         this.autoLocate = autoLocate
@@ -98,6 +103,7 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
         iniRecyclerView()
         initListener()
 
+        binding.searchLl.setHintText(hintText ?: "")
 
     }
 
