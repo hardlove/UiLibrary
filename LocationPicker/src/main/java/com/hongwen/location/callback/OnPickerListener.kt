@@ -100,3 +100,12 @@ fun LocationPicker.setOnItemClickListener(onItemClick: (IModel) -> Unit): Locati
     })
     return this
 }
+
+fun LocationPicker.setOnLocateListener(onLocate: (callback: OnPickerListener.OnLocationStateChangeListener) -> Unit): LocationPicker {
+    setOnLocateListener(object : OnPickerListener.OnLocateListener {
+        override fun onLocate(callback: OnPickerListener.OnLocationStateChangeListener) {
+            onLocate.invoke(callback)
+        }
+    })
+    return this
+}

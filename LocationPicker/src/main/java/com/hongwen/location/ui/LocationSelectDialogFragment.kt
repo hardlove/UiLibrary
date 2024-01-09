@@ -7,15 +7,16 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.*
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -78,12 +79,13 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
         this.onItemClickListener = onItemClickListener
     }
 
+
     fun setIModelLoader(iModelLoader: OnPickerListener.IModelLoader<IModel>) {
         this.iModelLoader = iModelLoader
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)// 隐藏标题栏（如果有）
         binding = FragmentLocationSelectBinding.inflate(inflater, container, false)
@@ -162,13 +164,11 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
                 "Carlos",
                 "systemBarsInsets.bottom:" + systemBarsInsets.bottom + "  rect:" + systemBarsInsets
             )
-            WindowInsetsCompat.Builder(insets)
-                .setInsets(
-                    WindowInsetsCompat.Type.systemBars(),
-                    // android:fitsSystemWindows="true" 可自动为根布局添加导航栏高度的paddingBottom,避免被导航栏覆盖
-                    Insets.of(0, 0, 0, systemBarsInsets.bottom)
-                )
-                .build()
+            WindowInsetsCompat.Builder(insets).setInsets(
+                WindowInsetsCompat.Type.systemBars(),
+                // android:fitsSystemWindows="true" 可自动为根布局添加导航栏高度的paddingBottom,避免被导航栏覆盖
+                Insets.of(0, 0, 0, systemBarsInsets.bottom)
+            ).build()
         }
     }
 
@@ -227,10 +227,13 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
                 val locateState: LocateState
                 val lastLocation = findLastLocated()
 
-                if (lastLocation == null) {
+                if (lastLocation == null || lastLocation.name.isBlank()) {
                     if (autoLocate) {
                         locateState = LocateState.LOCATING
                         allItems.add(0, LocatedLocation("正在定位"))
+
+                        onLocateListener?.onLocate(adapter)
+
                     } else {
                         locateState = LocateState.INIT
                         allItems.add(0, LocatedLocation("点击定位"))
@@ -271,8 +274,8 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
     }
 
     private fun findLastLocated(): LocatedLocation? {
-        return null
-
+        val location = preferences.getString("last_location", null)
+        return location?.let { LocatedLocation(it) }
     }
 
     private fun initListener() {
@@ -316,8 +319,32 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
     }
 
     override fun onLocate(callback: OnPickerListener.OnLocationStateChangeListener) {
-        onLocateListener?.onLocate(callback)
+        //代理
+        val listener = object : OnPickerListener.OnLocationStateChangeListener {
+            override fun onSuccess(locate: LocatedLocation) {
+                callback.onSuccess(locate)
+
+                saveLastLocation(locate)
+            }
+
+            override fun onFailed(msg: String) {
+                callback.onFailed(msg)
+            }
+
+        }
+        onLocateListener?.onLocate(listener)
     }
 
 
+    private val preferences by lazy {
+        requireContext().getSharedPreferences(
+            "location_picker_preferences", Context.MODE_PRIVATE
+        )
+    }
+
+    private fun saveLastLocation(locate: LocatedLocation) {
+        preferences.edit().apply {
+            putString("last_location", locate.name)
+        }.apply()
+    }
 }

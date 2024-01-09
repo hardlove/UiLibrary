@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class LocatedLocation implements IModel, Serializable {
     private final String name;
 
-    public LocatedLocation(String name) {
+    public LocatedLocation(@NonNull String name) {
         this.name = name;
     }
 
