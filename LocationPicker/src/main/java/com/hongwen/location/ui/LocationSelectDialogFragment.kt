@@ -56,7 +56,7 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
     private lateinit var iModelLoader: OnPickerListener.IModelLoader<IModel>
 
 
-    fun setSearchHintText(hint: String) {
+    fun setSearchHintText(hint: String?) {
         this.hintText = hint
     }
 

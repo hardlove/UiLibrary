@@ -17,6 +17,7 @@ import java.security.InvalidParameterException
  */
 class LocationPicker private constructor() {
     private lateinit var iModelLoader: OnPickerListener.IModelLoader<IModel>
+    private var searchHintText: String? = null
     private var mCancelable: Boolean = true
     private var autoLocate: Boolean = false
     private lateinit var fragmentManager: FragmentManager
@@ -80,6 +81,14 @@ class LocationPicker private constructor() {
         return this
     }
 
+    /**
+     * 搜索框提示词
+     */
+    fun setSearchHintText(searchHintText: String):LocationPicker {
+        this.searchHintText = searchHintText
+        return this
+    }
+
     fun setOnCancelListener(onCancelListener: OnPickerListener.OnCancelListener): LocationPicker {
         this.onCancelListener = onCancelListener
         return this
@@ -100,7 +109,7 @@ class LocationPicker private constructor() {
         return this
     }
 
-    fun setOnLocateListener(onLocateListener: OnPickerListener.OnLocateListener) :LocationPicker{
+    fun setOnLocateListener(onLocateListener: OnPickerListener.OnLocateListener): LocationPicker {
         this.onLocateListener = onLocateListener
         return this
 
@@ -109,7 +118,7 @@ class LocationPicker private constructor() {
     /**
      * 显示
      */
-    fun show(context:Context) {
+    fun show(context: Context) {
         if (!::locationType.isInitialized) {
             throw InvalidParameterException("locationType 未初始化,setLocationType设置数据源类型")
         }
@@ -126,6 +135,7 @@ class LocationPicker private constructor() {
         dialogFragment.apply {
             this.isCancelable = this@LocationPicker.mCancelable
             this.setAutoLocate(this@LocationPicker.autoLocate)
+            this.setSearchHintText(this@LocationPicker.searchHintText)
             this.setOnCancelListener(this@LocationPicker.onCancelListener)
             this.setOnDismissListener(this@LocationPicker.onDismissListener)
             this.setOnShowListener(this@LocationPicker.onShowListener)
