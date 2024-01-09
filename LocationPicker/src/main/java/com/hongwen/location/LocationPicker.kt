@@ -104,6 +104,9 @@ class LocationPicker private constructor() {
      * 显示
      */
     fun show(context:Context) {
+        if (!::locationType.isInitialized) {
+            throw InvalidParameterException("locationType 未初始化,setLocationType设置数据源类型")
+        }
         if (!::iModelLoader.isInitialized) {
             if (locationType == LocationType.ChinaCity) {
                 iModelLoader = ChinaCityDataLoader(context.applicationContext)
