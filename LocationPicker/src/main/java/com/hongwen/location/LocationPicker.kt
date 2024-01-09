@@ -100,6 +100,12 @@ class LocationPicker private constructor() {
         return this
     }
 
+    fun setOnLocateListener(onLocateListener: OnPickerListener.OnLocateListener) :LocationPicker{
+        this.onLocateListener = onLocateListener
+        return this
+
+    }
+
     /**
      * 显示
      */
