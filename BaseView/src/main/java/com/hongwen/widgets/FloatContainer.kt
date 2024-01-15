@@ -137,7 +137,7 @@ class FloatContainer(context: Context) : FrameLayout(context), LifecycleOwner {
                 layoutParams = WindowManager.LayoutParams()
                 layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
                 layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-                layoutParams.format = PixelFormat.TRANSPARENT
+                layoutParams.format = PixelFormat.RGBA_8888
                 layoutParams.flags =
                     WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
