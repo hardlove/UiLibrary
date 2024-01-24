@@ -221,6 +221,10 @@ suspend fun View.saveImageToGallery(displayName: String) {
         GalleryUtils.saveBitmapToGallery(context, convertViewToBitmap(), displayName)
     }
 }
+/**
+ * 将该View转成图片保存到系统图库中
+ * @param displayName 图片在系统图库中显示的名称
+ */
 fun View.saveImageToGallery(displayName: String,scope: CoroutineScope) {
     scope.launch {
         withContext(Dispatchers.IO){
