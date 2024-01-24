@@ -9,7 +9,9 @@ import android.os.Build
 import android.view.View
 import androidx.annotation.ColorInt
 import com.hongwen.hongutils.gallery.GalleryUtils
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
@@ -217,5 +219,12 @@ fun View.convertViewToBitmap(): Bitmap {
 suspend fun View.saveImageToGallery(displayName: String) {
     withContext(Dispatchers.IO) {
         GalleryUtils.saveBitmapToGallery(context, convertViewToBitmap(), displayName)
+    }
+}
+fun View.saveImageToGallery(displayName: String,scope: CoroutineScope) {
+    scope.launch {
+        withContext(Dispatchers.IO){
+            GalleryUtils.saveBitmapToGallery(context, convertViewToBitmap(), displayName)
+        }
     }
 }
