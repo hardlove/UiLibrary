@@ -1,5 +1,6 @@
 package com.hongwen.hongutils.image
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
@@ -7,6 +8,7 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,11 +19,17 @@ import java.net.URL
 
 object BitmapUtils {
     /**
+     *
      * @param context
      * @param bitmap
      * @param storePath 保存图片的目录
      * @return
+     *
      */
+    @Deprecated(
+        "",
+        replaceWith = ReplaceWith("saveBitmapToGallery(context: Context, bitmap: Bitmap, displayName: String)")
+    )
     fun saveImageToGallery(context: Context, bitmap: Bitmap, storePath: String): Boolean {
         val appDir = File(storePath)
         if (!appDir.exists()) {
@@ -30,11 +38,11 @@ object BitmapUtils {
         val fileName = System.currentTimeMillis().toString() + ".png"
         val file = File(appDir, fileName)
         try {
-            val fos = FileOutputStream(file)
-            //通过io流的方式来压缩保存图片
-            val isSuccess = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-            fos.flush()
-            fos.close()
+//            val fos = FileOutputStream(file)
+//            //通过io流的方式来压缩保存图片
+//            val isSuccess = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+//            fos.flush()
+//            fos.close()
             //把文件插入到系统图库
             MediaStore.Images.Media.insertImage(
                 context.contentResolver,
@@ -45,11 +53,37 @@ object BitmapUtils {
             //保存图片后发送广播通知更新数据库
             val uri = Uri.fromFile(file)
             context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
-            return isSuccess
+            return /*isSuccess*/true
         } catch (e: IOException) {
             e.printStackTrace()
         }
         return false
+    }
+
+    fun saveBitmapToGallery(context: Context, bitmap: Bitmap, displayName: String) {
+        // 获取图库的Uri
+        val contentUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+
+        val contentResolver = context.contentResolver
+        // 创建保存图片的元数据
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, displayName)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+        }
+
+        // 向图库插入新图片的元数据，并获取图片的Uri
+        val imageUri = contentResolver.insert(contentUri, contentValues)
+        // 如果成功获取到图片的Uri，则将Bitmap压缩成PNG格式并保存到该Uri指定的路径
+        imageUri?.let { uri ->
+            //打开一个输出流，该流将写入图片数据
+            contentResolver.openOutputStream(uri)?.use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            }
+        }
     }
 
     /**

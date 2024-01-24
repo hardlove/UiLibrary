@@ -1,5 +1,6 @@
 package com.hongwen.hongutils.ext
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -7,6 +8,9 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.View
 import androidx.annotation.ColorInt
+import com.hongwen.hongutils.gallery.GalleryUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -123,7 +127,11 @@ fun View.setRadius(radius: Float) {
  * @param [strokeColor] 颜色
  * @param [backgroundColor] 背景颜色（默认透明）
  */
-fun View.setStroke(strokeWidth: Int, @ColorInt strokeColor: Int, @ColorInt backgroundColor:Int = Color.TRANSPARENT) {
+fun View.setStroke(
+    strokeWidth: Int,
+    @ColorInt strokeColor: Int,
+    @ColorInt backgroundColor: Int = Color.TRANSPARENT,
+) {
     val drawable = GradientDrawable().apply {
         setColor(backgroundColor)
         setStroke(strokeWidth, strokeColor)
@@ -142,7 +150,12 @@ fun View.setStroke(strokeWidth: Int, @ColorInt strokeColor: Int, @ColorInt backg
  * @param [corner] 圆角
  * @param [backgroundColor] 背景颜色（默认透明）
  */
-fun View.setStroke(strokeWidth: Int, @ColorInt strokeColor: Int, corner: Float, @ColorInt backgroundColor:Int = Color.TRANSPARENT) {
+fun View.setStroke(
+    strokeWidth: Int,
+    @ColorInt strokeColor: Int,
+    corner: Float,
+    @ColorInt backgroundColor: Int = Color.TRANSPARENT,
+) {
     val drawable = GradientDrawable().apply {
         setColor(backgroundColor)
         cornerRadius = corner
@@ -162,7 +175,12 @@ fun View.setStroke(strokeWidth: Int, @ColorInt strokeColor: Int, corner: Float, 
  * @param [corner] 圆角
  * @param [backgroundColor] 背景颜色（默认透明）
  */
-fun View.setStroke(strokeWidth: Int, @ColorInt strokeColor: Int, corner: FloatArray, @ColorInt backgroundColor:Int = Color.TRANSPARENT) {
+fun View.setStroke(
+    strokeWidth: Int,
+    @ColorInt strokeColor: Int,
+    corner: FloatArray,
+    @ColorInt backgroundColor: Int = Color.TRANSPARENT,
+) {
     val drawable = GradientDrawable().apply {
         setColor(backgroundColor)
         cornerRadii = corner
@@ -180,14 +198,24 @@ fun View.setStroke(strokeWidth: Int, @ColorInt strokeColor: Int, corner: FloatAr
  */
 fun View.convertViewToBitmap(): Bitmap {
     measure(
-            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
     )
     layout(0, 0, measuredWidth, measuredHeight)
     val bitmap =
-            Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
+        Bitmap.createBitmap(measuredWidth, measuredHeight, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
     draw(canvas)
     canvas.save()
     return bitmap
+}
+
+/**
+ * 将该View转成图片保存到系统图库中
+ * @param displayName 图片在系统图库中显示的名称
+ */
+suspend fun View.saveImageToGallery(displayName: String) {
+    withContext(Dispatchers.IO) {
+        GalleryUtils.saveBitmapToGallery(context, convertViewToBitmap(), displayName)
+    }
 }
