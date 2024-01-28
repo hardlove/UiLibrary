@@ -2,15 +2,32 @@ package com.hongwen.network
 
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.cache
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 
+object ApiServiceImpl :ApiService by ServiceFactory.getService(url = ApiService.URL, clazz = ApiService::class.java) {
 
+}
 fun main(args: Array<String>) {
     runBlocking {
-        val apiService =
-            ServiceFactory.getService(url = ApiService.URL, clazz = ApiService::class.java)
+        val apiService = ApiServiceImpl
+
+        flow { emit(apiService.getAdvList("huawei", "10201", "com.nanjingwx.train")) }
+            .onStart {  }
+            .onEach {  }
+            .onCompletion {  }
+            .catch {
+
+            }
 
         // 1
         apiService.getAdvList("huawei", "10201", "com.nanjingwx.train")
