@@ -19,29 +19,23 @@ object ServiceFactory {
 //            })
             .addNetworkInterceptor { chain ->
                 chain.proceed(chain.request())
-            }
-            .build()
+            }.build()
     }
 
     private val services by lazy { mutableMapOf<String, Any>() }
     private fun createRetrofit(client: OkHttpClient = okHttpClient, url: String): Retrofit {
-        return Retrofit
-            .Builder()
-            .client(client)
-            .baseUrl(url)
+        return Retrofit.Builder().client(client).baseUrl(url)
 //            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+            .addConverterFactory(GsonConverterFactory.create()).build()
     }
 
     private fun <T : Any> getServiceKey(url: String, clazz: Class<T>) =
         "${url}_${clazz.canonicalName}"
 
     @JvmStatic
-    @Suppress("UNCHECKED_CAST")
     fun <T : Any> getService(client: OkHttpClient = okHttpClient, url: String, clazz: Class<T>): T {
         val key = getServiceKey(url, clazz)
-        var service = services[key]
+        @Suppress("UNCHECKED_CAST") var service = services[key] as? T
         if (service == null) {
             service = createRetrofit(client, url).create(clazz).also { services[key] = it }
         }
