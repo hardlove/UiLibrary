@@ -5,14 +5,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import retrofit2.Response
-import kotlin.Result
-
-const val URL = "http://browser.51star.top:8080"
 
 
 fun main(args: Array<String>) {
     runBlocking {
-        val apiService = ServiceFactory.getService(url = URL, clazz = ApiService::class.java)
+        val apiService =
+            ServiceFactory.getService(url = ApiService.URL, clazz = ApiService::class.java)
 
         // 1
         apiService.getAdvList("huawei", "10201", "com.nanjingwx.train")

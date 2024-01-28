@@ -5,6 +5,9 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
+    companion object{
+        const val URL = "http://browser.51star.top:8080"
+    }
     @GET("/LR_WaterMark/AppData/GetAllAdList")
     suspend fun getAdvList(
         @Query("channel") channel: String,
