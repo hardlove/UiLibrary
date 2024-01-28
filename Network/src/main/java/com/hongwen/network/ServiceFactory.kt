@@ -3,6 +3,7 @@ package com.hongwen.network
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 /**
  * ==================================================
@@ -12,8 +13,15 @@ import retrofit2.converter.gson.GsonConverterFactory
  * ==================================================
  **/
 object ServiceFactory {
+    private const val DEFAULT_TIMEOUT = 30000
     private val okHttpClient by lazy {
         OkHttpClient.Builder()
+            .connectTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+            .readTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+            .writeTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.MILLISECONDS)
+            .addNetworkInterceptor { chain ->
+                chain.proceed(chain.request())
+            }
 //            .addInterceptor(HttpLoggingInterceptor().apply {
 //                level = HttpLoggingInterceptor.Level.BODY // 设置日志级别
 //            })
