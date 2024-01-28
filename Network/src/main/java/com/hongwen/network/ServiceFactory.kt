@@ -50,5 +50,15 @@ object ServiceFactory {
         return service as T
     }
 
+    @JvmStatic
+    fun <T : Any> getService(builder: Retrofit.Builder, url: String, clazz: Class<T>): T {
+        val key = getServiceKey(url, clazz)
+        @Suppress("UNCHECKED_CAST") var service = services[key] as? T
+        if (service == null) {
+            service = builder.baseUrl(url).build().create(clazz).also { services[key] = it }
+        }
+        return service as T
+    }
+
 }
 
