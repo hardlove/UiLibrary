@@ -59,7 +59,7 @@ publishing {
             // 使用方引用 implementation "com.github.hardlove.UiLibrary:HongUtils:2.4.42"
             groupId = "com.github.hardlove.UiLibrary"
             artifactId = "HongUtils"
-            version = "2.4.42"
+            version = "2.4.43"
             afterEvaluate {
                 artifact(tasks.getByName("bundleReleaseAar"))
             }

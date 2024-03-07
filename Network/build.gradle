@@ -53,7 +53,7 @@ publishing {
             // 使用方引用 implementation "com.github.hardlove.UiLibrary:Network:2.4.42"
             groupId = "com.github.hardlove.UiLibrary"
             artifactId = "Network"
-            version = "2.4.42"
+            version = "2.4.43"
 
         }
     }
