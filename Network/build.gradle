@@ -6,6 +6,7 @@ plugins {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+
 }
 
 
@@ -20,7 +21,6 @@ dependencies {
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
 }
 
-
 apply plugin: 'maven-publish'
 // 创建源码 JAR
 tasks.register('generateSourcesJar', Jar) {
@@ -28,20 +28,27 @@ tasks.register('generateSourcesJar', Jar) {
     classifier 'sources'
 }
 
-
-// 创建 Javadoc JAR
-tasks.register('generateJavadocJar', Jar) {
-    dependsOn javadoc
-    classifier 'javadoc'
-    from javadoc.destinationDir
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
+
+tasks.withType(AbstractCompile) {
+    options.encoding = 'UTF-8'
+}
+
+//// 创建 Javadoc JAR
+//tasks.register('generateJavadocJar', Jar) {
+//    dependsOn javadoc
+//    classifier 'javadoc'
+//    from javadoc.destinationDir
+//}
 
 publishing {
     publications {
         Production(MavenPublication) {
             from components.java
             artifact generateSourcesJar
-            artifact generateJavadocJar
+//            artifact generateJavadocJar
 
             // 使用方引用 implementation "com.github.hardlove.UiLibrary:Network:2.4.42"
             groupId = "com.github.hardlove.UiLibrary"
