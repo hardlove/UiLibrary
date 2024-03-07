@@ -11,6 +11,7 @@
     <application>
         <provider
             android:name="com.hongwen.hongutils.provider.InitProvider"
-            android:authorities="${applicationId}.hongutils.init" />
+            android:authorities="${applicationId}.hongutils.init"
+            android:exported="false" />
     </application>
 </manifest>

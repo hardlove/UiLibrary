@@ -8,6 +8,7 @@
             android:theme="@style/Theme.Translucent.Activity" />
         <provider
             android:name="com.carlos.permissionhelper.InitProvider"
-            android:authorities="${applicationId}.permission.init" />
+            android:authorities="${applicationId}.permission.init"
+            android:exported="false" />
     </application>
 </manifest>

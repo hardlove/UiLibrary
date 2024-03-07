@@ -62,7 +62,7 @@ publishing {
             // 使用方引用 implementation "com.github.hardlove.UiLibrary:LocationPicker:2.4.44"
             groupId = "com.github.hardlove.UiLibrary"
             artifactId = "LocationPicker"
-            version = "2.4.45"
+            version = "2.4.46"
             afterEvaluate {
                 artifact(tasks.getByName("bundleReleaseAar"))
             }
