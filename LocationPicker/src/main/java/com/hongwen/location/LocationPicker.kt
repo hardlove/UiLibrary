@@ -17,6 +17,7 @@ import java.security.InvalidParameterException
  */
 class LocationPicker private constructor() {
     private lateinit var iModelLoader: OnPickerListener.IModelLoader<IModel>
+    private var title: String? = null
     private var searchHintText: String? = null
     private var mCancelable: Boolean = true
     private var autoLocate: Boolean = false
@@ -81,6 +82,11 @@ class LocationPicker private constructor() {
         return this
     }
 
+    fun setTitle(title: String):LocationPicker {
+        this.title = title
+        return this
+    }
+
     /**
      * 搜索框提示词
      */
@@ -135,6 +141,7 @@ class LocationPicker private constructor() {
         dialogFragment.apply {
             this.isCancelable = this@LocationPicker.mCancelable
             this.setAutoLocate(this@LocationPicker.autoLocate)
+            this.setTitle(this@LocationPicker.title)
             this.setSearchHintText(this@LocationPicker.searchHintText)
             this.setOnCancelListener(this@LocationPicker.onCancelListener)
             this.setOnDismissListener(this@LocationPicker.onDismissListener)
