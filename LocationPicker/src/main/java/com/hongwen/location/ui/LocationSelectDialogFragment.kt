@@ -47,6 +47,7 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
     private val allItems: MutableList<IModel> = mutableListOf()
 
     private var hintText: String? = null
+    private var title: String? = null
     private var autoLocate: Boolean = false
     private var onShowListener: OnPickerListener.OnShowListener? = null
     private var onDismissListener: OnPickerListener.OnDismissListener? = null
@@ -56,9 +57,13 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
     private lateinit var iModelLoader: OnPickerListener.IModelLoader<IModel>
 
 
+    fun setTitle(title: String?) {
+        this.title = title
+    }
     fun setSearchHintText(hint: String?) {
         this.hintText = hint
     }
+
 
     fun setAutoLocate(autoLocate: Boolean) {
         this.autoLocate = autoLocate
@@ -104,6 +109,7 @@ class LocationSelectDialogFragment : DialogFragment(), OnPickerListener.OnItemCl
         initListener()
 
         binding.searchLl.setHintText(hintText ?: "")
+        binding.cToolBar.setCenterText(title?:"选择城市")
 
     }
 
