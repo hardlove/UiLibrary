@@ -35,10 +35,6 @@ dependencies {
 }
 
 
-
-
-
-
 apply plugin: 'maven-publish'
 task generateSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
@@ -49,7 +45,7 @@ publishing {
     publications {
         Production(MavenPublication) {
             // 使用方引用 implementation "com.github.hardlove.UiLibrary:VerifyCodeView:2.4.42"
-            groupId = "com.github.hardlove.UiLibrary"
+            groupId = "com.sqm.cl.UiLibrary"
             artifactId = "VerifyCodeView"
             version = "2.4.42"
             afterEvaluate {
@@ -82,6 +78,14 @@ publishing {
             url = "D:\\Work\\repos"
 //            url = "../../../repos"
         }
-        mavenLocal()
+        maven {
+            name = 'cdLocalMaven'
+            url = "http://117.139.166.173:8081/repository/maven-releases/"
+            credentials {
+                allowInsecureProtocol = true //这一行
+                username System.getenv("maven_username")
+                password System.getenv("maven_password")
+            }
+        }
     }
 }

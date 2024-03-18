@@ -43,7 +43,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
 
     implementation 'androidx.room:room-runtime:2.3.0'
-    kapt  'androidx.room:room-compiler:2.3.0'
+    kapt 'androidx.room:room-compiler:2.3.0'
     implementation 'com.google.code.gson:gson:2.8.8'
 
     implementation 'com.belerweb:pinyin4j:2.5.1'
@@ -60,7 +60,7 @@ publishing {
     publications {
         Production(MavenPublication) {
             // 使用方引用 implementation "com.github.hardlove.UiLibrary:LocationPicker:2.4.44"
-            groupId = "com.github.hardlove.UiLibrary"
+            groupId = "com.sqm.cl.UiLibrary"
             artifactId = "LocationPicker"
             version = "2.4.47"
             afterEvaluate {
@@ -93,6 +93,14 @@ publishing {
             url = "D:\\Work\\repos"
 //            url = "../../../repos"
         }
-        mavenLocal()
+        maven {
+            name = 'cdLocalMaven'
+            url = "http://117.139.166.173:8081/repository/maven-releases/"
+            credentials {
+                allowInsecureProtocol = true //这一行
+                username System.getenv("maven_username")
+                password System.getenv("maven_password")
+            }
+        }
     }
 }
